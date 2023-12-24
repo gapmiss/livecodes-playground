@@ -1,0 +1,10 @@
+{
+	"id": "svelte-base-plugin",
+	"name": "Svelte Base Plugin",
+	"version": "0.1.0",
+	"minAppVersion": "0.15.0",
+	"description": "Svelte plugin for Obsidian.md",
+	"author": "@gapmiss",
+	"authorUrl": "https://github.com/gapmiss",
+	"isDesktopOnly": false
+}
