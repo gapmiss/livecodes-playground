@@ -12,13 +12,13 @@ import { SBPView, VIEW_TYPE_SBP } from "./view";
 import SVELTE_ICON from "./util"
 
 interface SBPSettings {
-  favoriteNumber: number;
-  favoriteWord: string;
+  varNumber: number;
+  varString: string;
 }
 
 const DEFAULT_SETTINGS: SBPSettings = {
-  favoriteNumber: 33,
-  favoriteWord: "Hello",
+  varNumber: 3,
+  varString: "Hello",
 };
 
 
@@ -34,7 +34,7 @@ export default class SvelteBasePlugin extends Plugin {
 
     this.registerView(
       VIEW_TYPE_SBP,
-      (leaf) => new SBPView(leaf, this.settings.favoriteNumber, this.settings.favoriteWord),
+      (leaf) => new SBPView(leaf, this.settings.varNumber, this.settings.varString),
     );
     addIcon("svelte-icon", SVELTE_ICON);
     this.addRibbonIcon("svelte-icon", "svelte-base-plugin", async () => {
@@ -94,27 +94,27 @@ class SBPSettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-      .setName("Favorite number")
-      .setDesc("What is your favorite number?")
+      .setName("My number")
+      // .setDesc("")
       .addText((text) =>
         text
-          .setPlaceholder("33 is the best number!")
-          .setValue(this.plugin.settings.favoriteNumber.toString())
+          .setPlaceholder("My number")
+          .setValue(this.plugin.settings.varNumber.toString())
           .onChange(async (value) => {
-            this.plugin.settings.favoriteNumber = parseInt(value || "33");
+            this.plugin.settings.varNumber = parseInt(value || "33");
             await this.plugin.saveSettings();
           })
       );
 
     new Setting(containerEl)
-      .setName("Favorite word")
-      .setDesc("What is your favorite word?")
+      .setName("My String")
+      // .setDesc("")
       .addText((text) =>
         text
-          .setPlaceholder("Hello is the best word!")
-          .setValue(this.plugin.settings.favoriteWord.toString())
+          .setPlaceholder("My string")
+          .setValue(this.plugin.settings.varString.toString())
           .onChange(async (value) => {
-            this.plugin.settings.favoriteWord = value;
+            this.plugin.settings.varString = value;
             await this.plugin.saveSettings();
           })
       );

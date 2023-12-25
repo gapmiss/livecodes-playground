@@ -19,8 +19,8 @@
 <h6>Example:</h6>
 <pre>
   <em>// plugin settings</em>
-  plugin.settings.favoriteNumber: <span>{plugin.settings.favoriteNumber}</span>
-  plugin.settings.favoriteWord: <span>{plugin.settings.favoriteWord}</span>
+  plugin.settings.varNumber: <span>{plugin.settings.varNumber}</span>
+  plugin.settings.varString: <span>{plugin.settings.varString}</span>
   <div />
   <em>// deprecated `app`</em>
   app.vault.configDir: <span>{app.vault.configDir}</span>

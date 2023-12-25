@@ -5,13 +5,13 @@ export const VIEW_TYPE_SBP = "SBP-view";
 
 export class SBPView extends ItemView {
   component: Component;
-  favoriteNumber: number;
-  favoriteWord: string;
+  varNumber: number;
+  varString: string;
 
-  constructor(leaf: WorkspaceLeaf, favoriteNumber: number, favoriteWord: string) {
+  constructor(leaf: WorkspaceLeaf, varNumber: number, varString: string) {
     super(leaf);
-    this.favoriteNumber = favoriteNumber;
-    this.favoriteWord = favoriteWord;
+    this.varNumber = varNumber;
+    this.varString = varString;
   }
 
   getViewType() {
@@ -30,8 +30,8 @@ export class SBPView extends ItemView {
     this.component = new Component({
       target: this.contentEl,
       props: {
-        myNumber: this.favoriteNumber,
-        myString: this.favoriteWord,
+        myNumber: this.varNumber,
+        myString: this.varString,
       },
     });
   }
