@@ -6,55 +6,124 @@ import {
   WorkspaceLeaf,
   addIcon,
   PluginManifest,
-  DataAdapter
+  DataAdapter,
+  TFile,
+  Notice
 } from "obsidian";
-import { SBPView, VIEW_TYPE_SBP } from "./view";
+
+import { 
+  LivecodesView, 
+  VIEW_TYPE_LIVECODES 
+} from "./views/livecodes";
+import { LivecodesSettingsTab } from './settings';
+import { TemplateSelectModal } from "./modals/template-select-modal";
 import SVELTE_ICON from "./util"
 
-interface SBPSettings {
+interface LivecodesSettings {
   varNumber: number;
   varString: string;
+	templateFolder: string;
+	appUrl: string;
+	fontFamily: string;
+	fontSize: any;
+	editor: any;
+	lineNumbers: boolean;
+	darkTheme: boolean;
+	useTabs: boolean;
+	tabSize: any;
+	closeBrackets: boolean;
+	semicolons: boolean;
+	singleQuote: boolean;
+	trailingComma: boolean;
+	wordWrap: boolean;
+	autoUpdate: boolean;
+	delay: number;
+	template: string | null;
+	dataHeight: any;
+  // myTemplate: string;
 }
 
-const DEFAULT_SETTINGS: SBPSettings = {
+const DEFAULT_SETTINGS: LivecodesSettings = {
   varNumber: 3,
   varString: "Hello",
+	templateFolder: "livecodes",
+	appUrl: "https://livecodes.io/",
+	fontFamily: "Default",
+	fontSize: "12",
+	editor: "monaco",
+	lineNumbers: true,
+	darkTheme: true,
+	useTabs: false,
+	tabSize: "2",
+	closeBrackets: true,
+	semicolons: true,
+	singleQuote: false,
+	trailingComma: true,
+	wordWrap: false,
+	autoUpdate: true,
+	delay: 1500,
+	template: null,
+	dataHeight: "300",
+  // myTemplate: "",
 };
 
 
-export default class SvelteBasePlugin extends Plugin {
-  settings!: SBPSettings;
+export default class LivecodesPlugin extends Plugin {
+  settings!: LivecodesSettings;
   manifest: PluginManifest;
-  plugin: SvelteBasePlugin;
+  plugin: LivecodesPlugin;
   public adapter: DataAdapter = this.app.vault.adapter;
   state: string = 'initial';
+	params: any;
+	fontFamily: any;
+	fontSize: any;
+	editor: any;
+	lineNumbers: boolean;
+	darkTheme: boolean;
+	useTabs: boolean;
+	tabSize: any;
+	closeBrackets: boolean;
+	semicolons: boolean;
+	singleQuote: boolean;
+	trailingComma: boolean;
+	wordWrap: boolean;
+	autoUpdate: boolean;
+	delay: number = 1500;
+	d: any = new Date();
+	template: string | null;
+	dataHeight: string | undefined;
+	logDebug: boolean = true;
+  // myTemplate: string | undefined;
 
   async onload() {
     await this.loadSettings();
 
     this.registerView(
-      VIEW_TYPE_SBP,
-      (leaf) => new SBPView(leaf, this.settings.varNumber, this.settings.varString),
+      VIEW_TYPE_LIVECODES,
+      (leaf) => new LivecodesView(leaf, this.settings.template),
     );
-    addIcon("svelte-icon", SVELTE_ICON);
-    this.addRibbonIcon("svelte-icon", "svelte-base-plugin", async () => {
+
+    this.addRibbonIcon("code", "livecodes-for-obsidian", async () => {
+      new TemplateSelectModal(this).open();
+      /*/
       const { workspace } = this.app;
 
       let leaf: WorkspaceLeaf | null = null;
-      const leaves = workspace.getLeavesOfType(VIEW_TYPE_SBP);
+      const leaves = workspace.getLeavesOfType(VIEW_TYPE_LIVECODES);
 
       if (leaves.length > 0) {
         leaf = leaves[0];
       } else {
         // leaf = workspace.getRightLeaf(false);
         leaf = workspace.getLeaf(false)
-        await leaf.setViewState({ type: VIEW_TYPE_SBP, active: true });
+        await leaf.setViewState({ type: VIEW_TYPE_LIVECODES, active: true });
       }
 
       workspace.revealLeaf(leaf);
+      /**/
     });
 
-    this.addSettingTab(new SBPSettingsTab(this.app, this));
+    this.addSettingTab(new LivecodesSettingsTab(this.app, this));
 
     this.state = "loaded";
     console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
@@ -63,6 +132,21 @@ export default class SvelteBasePlugin extends Plugin {
   onunload() {
     this.state = "unloaded";
     console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
+  }
+
+  async activateView() {
+		new Notice("Loading livecodes playground…", 5000);
+
+    await this.app.workspace.getLeaf(true).setViewState({
+      type: VIEW_TYPE_LIVECODES,
+      active: true,
+    });
+
+    const leaf = this.app.workspace.getMostRecentLeaf();
+
+    if (leaf?.view instanceof LivecodesView) {
+	    this.app.workspace.revealLeaf(leaf);
+		}
   }
 
   async loadSettings() {
@@ -78,45 +162,43 @@ export default class SvelteBasePlugin extends Plugin {
     return "Consequat laborum labore in dolore ex voluptate consequat est proident eu deserunt.";
   }
 
-}
 
-class SBPSettingsTab extends PluginSettingTab {
-  plugin: SvelteBasePlugin;
+	/**
+	 * https://github.com/eoureo/obsidian-runjs/blob/master/src/main.ts#L1394
+	 */
+  async reload() {
+    this.state = "start reloading";
+    console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
+    let manifest_id = this.manifest.id;
+    // @ts-ignore
+    if (this.app.plugins.enabledPlugins.has(manifest_id)) {
+      this.state = "disable";
+      // @ts-ignore
+      await this.app.plugins.disablePlugin(manifest_id);
 
-  constructor(app: App, plugin: SvelteBasePlugin) {
-    super(app, plugin);
-    this.plugin = plugin;
+      window.setTimeout(async () => {
+        // @ts-ignore
+        this.app.plugins.enablePlugin(manifest_id);
+
+        for (let i = 0; i < 100; i++) {
+          // @ts-ignore
+          let state = this.app.plugins.plugins[manifest_id]?.state;
+          if (state == "loaded") {
+            window.setTimeout(() => {
+              // @ts-ignore
+              this.app.setting.openTabById(manifest_id);
+            }, 100);
+            break;
+          }
+          await sleep(500);
+        }
+      }, 100);
+    }
   }
 
-  display(): void {
-    const { containerEl } = this;
-
-    containerEl.empty();
-
-    new Setting(containerEl)
-      .setName("My number")
-      // .setDesc("")
-      .addText((text) =>
-        text
-          .setPlaceholder("My number")
-          .setValue(this.plugin.settings.varNumber.toString())
-          .onChange(async (value) => {
-            this.plugin.settings.varNumber = parseInt(value || "33");
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName("My String")
-      // .setDesc("")
-      .addText((text) =>
-        text
-          .setPlaceholder("My string")
-          .setValue(this.plugin.settings.varString.toString())
-          .onChange(async (value) => {
-            this.plugin.settings.varString = value;
-            await this.plugin.saveSettings();
-          })
-      );
+	sleep(ms:number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+
 }

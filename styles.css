@@ -1,8 +1,42 @@
-/*
-
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+.livecodes-wrapper {
+	resize: both !important;
+	overflow: hidden;
+	padding:2em !important;
+	padding-bottom:4em !important;
+	border: 1px solid var(--interactive-accent) !important;
+	background-color: var(--background-primary) !important;
+	margin-bottom: 3em;
+}
+.open-with-livecodes-wrap {
+	position: relative;
+}
+.open-with-livecodes-wrap:hover .open-with-livecodes-button {
+	opacity: .8;
+}
+.open-with-livecodes-button {
+	position: absolute;
+	top: -15px;
+	left: -15px;
+	opacity: 0;
+	transition: opacity 0.25s;
+	cursor: pointer;	
+	border-radius: 15px;
+	padding: .5em;
+}
+.livecodes-prompt-modal input.prompt-input {
+  width: 100%;
+  padding: var(--size-4-6);
+  background-color: var(--background-primary);
+  font-size: var(--font-ui-medium);
+  border: none;
+  height: 40px;
+  border-radius: var(--radius-m);
+  border-bottom: none !important;
+}
+.livecodes-prompt-modal input.prompt-input:hover,
+.livecodes-prompt-modal input.prompt-input:focus,
+.livecodes-prompt-modal input.prompt-input:focus-visible {
+  border-bottom: none !important;
+  /* box-shadow: none; */
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+}
