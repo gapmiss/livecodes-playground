@@ -39,12 +39,14 @@ export class LivecodesView extends ItemView {
 		if (this.contentEl) {
 			this.contentEl.empty();
 		}
-		console.log(this.template);
+		// console.log(this.template);
 		// return;
     let foundTemplate: boolean = (this.template !== null);
     let newTemplate: Partial<config>;
+		let tplPath: string|undefined;
     if (foundTemplate) {
-      let tpl = await this.adapter.read(normalizePath((this.template as unknown as TFile).path));
+			tplPath = normalizePath((this.template as unknown as TFile).path);
+      let tpl = await this.adapter.read(tplPath);
       newTemplate = JSON.parse(tpl) as Partial<config>;
     }
 
@@ -53,6 +55,7 @@ export class LivecodesView extends ItemView {
       props: {
         // myNumber: this.varNumber,
         myTemplate: newTemplate,
+        myTemplatePath: tplPath,
       },
     });
   }

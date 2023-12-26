@@ -153,7 +153,7 @@ export default class LivecodesPlugin extends Plugin {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 
-  async saveSettings() {
+  public async saveSettings() {
     await this.saveData(this.settings);
   }
 
