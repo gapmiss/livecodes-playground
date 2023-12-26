@@ -174,53 +174,53 @@
 	class="livecodes-wrapper" data-height="{plugin.settings.dataHeight || '300'}">
 </div>
 
-<!-- https://live-codes.github.io/livecodes-examples/sdk-demo.html -->
-<button
-	aria-label="Watch for changes"
-	data-command="onChange"
-	data-tooltip-position="top">
-	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-</button>
+<div class="buttons-wrapper">
+	<!-- https://live-codes.github.io/livecodes-examples/sdk-demo.html -->
+	<button
+		aria-label="Watch for changes"
+		data-command="onChange"
+		data-tooltip-position="top">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+	</button>
 
-<button
-	aria-label="Toggle theme"
-	data-command="setConfig"
-	data-tooltip-position="top">
-	{#if plugin.settings.darkTheme}
-		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-	{:else}
-		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-	{/if}
-</button>
+	<button
+		aria-label="Toggle theme"
+		data-command="setConfig"
+		data-tooltip-position="top">
+		{#if plugin.settings.darkTheme}
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+		{:else}
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+		{/if}
+	</button>
 
-<!-- <a href="#" data-command="onChange">add onChange</a> -->
+	<button
+		aria-label="Get config"
+		data-command="getConfig"
+		data-tooltip-position="top">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-braces"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></svg>
+	</button>
 
-<button
-	aria-label="Get config"
-	data-command="getConfig"
-	data-tooltip-position="top">
-	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-braces"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></svg>
-</button>
+	<button
+		aria-label="Copy share URL"
+		data-command="getShareUrl"
+		data-tooltip-position="top">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+	</button>
 
-<button
-	aria-label="Copy share URL"
-	data-command="getShareUrl"
-	data-tooltip-position="top">
-	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-</button>
-<!-- <a href="#" data-command="destroy">destroy</a> -->
-<button
-	aria-label="Get code"
-	data-command="getCode"
-	data-tooltip-position="top">
-	<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-2"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
-</button>
+	<button
+		aria-label="Get code"
+		data-command="getCode"
+		data-tooltip-position="top">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-2"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+	</button>
 
-<hr />
+	<!-- <a href="#" data-command="destroy">destroy</a> -->
+
+</div>
 
 <textarea name="text" id="text" wrap="off" style="width:100ch;height:30ch;"></textarea>
 
-<!-- <h1>myNumber: {myNumber}</h1> -->
 <h2>myTemplate: {myTemplate.title}</h2>
 <div>myTemplatePath: <code>{myTemplatePath}</code></div>
 <hr />
@@ -248,13 +248,17 @@
   h2 {
     color: dodgerblue;
   }
-  pre span {
+  div code,
+	pre span {
     color: dodgerblue;
   }
   pre span.obsidian-var {
     color: var(--interactive-accent);
   }
-  pre em {
+	pre em {
     color: var(--color-base-50);
   }
+	.buttons-wrapper {
+		margin-bottom: 1em;
+	}
 </style>
