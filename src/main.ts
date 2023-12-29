@@ -17,7 +17,8 @@ import {
 } from "./views/livecodes";
 import { LivecodesSettingsTab } from './settings';
 import { TemplateSelectModal } from "./modals/template-select-modal";
-import SVELTE_ICON from "./util"
+import { PlaygroundRenderChild } from "./views/playground";
+import { HeadlessRenderChild } from "./views/headless";
 
 interface LivecodesSettings {
   varNumber: number;
@@ -38,7 +39,7 @@ interface LivecodesSettings {
 	wordWrap: boolean;
 	autoUpdate: boolean;
 	delay: number;
-	template: string | null;
+	template: TFile | undefined;
 	dataHeight: any;
   // myTemplate: string;
 }
@@ -62,7 +63,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	wordWrap: false,
 	autoUpdate: true,
 	delay: 1500,
-	template: null,
+	template: undefined,
 	dataHeight: "300",
   // myTemplate: "",
 };
@@ -90,7 +91,7 @@ export default class LivecodesPlugin extends Plugin {
 	autoUpdate: boolean;
 	delay: number = 1500;
 	d: any = new Date();
-	template: string | null;
+	template: TFile | undefined;
 	dataHeight: string | undefined;
 	logDebug: boolean = true;
   // myTemplate: string | undefined;
@@ -103,7 +104,7 @@ export default class LivecodesPlugin extends Plugin {
       (leaf) => new LivecodesView(leaf, this.settings.template),
     );
 
-    this.addRibbonIcon("code", "livecodes-for-obsidian", async () => {
+    this.addRibbonIcon("code", "Playground: Open Template", async () => {
       new TemplateSelectModal(this).open();
       /*/
       const { workspace } = this.app;
@@ -122,6 +123,36 @@ export default class LivecodesPlugin extends Plugin {
       workspace.revealLeaf(leaf);
       /**/
     });
+
+		this.registerMarkdownCodeBlockProcessor(
+			"playground",
+			async (source, el, ctx) => {
+				ctx.addChild(
+					new PlaygroundRenderChild(
+						el,
+						this.app,
+						source,
+						this.settings,
+					)
+				);
+			}
+		);
+
+		this.registerMarkdownCodeBlockProcessor(
+			"headless",
+			async (source, el, ctx) => {
+				ctx.addChild(
+					new HeadlessRenderChild(
+						el,
+						this.app,
+						source,
+						this.settings,
+					)
+				);
+			}
+		);
+
+    this.registerExtensions(["json"], "markdown");
 
     this.addSettingTab(new LivecodesSettingsTab(this.app, this));
 

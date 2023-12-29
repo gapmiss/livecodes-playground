@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { App, Notice, Plugin, Vault, TFile } from "obsidian";
-	import { writable } from 'svelte/store';
+  import { type App, Notice, Plugin, Vault, TFile } from "obsidian";
+	// import { writable } from 'svelte/store';
   import SvelteBasePlugin from "../main";
+	import { onMount } from 'svelte';
+  import { EmbedOptions, createPlayground } from 'livecodes';
+
   export let myTemplate: string;
   export let myTemplatePath: string|undefined;
   
@@ -9,25 +12,7 @@
   const plugin = app.plugins.plugins['livecodes-for-obsidian'];
   // const fs = require('fs');
   let vaultPath = plugin.adapter.basePath;
-	
-  import { onMount } from 'svelte';
-  import { EmbedOptions, createPlayground } from 'livecodes';
-	// console.log('myTemplate');
-	// console.log(myTemplate);
-	// console.log('myTemplatePath');
-	// console.log(myTemplatePath);
-  // Embed Options
-  /*/
-	const options: EmbedOptions = {
-		// appUrl: "https://playground.test/",
-    params: {
-      html: '<h1>Hello World!</h1>',
-      css: 'h1 {color: blue;}',
-      js: 'console.log("Hello, Svelte!")',
-      console: 'open',
-    },
-  };
-	/**/
+  
 	const options: EmbedOptions = {
       config: myTemplate!,
       appUrl: plugin.settings.appUrl,
@@ -54,9 +39,13 @@
 
   let container: any;
   let playground: any;
-  onMount(() => {
-    createPlayground(container, options).then((p) => {
-      playground = p; // now the SDK is available
+
+	onMount(() => {
+
+		createPlayground(container, options).then((p) => {
+
+			playground = p; // now the SDK is available
+
 			const setTextarea = (value = "", append = false) => {
 				if (append) {
 					document.querySelector("#text").innerHTML += "\n\n" + value;
@@ -64,6 +53,7 @@
 					document.querySelector("#text").innerHTML = value;
 				}
 			};
+
 			document.querySelector('[data-command="getCode"]')
 				.addEventListener("click", async (e) => {
 					e.preventDefault();
@@ -75,75 +65,100 @@
 						setTextarea(error.message || error, true);
 					}
 				});
-				// document
-				// 	.querySelector('[data-command="destroy"]')
-				// 	.addEventListener("click", async (e) => {
-				// 		e.preventDefault();
-				// 		setTextarea("executing: destroy()");
-				// 		try {
-				// 			await playground.destroy();
-				// 			setTextarea("executed: destroy()", true);
-				// 		} catch (error) {
-				// 			setTextarea(error.message || error, true);
-				// 		}
-				// 	});
-				let watcher;
-				const watcherButton = document.querySelector('[data-command="onChange"]');
-				watcherButton.addEventListener("click", async (e) => {
+
+			/*/
+			document
+				.querySelector('[data-command="destroy"]')
+				.addEventListener("click", async (e) => {
 					e.preventDefault();
+					setTextarea("executing: destroy()");
 					try {
-						if (!watcher) {
-							setTextarea("Watching for changes…");
-							watcher = playground.onChange((output) => {
-								setTextarea("Changes detected:");
-								setTextarea(JSON.stringify(output, null, 2), true);
-							});
-							// watcherButton.innerText = "remove onChange";
-							watcherButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
-							watcherButton.setAttribute("aria-label","Stop watching for changes");
+						await playground.destroy();
+						setTextarea("executed: destroy()", true);
+					} catch (error) {
+						setTextarea(error.message || error, true);
+					}
+				});
+			/**/
+			const openModal = () => {
+				console.log('openModal');
+			}
+			/**/
+			document
+				.querySelector('[data-command="modal"]')
+				.addEventListener("click", async (e) => {
+					e.preventDefault();
+					setTextarea("executing: modal");
+					try {
+						openModal();
+					} catch (error) {
+						setTextarea(error.message || error, true);
+					}
+				});
+			/**/
+
+			let watcher;
+			const watcherButton = document.querySelector('[data-command="onChange"]');
+			watcherButton.addEventListener("click", async (e) => {
+				e.preventDefault();
+				try {
+					if (!watcher) {
+						setTextarea("Watching for changes…");
+						watcher = playground.onChange((output) => {
+							setTextarea("Changes detected:");
+							setTextarea(JSON.stringify(output, null, 2), true);
+						});
+						// watcherButton.innerText = "remove onChange";
+						watcherButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
+						watcherButton.setAttribute("aria-label","Stop watching for changes");
+					} else {
+						watcher?.remove();
+						watcher = null;
+						setTextarea("Stopped watching for changes…");
+						// watcherButton.innerText = "add onChange";
+						watcherButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+						watcherButton.setAttribute("aria-label","Watch for changes");
+					}
+				} catch (error) {
+					setTextarea(error.message || error, true);
+				}
+			});
+
+			const setThemeButton = document.querySelector('[data-command="setConfig"]');
+			setThemeButton
+				.addEventListener("click", async (e) => {
+					e.preventDefault();
+					const currentTheme = plugin.settings.darkTheme ? "dark" : "light";
+					console.log('currentTheme');
+					console.log(currentTheme);
+					try {
+						if (currentTheme !== "dark") {
+							await playground.setConfig({theme:"dark"})
+							plugin.settings.darkTheme = true;
+							setThemeButton.setAttribute("aria-label","Set light mode");
 						} else {
-							watcher?.remove();
-							watcher = null;
-							setTextarea("Stopped watching for changes…");
-							// watcherButton.innerText = "add onChange";
-							watcherButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
-							watcherButton.setAttribute("aria-label","Watch for changes");
+							await playground.setConfig({theme:"light"})
+							plugin.settings.darkTheme = false;
+							setThemeButton.setAttribute("aria-label","Set dark mode");
 						}
 					} catch (error) {
 						setTextarea(error.message || error, true);
 					}
 				});
 
-				
-				const setThemeButton = document.querySelector('[data-command="setConfig"]');
-				setThemeButton
-					.addEventListener("click", async (e) => {
-						e.preventDefault();
-						const currentTheme = plugin.settings.darkTheme ? "dark" : "light";
-						try {
-							if (currentTheme !== "dark") {
-								await playground.setConfig({theme:"dark"})
-								plugin.settings.darkTheme = true;
-								setThemeButton.setAttribute("aria-label","Set light mode");
-							} else {
-								await playground.setConfig({theme:"light"})
-								plugin.settings.darkTheme = false;
-								setThemeButton.setAttribute("aria-label","Set dark mode");
-							}
-						} catch (error) {
-							setTextarea(error.message || error, true);
-						}
-					});
-
-
-
-
 			document.querySelector('[data-command="getConfig"]')
 				.addEventListener("click", async (e) => {
+					console.log('got here');
 					e.preventDefault();
+					console.log('got here too');
 					// setTextarea("executing: getConfig()");
 					try {
+						console.log('got here too too');
+						console.log('playground');
+						console.log(playground);
 						const config = await playground.getConfig();
+						console.log('config');
+						console.log(config);
 						setTextarea(JSON.stringify(config, null, 2), false);
 					} catch (error) {
 						setTextarea(error.message || error, true);
@@ -161,7 +176,6 @@
 						setTextarea(error.message || error, true);
 					}
 				});
-
 
     });
     // cleanup when the component is destroyed
@@ -215,6 +229,13 @@
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-2"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
 	</button>
 
+	<button
+		aria-label="Open modal"
+		data-command="modal"
+		data-tooltip-position="top">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
+	</button>
+
 	<!-- <a href="#" data-command="destroy">destroy</a> -->
 
 </div>
@@ -242,9 +263,6 @@
 </pre>
 
 <style>
-  /* h1 {
-    color: hotpink;
-  } */
   h2 {
     color: dodgerblue;
   }

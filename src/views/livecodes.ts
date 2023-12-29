@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile, Notice, DataAdapter } from 'obsidian';
 import LivecodesPlugin from "../main";
-import { openPromptModal } from "../modals/prompt-modal";
+
 // @ts-ignore
 import { config } from 'livecodes';
 
@@ -11,13 +11,11 @@ export const VIEW_TYPE_LIVECODES = "Livecodes-view";
 export class LivecodesView extends ItemView {
 	plugin: LivecodesPlugin;
   component: Component;
-  // varNumber: number;
-  template: string | null;
+  template: TFile | undefined;
 	adapter: FileSystemAdapter;
 
-  constructor(leaf: WorkspaceLeaf, template: string|null) {
+  constructor(leaf: WorkspaceLeaf, template: TFile|undefined) {
     super(leaf);
-    // this.varNumber = varNumber;
     this.template = template;
 		
 		this.adapter = this.app.vault.adapter as FileSystemAdapter;
@@ -39,13 +37,11 @@ export class LivecodesView extends ItemView {
 		if (this.contentEl) {
 			this.contentEl.empty();
 		}
-		// console.log(this.template);
-		// return;
-    let foundTemplate: boolean = (this.template !== null);
+    let foundTemplate: boolean = (this.template !== undefined);
     let newTemplate: Partial<config>;
 		let tplPath: string|undefined;
     if (foundTemplate) {
-			tplPath = normalizePath((this.template as unknown as TFile).path);
+			let tplPath = normalizePath((this.template!).path);
       let tpl = await this.adapter.read(tplPath);
       newTemplate = JSON.parse(tpl) as Partial<config>;
     }
@@ -53,7 +49,6 @@ export class LivecodesView extends ItemView {
     this.component = new Component({
       target: this.contentEl,
       props: {
-        // myNumber: this.varNumber,
         myTemplate: newTemplate,
         myTemplatePath: tplPath,
       },

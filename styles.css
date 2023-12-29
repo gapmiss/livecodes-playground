@@ -1,7 +1,7 @@
 .livecodes-wrapper {
 	resize: both !important;
 	overflow: hidden;
-	padding:1.5em !important;
+	padding:.5em !important;
 	/* padding-bottom:4em !important; */
 	border: 1px solid var(--interactive-accent) !important;
 	background-color: var(--background-primary) !important;
