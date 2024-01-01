@@ -1,4 +1,4 @@
-import { MarkdownView, normalizePath, type App } from "obsidian";
+import { MarkdownView, normalizePath, Notice, type App } from "obsidian";
 
 /**
  * 
@@ -10,14 +10,14 @@ export function saveJson(
 	path: string,
 	content: string
 ) {
-	const markdownView = app.workspace.getActiveViewOfType(MarkdownView);
-	if (!markdownView) {
-		return;
-	}
-	const editor = markdownView.editor;
-	if (!editor) {
-		return;
-	}
+	// const markdownView = app.workspace.getActiveViewOfType(MarkdownView);
+	// if (!markdownView) {
+	// 	return;
+	// }
+	// const editor = markdownView.editor;
+	// if (!editor) {
+	// 	return;
+	// }
 	saveTemplateToFile(app, path, content);
 }
 
@@ -46,4 +46,18 @@ export async function downloadFile(data: BlobPart, fileName: string, type="text/
 	window.URL.revokeObjectURL(a.href);
 	window.document.body.removeChild(a);
 	return;
+}
+
+/**
+ * from: https://github.com/Obsidian-TTRPG-Community/TTRPG-Community-Admin/
+ */
+export async function copyStringToClipboard(text:string, topic:string|undefined=undefined) {
+  navigator.clipboard
+		.writeText(text)
+		.then(function () {
+			new Notice((topic !== undefined ? topic + " " : "") + "copied to clipboard", 2500);
+		})
+		.catch(function (error) {
+			console.error('Failed to copy to clipboard: ', error)
+		})
 }

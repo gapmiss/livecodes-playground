@@ -1,10 +1,5 @@
 import {
-  App,
   Plugin,
-  PluginSettingTab,
-  Setting,
-  WorkspaceLeaf,
-  addIcon,
   PluginManifest,
   DataAdapter,
   TFile,
@@ -41,7 +36,6 @@ interface LivecodesSettings {
 	delay: number;
 	template: TFile | undefined;
 	dataHeight: any;
-  // myTemplate: string;
 }
 
 const DEFAULT_SETTINGS: LivecodesSettings = {
@@ -65,7 +59,6 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	delay: 1500,
 	template: undefined,
 	dataHeight: "300",
-  // myTemplate: "",
 };
 
 
@@ -94,35 +87,26 @@ export default class LivecodesPlugin extends Plugin {
 	template: TFile | undefined;
 	dataHeight: string | undefined;
 	logDebug: boolean = true;
-  // myTemplate: string | undefined;
 
   async onload() {
     await this.loadSettings();
 
     this.registerView(
       VIEW_TYPE_LIVECODES,
-      (leaf) => new LivecodesView(leaf, this.settings.template),
+      (leaf) => new LivecodesView(this.app, leaf, this.settings.template, this.settings),
     );
 
     this.addRibbonIcon("code", "Playground: Open Template", async () => {
       new TemplateSelectModal(this).open();
-      /*/
-      const { workspace } = this.app;
-
-      let leaf: WorkspaceLeaf | null = null;
-      const leaves = workspace.getLeavesOfType(VIEW_TYPE_LIVECODES);
-
-      if (leaves.length > 0) {
-        leaf = leaves[0];
-      } else {
-        // leaf = workspace.getRightLeaf(false);
-        leaf = workspace.getLeaf(false)
-        await leaf.setViewState({ type: VIEW_TYPE_LIVECODES, active: true });
-      }
-
-      workspace.revealLeaf(leaf);
-      /**/
     });
+
+		this.addCommand({
+			id: "open-template-select-modal",
+			name: "Open template in playground",
+			callback: async () => {
+				new TemplateSelectModal(this).open();
+			},
+		});
 
 		this.registerMarkdownCodeBlockProcessor(
 			"playground",
@@ -152,7 +136,7 @@ export default class LivecodesPlugin extends Plugin {
 			}
 		);
 
-    this.registerExtensions(["json"], "markdown");
+    // this.registerExtensions(["json"], "markdown");
 
     this.addSettingTab(new LivecodesSettingsTab(this.app, this));
 
@@ -189,12 +173,10 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   static foo() {
-    // console.log("foo() method");
-    return "Consequat laborum labore in dolore ex voluptate consequat est proident eu deserunt.";
+    return "bar";
   }
 
-
-	/**
+  /**
 	 * https://github.com/eoureo/obsidian-runjs/blob/master/src/main.ts#L1394
 	 */
   async reload() {
@@ -230,6 +212,5 @@ export default class LivecodesPlugin extends Plugin {
 	sleep(ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
 
 }

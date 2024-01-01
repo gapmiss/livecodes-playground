@@ -13,6 +13,8 @@
 	import {saveJson, downloadFile}  from "../util";
 	let container: any;
   let playground: any;
+  let output: any;
+  let editor: HTMLTextAreaElement;
 
 
 	// export let source: string;
@@ -48,7 +50,7 @@
 		appUrl: plugin.settings.appUrl,
 	};
 
-	const initialCode = `import { useState, useEffect } from 'react';
+	const initialCode: string = `import { useState, useEffect } from 'react';
 export const Hello = ({name}) => {  
   const [count, setCount] = useState(0);
   return (
@@ -80,7 +82,7 @@ export const Hello = ({name}) => {
 
 // the code editor
 // const editor = CodeMirror.fromTextArea(
-//   document.querySelector("#editor")!,
+//   document.querySelector(".editor")!,
 //   {
 //     lineNumbers: true,
 //     mode: "markdown",
@@ -89,29 +91,44 @@ export const Hello = ({name}) => {
 // editor.setSize("100%", 200);
 // editor.setValue(initialCode);
 // @ts-ignore
-document.querySelector("#editor")?.textContent = initialCode;
+			editor.value = initialCode;
 
 			const compile = async () => {
+				console.log('comp');
 				await playground.setConfig({
 					autoupdate: false,
 					markup: {
 						language: "mdx",
-						content: document.querySelector("#editor")?.textContent,
+						content: editor.value,
 					},
 				});
 			};
 
 			// watch for changes
-			document.getElementById("editor")?.addEventListener(
-				"change", 
-				(ev) => {console.log('------------' +ev + '------------')}
-				// debounce(compile, 1000)
+			editor.addEventListener(
+				"input", 
+				// () => {
+					// console.log('evt');
+					async () => {
+						console.log('evt');
+						// debounce(compile, 1000);
+				// console.log('compile');
+				// console.log(editor.value);
+				await playground.setConfig({
+					autoupdate: false,
+					markup: {
+						language: "mdx",
+						content: editor.value,
+					},
+				});
+			// }
+				}
 			);
 			// @ts-ignore
 			playground.watch("code", ({ code, config }) => {
 				console.log(code);
 				createSandbox(
-					document.querySelector("#output"), 
+					output, 
 					code.result
 				);
 			});
@@ -138,26 +155,7 @@ document.querySelector("#editor")?.textContent = initialCode;
 		});
 	});
 
-	const handleWatchedTemplate = (tplPath: string, output: any) => {
-		// output.config.head = "";
-		// console.log('output');
-		// console.log(output);
-		saveJson(app, tplPath, JSON.stringify(output, null, 2));
-	};
 
-/**
- * from: https://github.com/Obsidian-TTRPG-Community/TTRPG-Community-Admin/
- */
- async function copyStringToClipboard(text:string, topic:string|undefined=undefined) {
-  navigator.clipboard
-      .writeText(text)
-      .then(function () {
-          new Notice((topic !== undefined ? topic + " " : "") + "Copied to clipboard", 2500);
-      })
-      .catch(function (error) {
-          console.error('Failed to copy to clipboard: ', error)
-      })
-}
 
 </script>
 
@@ -166,13 +164,15 @@ document.querySelector("#editor")?.textContent = initialCode;
 	class="livecodes-wrapper" 
 	data-height="{plugin.settings.dataHeight || '300'}">
 
-	<textarea 	
-		id="editor" 
+	<textarea
+		class="editor"
+		bind:this={editor}
 		style="/*display: none;*/">
 		{initialCode}
 	</textarea>
 
-	<div id="output">Loading...</div>
+	<div bind:this={output} class="output">Loading...</div>
+
 </div>
 
 <style>
@@ -182,10 +182,10 @@ document.querySelector("#editor")?.textContent = initialCode;
   height: 100vh;
   overflow: hidden;
 }
-#output {
+.output {
   flex: 1;
 }
-/* #output iframe {
+/* .output iframe {
   width: 100%;
   height: 100%;
   border: none;

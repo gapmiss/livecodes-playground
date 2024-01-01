@@ -1,23 +1,29 @@
-import { ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile, Notice, DataAdapter } from 'obsidian';
-import LivecodesPlugin from "../main";
+import { type App, ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile } from 'obsidian';
+import LivecodesPlugin from '../main';
+import Component from "../components/Livecodes.svelte";
 
 // @ts-ignore
 import { config } from 'livecodes';
 
-import Component from "../components/Livecodes.svelte";
+
 
 export const VIEW_TYPE_LIVECODES = "Livecodes-view";
 
 export class LivecodesView extends ItemView {
+
 	plugin: LivecodesPlugin;
   component: Component;
   template: TFile | undefined;
 	adapter: FileSystemAdapter;
 
-  constructor(leaf: WorkspaceLeaf, template: TFile|undefined) {
+  constructor(
+    app: App,
+    leaf: WorkspaceLeaf, 
+    template: TFile|undefined,
+    private settings: any,
+  ) {
     super(leaf);
     this.template = template;
-		
 		this.adapter = this.app.vault.adapter as FileSystemAdapter;
   }
 
@@ -37,20 +43,44 @@ export class LivecodesView extends ItemView {
 		if (this.contentEl) {
 			this.contentEl.empty();
 		}
+    console.log(this.template);
     let foundTemplate: boolean = (this.template !== undefined);
-    let newTemplate: Partial<config>;
-		let tplPath: string|undefined;
+    console.log('foundTemplate');
+    console.log(foundTemplate);
+    // let newTemplate: Partial<config>;
+
+    // let part:string = this.source.trim().substring(2);
+		// let content:string = part.substring(part.length-2,0).trim();
+    // console.log('this.plugin');
+    // console.log(this.plugin);
+    // return;
+		let tplPath = this.template?.path;
+		// let tplPath = this.settings.templateFolder + "/" + this.template?.path;
+		let newTemplate: Partial<config>;
+
+		// let tplPath:string|undefined;
+		let tpl = await this.adapter.read(tplPath!);
+		newTemplate = JSON.parse(tpl) as Partial<config>;
+
+
+    
+		
     if (foundTemplate) {
+      console.log('ssssssss');
 			let tplPath = normalizePath((this.template!).path);
+      console.log('----tplPath');
+      console.log(tplPath);
       let tpl = await this.adapter.read(tplPath);
       newTemplate = JSON.parse(tpl) as Partial<config>;
     }
-
+    console.log('tplPath');
+    console.log(tplPath);
+    // return;
     this.component = new Component({
       target: this.contentEl,
       props: {
-        myTemplate: newTemplate,
-        myTemplatePath: tplPath,
+        template: newTemplate,
+        tplPath: tplPath!
       },
     });
   }
@@ -58,18 +88,4 @@ export class LivecodesView extends ItemView {
   async onClose() {
     this.component.$destroy();
   }
-}
-
-/**
- * from: https://github.com/Obsidian-TTRPG-Community/TTRPG-Community-Admin/
- */
-async function copyStringToClipboard(text:string, topic:string|undefined=undefined) {
-  navigator.clipboard
-      .writeText(text)
-      .then(function () {
-          new Notice((topic !== undefined ? topic + " " : "") + "Copied to clipboard", 2500);
-      })
-      .catch(function (error) {
-          console.error('Failed to copy to clipboard: ', error)
-      })
 }
