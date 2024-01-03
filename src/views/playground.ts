@@ -28,7 +28,12 @@ export class PlaygroundView extends ItemView {
   }
 
   getDisplayText() {
-    return "Livecodes";
+    let fileName = this.template?.path
+      .substring(
+        this.template?.path.lastIndexOf("/") + 1, 
+        this.template?.path.length
+      );
+    return "Livecodes / "+fileName;
   }
 
   getIcon(): string {
