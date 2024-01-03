@@ -8,10 +8,6 @@ import { HeadlessRenderChild } from "./views/headless";
 
 //@ts-ignore
 import { EmbedOptions, config } from "livecodes";
-import { createStorage } from "unstorage";
-// Create a new storage
-const storage = createStorage();
-
 
 import {
 	Parameters,
@@ -250,12 +246,6 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Livecodes: Open this project")
                 .setIcon("file-code-2")
                 .onClick(async () => {
-									console.log(await storage.setItem("foo", "bar"));
-									console.log(await storage.getItem("foo")); // => "bar"
-									console.log(await storage.hasItem("foo")); // => true
-									console.log(await storage.removeItem("foo"));
-					
-					
 									f.children.forEach( async (child, index) => {
 										let fileExt = child.name.split('.').pop();
 										const c = this.app.vault.getAbstractFileByPath(child.path);
