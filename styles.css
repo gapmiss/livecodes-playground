@@ -2,12 +2,13 @@
 	resize: both !important;
 	overflow: hidden;
 	/* overflow: scroll; */
-	padding:.5em !important;
+	padding:1em !important;
 	/* padding-bottom:4em !important; */
 	border: 1px solid var(--interactive-accent) !important;
 	background-color: var(--background-primary) !important;
 	/* margin-bottom: 3em; */
 	margin-bottom: 1em;
+	border-radius: var(--size-2-3);
 }
 .open-with-livecodes-wrap {
 	position: relative;

@@ -1,51 +1,71 @@
-/**
- * https://github.com/jgblight/obsidian-event-calendar/
- */
-import { type App, MarkdownRenderChild, normalizePath, FileSystemAdapter } from "obsidian";
-import Component from "../components/Playground.svelte";
-
+import { type App, ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile } from 'obsidian';
 // @ts-ignore
 import { config } from 'livecodes';
+import LivecodesPlugin from '../main';
+import Component from "../components/Playground.svelte";
 
-export class PlaygroundRenderChild extends MarkdownRenderChild {
+export const VIEW_TYPE_PLAYGROUND = "Livecodes-view";
+
+export class PlaygroundView extends ItemView {
+	plugin: LivecodesPlugin;
+  component: Component;
+  template: TFile | undefined;
 	adapter: FileSystemAdapter;
-	constructor(
-		container: HTMLElement,
-		private app: App,
-		private source: string,
-		private settings: any,
-	) {
-		super(container);
+
+  constructor(
+    app: App,
+    leaf: WorkspaceLeaf, 
+    template: TFile|undefined,
+    private settings: any,
+  ) {
+    super(leaf);
+    this.template = template;
 		this.adapter = this.app.vault.adapter as FileSystemAdapter;
-	}
+  }
 
-	onload(): void {
-		this.render();
-	}
+  getViewType() {
+    return VIEW_TYPE_PLAYGROUND;
+  }
 
-	private async render() {
-		while (this.containerEl.firstChild) {
-			this.containerEl.removeChild(this.containerEl.firstChild);
+  getDisplayText() {
+    return "Livecodes";
+  }
+
+  getIcon(): string {
+    return "code";
+  }
+
+  async onOpen() {
+		if (this.contentEl) {
+			this.contentEl.empty();
 		}
-		let part:string = this.source.trim().substring(2);
-		let content:string = part.substring(part.length-2,0).trim();
-		let templatePath = this.settings.templateFolder + "/" + content;
+    console.log('this.template');
+    console.log(this.template);
+    let foundTemplate: boolean = (this.template !== undefined);
+    
+		let tplPath = this.template?.path;
 		let newTemplate: Partial<config>;
-
-		let tplPath:string|undefined = normalizePath(templatePath);
-		let tpl = await this.adapter.read(tplPath);
+		let tpl = await this.adapter.read(tplPath!);
 		newTemplate = JSON.parse(tpl) as Partial<config>;
+		console.log('foundTemplate');
+		console.log(foundTemplate);
+    if (foundTemplate) {
+			let tplPath = normalizePath((this.template!).path);
+      let tpl = await this.adapter.read(tplPath);
+      newTemplate = JSON.parse(tpl) as Partial<config>;
+    }
 
-		const props = {
-			source: this.source,
-			template: newTemplate,
-			tplPath: tplPath
-		};
+    this.component = new Component({
+      target: this.contentEl,
+      props: {
+        template: newTemplate,
+        tplPath: tplPath!
+      },
+    });
 
-		new Component({
-			target: this.containerEl,
-			props: props,
-		});
-	}
+  }
 
+  async onClose() {
+    this.component.$destroy();
+  }
 }

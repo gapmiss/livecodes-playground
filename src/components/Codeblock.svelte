@@ -10,6 +10,7 @@
 	let container: any;
   let playground: any;
 	let watcher: { remove: () => void; } | null;
+	
 	export let template: any;
 	export let tplPath: string;
 
@@ -239,9 +240,6 @@ const createText = async (
 		</button>
 	</div>
 </div>
-
-
-<!-- <textarea name="text" id="text" wrap="off" style="width:100%;height:20ch;"></textarea> -->
 
 <style>
 	.buttons-wrapper {

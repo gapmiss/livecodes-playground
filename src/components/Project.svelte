@@ -11,8 +11,8 @@
   let playground: any;
 	let watcher: { remove: () => void; } | null;
 
-	export let template: any;
-	export let tplPath: string;
+	export let projectOptions: any;
+	// export let tplPath: string;
 
 	let copyHTML:HTMLButtonElement;
 	let downloadHTML:HTMLButtonElement;
@@ -21,37 +21,10 @@
 	let toggleTheme:HTMLButtonElement;
 	let onWatch:HTMLButtonElement;
 
-	const options: EmbedOptions = {
-		config: template!,
-		appUrl: plugin.settings.appUrl,
-		params: {
-			// on hold for now
-			// https://github.com/live-codes/livecodes/commit/fd09b34#diff-f560a5347277991a51f28ea87e4980c282447dffefb1b58902a01009eb751466
-			// editorTheme: ["monaco:kuroir@light", "monaco:dracula@dark"],
-			// editorTheme: ["monaco:clouds@light", "monaco:monoindustrial@dark"],
-			autoupdate: plugin.settings.autoUpdate,
-			delay: plugin.settings.delay,
-			theme: plugin.settings.darkTheme ? "dark" : "light",
-			fontFamily: plugin.settings.fontFamily,
-			fontSize: Number(plugin.settings.fontSize),
-			closeBrackets: plugin.settings.closeBrackets,
-			trailingComma: plugin.settings.trailingComma,
-			singleQuote: plugin.settings.singleQuote,
-			semicolons: plugin.settings.semicolons,
-			useTabs: plugin.settings.useTabs,
-			tabSize: Number(plugin.settings.tabSize),
-			console: "open", // or full
-			lineNumbers: plugin.settings.lineNumbers,
-			wordWrap: plugin.settings.wordWrap,
-			editor: plugin.settings.editor,
-			version: "19"
-		},
-		loading: "eager",
-	};
 
 	onMount(() => {
 
-		createPlayground(container, options).then((p) => {
+		createPlayground(container, projectOptions).then((p) => {
 		
 			playground = p;
 
@@ -69,53 +42,53 @@
 				}
 			);
 
-			setIcon(downloadHTML, 'file-code-2');
-			downloadHTML.addEventListener(
-				"click", 
-				async (e) => {
-					e.preventDefault();
-					new Notice("Preparing HTML");
-					try {
-						const code = await playground.getCode();
-						let fileName = tplPath.substring(tplPath.lastIndexOf("/") + 1, tplPath.length);
-						downloadFile(code.result, fileName.replace(/\.json/,".html"));
-					} catch (error) {
-						console.log(error.message || error);
-					}
-				}
-			);
+			// setIcon(downloadHTML, 'file-code-2');
+			// downloadHTML.addEventListener(
+				// "click", 
+				// async (e) => {
+					// e.preventDefault();
+					// new Notice("Preparing HTML");
+					// try {
+						// const code = await playground.getCode();
+						// let fileName = tplPath.substring(tplPath.lastIndexOf("/") + 1, tplPath.length);
+						// downloadFile(code.result, fileName.replace(/\.json/,".html"));
+					// } catch (error) {
+						// console.log(error.message || error);
+					// }
+				// }
+			// );
 			
-			setIcon(onWatch, 'eye');
-			onWatch.addEventListener(
-				"click", 
-				async (e) => {
-					e.preventDefault();
-					try {
-						if (!watcher) {
-							new Notice("Watching for changes");
-							//@ts-ignore
-							watcher = playground.watch('code', ({code, config}) => {
-								handleWatchedTemplate(tplPath, config);
-								new Notice("Changes saved");
-							});
-							setIcon(onWatch, 'eye-off');
-							// onWatch.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
-							onWatch.setAttribute("aria-label","Stop watching for changes");
-							onWatch.setAttribute("style", "color:var(--text-error);");
-						} else {
-							watcher?.remove();
-							watcher = null;
-							setIcon(onWatch, 'eye');
-							// onWatch.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
-							onWatch.setAttribute("aria-label","Watch for changes and SAVE");
-							onWatch.setAttribute("style", "color:unset;");
-							new Notice("Stopped watching for changes");
-						}
-					} catch (error) {
-						console.log(error.message || error);
-					}
-				}
-			);
+			// setIcon(onWatch, 'eye');
+			// onWatch.addEventListener(
+			// 	"click", 
+			// 	async (e) => {
+			// 		e.preventDefault();
+			// 		try {
+			// 			if (!watcher) {
+			// 				new Notice("Watching for changes");
+			// 				//@ts-ignore
+			// 				watcher = playground.watch('code', ({code, config}) => {
+			// 					handleWatchedTemplate(tplPath, config);
+			// 					new Notice("Changes saved");
+			// 				});
+			// 				setIcon(onWatch, 'eye-off');
+			// 				// onWatch.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
+			// 				onWatch.setAttribute("aria-label","Stop watching for changes");
+			// 				onWatch.setAttribute("style", "color:var(--text-error);");
+			// 			} else {
+			// 				watcher?.remove();
+			// 				watcher = null;
+			// 				setIcon(onWatch, 'eye');
+			// 				// onWatch.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+			// 				onWatch.setAttribute("aria-label","Watch for changes and SAVE");
+			// 				onWatch.setAttribute("style", "color:unset;");
+			// 				new Notice("Stopped watching for changes");
+			// 			}
+			// 		} catch (error) {
+			// 			console.log(error.message || error);
+			// 		}
+			// 	}
+			// );
 
 			if (plugin.settings.darkTheme) {
 				setIcon(toggleTheme, 'sun');
@@ -157,6 +130,8 @@
 				async (e) => {
 					e.preventDefault();
 					const cfg = await playground.getConfig();
+					console.log('cfg');
+					console.log(cfg);
 					let fName = await openPromptModal(this.app, "Livecodes", "Save template as:", "", "e.g. New Project", false);
 					if (fName?.length === 0) {
 						return;
@@ -214,11 +189,11 @@ const createText = async (
 	</div>
 
 	<div class="buttons-wrapper">
-		<button
+		<!-- <button
 			aria-label="Watch for changes & SAVE"
 			bind:this={onWatch}
 			data-tooltip-position="bottom">
-		</button>
+		</button> -->
 		<button
 			aria-label="Save as JSON template"
 			bind:this={saveAsJSON}
@@ -239,12 +214,11 @@ const createText = async (
 			bind:this={copyHTML}
 			data-tooltip-position="bottom">
 		</button>
-		<button
+		<!-- <button
 			aria-label="Save as HTML file"
 			bind:this={downloadHTML}
 			data-tooltip-position="bottom">
-			<!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> -->
-		</button>
+		</button> -->
 	</div>
 </div>
 
