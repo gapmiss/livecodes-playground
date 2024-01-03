@@ -1,4 +1,4 @@
-import { MarkdownView, normalizePath, Notice, type App } from "obsidian";
+import { normalizePath, Notice, type App } from "obsidian";
 
 /**
  * 
@@ -61,3 +61,67 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
 			console.error('Failed to copy to clipboard: ', error)
 		})
 }
+
+export const blankTemplate = {
+	appUrl: "https://v19.livecodes.io/",
+	title: "New Project",
+	description: "",
+	head: "<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",
+	htmlAttrs: "lang=\"en\" class=\"\"",
+	tags: [],
+	autoupdate: false,
+	autosave: false,
+	autotest: false,
+	delay: 1500,
+	formatOnsave: false,
+	mode: "full",
+	theme: "dark",
+	recoverUnsaved: true,
+	showSpacing: false,
+	welcome: true,
+	readonly: false,
+	allowLangChange: true,
+	activeEditor: "markup",
+	markup: {
+		language: "html",
+		content: ""
+	},
+	style: {
+		language: "css",
+		content: ""
+	},
+	script: {
+		language: "javascript",
+		content: ""
+	},
+	stylesheets: [],
+	scripts: [],
+	cssPreset: "normalize.css",
+	imports: {},
+	types: {},
+	tests: {
+		language: "typescript",
+		content: ""
+	},
+	tools: {
+		enabled: "all",
+		active: "console",
+		status: "open"
+	},
+	zoom: 1,
+	processors: [],
+	customSettings: {},
+	editor: "monaco",
+	fontFamily: "Iosevka",
+	fontSize: 12,
+	useTabs: false,
+	tabSize: 2,
+	lineNumbers: true,
+	wordWrap: false,
+	closeBrackets: true,
+	semicolons: true,
+	singleQuote: false,
+	trailingComma: true,
+	emmet: false,
+	version: "19"
+};

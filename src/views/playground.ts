@@ -39,16 +39,13 @@ export class PlaygroundView extends ItemView {
 		if (this.contentEl) {
 			this.contentEl.empty();
 		}
-    console.log('this.template');
-    console.log(this.template);
+  
     let foundTemplate: boolean = (this.template !== undefined);
     
 		let tplPath = this.template?.path;
-		let newTemplate: Partial<config>;
 		let tpl = await this.adapter.read(tplPath!);
-		newTemplate = JSON.parse(tpl) as Partial<config>;
-		console.log('foundTemplate');
-		console.log(foundTemplate);
+    let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
+		
     if (foundTemplate) {
 			let tplPath = normalizePath((this.template!).path);
       let tpl = await this.adapter.read(tplPath);

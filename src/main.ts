@@ -5,13 +5,11 @@ import { LivecodesSettingsTab } from './settings';
 import { TemplateSelectModal } from "./modals/template-select-modal";
 import { CodeblockRenderChild } from "./views/codeblock";
 import { HeadlessRenderChild } from "./views/headless";
-
+import { openPromptModal } from "./modals/prompt-modal";
+import { blankTemplate } from "./util";
 //@ts-ignore
-import { EmbedOptions, config } from "livecodes";
-
-import {
-	Parameters,
-} from "./types";
+import { config } from "livecodes";
+import { Parameters } from "./types";
 
 interface LivecodesSettings {
 	templateFolder: string;
@@ -29,7 +27,7 @@ interface LivecodesSettings {
 	trailingComma: boolean;
 	wordWrap: boolean;
 	autoUpdate: boolean;
-	editorTheme: any;
+	// editorTheme: any;
 	delay: number;
 	template: TFile | undefined;
 	dataHeight: any;
@@ -52,7 +50,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	trailingComma: true,
 	wordWrap: false,
 	autoUpdate: true,
-	editorTheme: ["vs@light", "vs-dark@dark"],
+	// editorTheme: ["vs@light", "vs-dark@dark"],
 	delay: 1500,
 	template: undefined,
 	dataHeight: "300",
@@ -79,7 +77,7 @@ export default class LivecodesPlugin extends Plugin {
 	trailingComma: boolean;
 	wordWrap: boolean;
 	autoUpdate: boolean;
-	editorTheme: any;
+	// editorTheme: any;
 	delay: number = 1500;
 	d: any = new Date();
 	template: TFile | undefined;
@@ -137,18 +135,10 @@ export default class LivecodesPlugin extends Plugin {
 
 		this.registerObsidianProtocolHandler("playground", async (e) => {
 			const parameters = e as unknown as Parameters;
-			// console.log('parameters');
-			// console.log(parameters);
-			// return;
-			// let templatePath = this.settings.templateFolder + "/" + decodeURI(parameters.template as string);
-			// console.log('templatePath');
-			// console.log(templatePath);
-
 			const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);
 			if (f instanceof TFile) {
 				this.settings.template = f;
 				await this.saveSettings();
-				// console.log(this.settings);
 				await this.activateView();
 			}
 		});
@@ -163,8 +153,6 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Livecodes: Open this template")
                 .setIcon("code")
                 .onClick(async () => {
-									// console.log('f');
-									// console.log(f);
 									this.settings.template = f;
 									await this.saveSettings();
 									await this.activateView();
@@ -175,8 +163,6 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Livecodes: Copy markdown link")
                 .setIcon("link")
                 .onClick(async () => {
-									// console.log('f');
-									// console.log(f);
 									let tplPath = normalizePath(f.path);
 									await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath)+")");
                 });
@@ -186,8 +172,6 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Livecodes: Copy Obsidian URL")
                 .setIcon("link")
                 .onClick(async () => {
-									// console.log('f');
-									// console.log(f);
 									let tplPath = normalizePath(f.path);
 									await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath));
                 });
@@ -198,14 +182,13 @@ export default class LivecodesPlugin extends Plugin {
     );
 
     this.registerEvent(
-      this.app.workspace.on("file-menu", (menu, file) => {
-
+      this.app.workspace.on("file-menu", async (menu, file) => {
 
         const f = this.app.vault.getAbstractFileByPath(file.path);
-				
-				const ALLOWED_EXTS = ["html","css","js"];
-				let showMenu = false;
-        if (f instanceof TFolder && f.children.length <= 3) {
+
+        if (f instanceof TFolder && f.children.length > 1) {
+					const ALLOWED_EXTS = ["html","css","js","ts","json"];
+					let showMenu = false;
 					f.children.forEach((f) => {
 						let fileExt = f.name.split('.').pop();
 						if (ALLOWED_EXTS.includes(fileExt as string)) {
@@ -213,108 +196,83 @@ export default class LivecodesPlugin extends Plugin {
 							return;
 						}
 					});
+
 					if (showMenu) {
-						let options:EmbedOptions = {
-							config: undefined,
-							appUrl: this.settings.appUrl,
-							params: {
-								autoupdate: this.settings.autoUpdate,
-								delay: this.settings.delay,
-								theme: this.settings.darkTheme ? "dark" : "light",
-								fontFamily: this.settings.fontFamily,
-								fontSize: Number(this.settings.fontSize),
-								closeBrackets: this.settings.closeBrackets,
-								trailingComma: this.settings.trailingComma,
-								singleQuote: this.settings.singleQuote,
-								semicolons: this.settings.semicolons,
-								useTabs: this.settings.useTabs,
-								tabSize: Number(this.settings.tabSize),
-								console: "open", // or full
-								lineNumbers: this.settings.lineNumbers,
-								wordWrap: this.settings.wordWrap,
-								editor: this.settings.editor,
-								version: "19"
-							},
-							loading: "eager",
-						};
-						let htmlContent: any;
-						let cssContent: any;
-						let jsContent: any;
-						let newConfig:Partial<config>;
+
             menu.addItem( (item) => {
               item
                 .setTitle("Livecodes: Open this project")
                 .setIcon("file-code-2")
                 .onClick(async () => {
-									f.children.forEach( async (child, index) => {
-										let fileExt = child.name.split('.').pop();
-										const c = this.app.vault.getAbstractFileByPath(child.path);
-										let codeContent = await this.app.vault.read(c as TFile);
-										if (fileExt === 'html') {
-											htmlContent = codeContent;
-											console.log('-----'+htmlContent);
-										} else if (fileExt === 'css') {
-											cssContent = codeContent;
-											console.log('-----'+cssContent);
-										} else {
-											jsContent = codeContent;
-											console.log('-----'+jsContent);
-										}
-
-										// switch (fileExt) {
-										// 	case "html":
-										// 		console.log('html '+codeContent);
-										// 		htmlContent = codeContent;
-										// 		break;
-										// 	case "css":
-										// 		console.log('css '+codeContent);
-										// 		cssContent = codeContent;
-										// 		break;
-										// 	case "js":
-										// 		console.log('js ' +codeContent);
-										// 		jsContent = codeContent;
-										// 		break;
-										// }
-
-										// console.log('newConfig');
-										// console.log(newConfig);
-										// options.config = newConfig;
-										// console.log('options');
-										// console.log(options);
-
-										console.log(htmlContent);
-										console.log(cssContent);
-										console.log(jsContent);
-										newConfig = {
-											"markup": {
-												"language": "html",
-												"content": htmlContent
-											},
-											"style": {
-												"language": "css",
-												"content": cssContent
-											},
-											"script": {
-												"language": "javascript",
-												"content": jsContent
-											},
-										};
-
-
-									});
 									
-									// console.log('options');
-									// console.log(options);
-									console.log('newConfig');
-									console.log(newConfig);
-									// options.config = newConfig;
-									this.settings.template = undefined;
-									this.settings.projectOptions = newConfig;
-									// console.log('this.projectOptions');
-									// console.log(this.projectOptions);
-									await this.saveSettings();
-									await this.activateView();
-									// await this.openProjectView();
+									await openPromptModal(this.app, "Livecodes", "Save template as:", "", "e.g. New Project", false)
+										.then(async (fName:string) => {
+											if (fName?.length === 0) {
+												return;
+											}
+											let newTemplate = blankTemplate;
+
+											let foundMarkup: boolean = await this.adapter.exists(f.path+"/index.html");
+											let foundStyle: boolean = await this.adapter.exists(f.path+"/style.css");
+											let foundScript: boolean = await this.adapter.exists(f.path+"/script.js");
+											let foundTypeScript: boolean = await this.adapter.exists(f.path+"/script.ts");
+											if (foundMarkup) {
+												let c = this.app.vault.getAbstractFileByPath(f.path+"/index.html");
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.markup.content = t;
+											}
+											if (foundStyle) {
+												let c = this.app.vault.getAbstractFileByPath(f.path+"/style.css");
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.style.content = t;
+											}
+											if (foundScript) {
+												let c = this.app.vault.getAbstractFileByPath(f.path+"/script.js");
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.script.content = t;
+											}
+											if (foundTypeScript) {
+												let c = this.app.vault.getAbstractFileByPath(f.path+"/script.ts");
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.script.content = t;
+												newTemplate.script.language = "typescript";
+											}
+											newTemplate.title = fName;
+											newTemplate.appUrl = this.settings.appUrl;
+											newTemplate.fontFamily = this.settings.fontFamily;
+											newTemplate.fontSize = this.settings.fontSize;
+											newTemplate.editor = this.settings.editor;
+											newTemplate.lineNumbers = this.settings.lineNumbers;
+											newTemplate.theme = this.settings.darkTheme ? "dark" : "light";
+											newTemplate.useTabs = this.settings.useTabs;
+											newTemplate.tabSize = this.settings.tabSize;
+											newTemplate.closeBrackets = this.settings.closeBrackets;
+											newTemplate.semicolons = this.settings.semicolons;
+											newTemplate.singleQuote = this.settings.singleQuote;
+											newTemplate.trailingComma = this.settings.trailingComma;
+											newTemplate.wordWrap = this.settings.wordWrap;
+											newTemplate.autoupdate = this.settings.autoUpdate;
+											newTemplate.delay = this.settings.delay;
+
+											let prettyCfg: string | undefined = JSON.stringify(newTemplate, null, 2);
+											try {
+												await this.app.vault
+													.create(
+														this.settings.templateFolder+'/'+fName + ".json",
+														await this.createText(
+															prettyCfg
+														)
+													).then(async (f:TFile) => {
+															this.settings.template = f;
+															await this.saveSettings();
+															await this.activateView();
+														}
+													);
+												new Notice("Template saved as: " + this.settings.templateFolder+'/'+fName + ".json");
+											} catch (error) {
+												new Notice("❌ " + error + " Click this message to dismiss.", 0);
+											}
+										});
                 });
             });
 					}
@@ -363,8 +321,6 @@ export default class LivecodesPlugin extends Plugin {
     });
 
     const leaf = this.app.workspace.getMostRecentLeaf();
-		// console.log('leaf');
-		// console.log(leaf);
     if (leaf?.view instanceof ProjectView) {
 	    this.app.workspace.revealLeaf(leaf);
 		}
@@ -439,6 +395,12 @@ export default class LivecodesPlugin extends Plugin {
 			.catch(function (error) {
 				console.error('Failed to copy to clipboard: ', error)
 			})
+	}
+
+	createText = async (
+			fileContent: string|undefined
+		): Promise<string> => {
+			return fileContent?.trim() as string;
 	}
 
 }
