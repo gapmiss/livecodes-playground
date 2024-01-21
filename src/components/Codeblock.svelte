@@ -25,6 +25,8 @@
 		config: template!,
 		appUrl: plugin.settings.appUrl,
 		params: {
+			// @ts-ignore
+			editorTheme: plugin.settings.editorTheme,
 			autoupdate: plugin.settings.autoUpdate,
 			delay: plugin.settings.delay,
 			theme: plugin.settings.darkTheme ? "dark" : "light",

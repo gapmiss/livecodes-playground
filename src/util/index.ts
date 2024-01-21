@@ -49,6 +49,45 @@ export async function downloadFile(data: BlobPart, fileName: string, type="text/
 }
 
 /**
+ * sends a request to the specified url from a form. this will change the window location.
+ * @param {string} path the path to send the post request to
+ * @param {object} params the paramiters to add to the url
+ * @param {string} [method=post] the method to use on the form
+ */
+
+export function postToCodepen(ele: HTMLElement, params: string, path: string = "https://codepen.io/pen/define", method: string='POST') {
+	/**
+	 * https://blog.codepen.io/documentation/prefill/
+	 */
+
+  // The rest of this code assumes you are not using a library.
+  // It can be made less wordy if you use one.
+  const form = window.document.createElement('form');
+  form.method = method;
+  form.action = path;
+	form.target = '_blank';
+	// form.setAttribute("style", 'display:none;');
+//  for (const key in params) {
+//    if (params.hasOwnProperty(key)) {
+      const hiddenField = window.document.createElement('input');
+      hiddenField.type = 'hidden';
+      hiddenField.name = 'data';
+      hiddenField.value = params;
+      form.appendChild(hiddenField);
+			const submitBttn = window.document.createElement('input');
+			submitBttn.type = 'submit';
+      submitBttn.value = "Create New Pen with Prefilled Data";
+			form.appendChild(submitBttn);
+//     }
+//   }
+
+  
+  ele.appendChild(form);
+  form.submit();
+	// form.detach();
+}
+
+/**
  * from: https://github.com/Obsidian-TTRPG-Community/TTRPG-Community-Admin/
  */
 export async function copyStringToClipboard(text:string, topic:string|undefined=undefined) {
@@ -63,7 +102,7 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
 }
 
 export const blankTemplate = {
-	appUrl: "https://v19.livecodes.io/",
+	appUrl: "https://v20.livecodes.io/",
 	title: "New Project",
 	description: "",
 	head: "<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",
@@ -122,6 +161,7 @@ export const blankTemplate = {
 	semicolons: true,
 	singleQuote: false,
 	trailingComma: true,
-	emmet: false,
-	version: "19"
+	emmet: true,
+	editorTheme: ["vs@light", "vs-dark@dark"],
+	version: "20"
 };

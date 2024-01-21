@@ -15,7 +15,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			() => {
 				new Notice("Trailing slash is required");
 			},
-			200
+			500
 		);
 		let { containerEl } = this;
 		containerEl.addClass("livecodes-settings-tab");
@@ -47,13 +47,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setPlaceholder('https://v19.livecodes.io/')
 			.setValue(this.plugin.settings.appUrl)
 			.onChange(async newAppUrl => {
+				this.plugin.settings.appUrl = newAppUrl;
+				await this.plugin.saveSettings();
 				if ( newAppUrl.split("").pop() != '/' ) {
 					debounceNotice();
 					// text.setValue(this.plugin.settings.appUrl);
 					return;
 				}
-				this.plugin.settings.appUrl = newAppUrl;
-				await this.plugin.saveSettings();
 			})
 		);
 
@@ -322,6 +322,78 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 			});
 		});
+
+		new Setting(containerEl)
+		.setName('Editor theme')
+		.setDesc('Choice of editor theme.')
+		.addDropdown((dropdown) => {
+			dropdown
+			.addOptions({
+				"active4d":"active4d",
+				"all-hallows-eve":"all-hallows-eve",
+				"amy":"amy",
+				"birds-of-paradise":"birds-of-paradise",
+				"blackboard":"blackboard",
+				"brilliance-black":"brilliance-black",
+				"brilliance-dull":"brilliance-dull",
+				"chrome-devtools":"chrome-devtools",
+				"clouds-midnight":"clouds-midnight",
+				"clouds":"clouds",
+				"cobalt":"cobalt",
+				"cobalt2":"cobalt2",
+				"dawn":"dawn",
+				"dracula":"dracula",
+				"dreamweaver":"dreamweaver",
+				"eiffel":"eiffel",
+				"espresso-libre":"espresso-libre",
+				"github":"github",
+				"github-dark":"github-dark",
+				"github-light":"github-light",
+				"hc-black":"hc-black",
+				"hc-light":"hc-light",
+				"idle":"idle",
+				"idlefingers":"idlefingers",
+				"iplastic":"iplastic",
+				"katzenmilch":"katzenmilch",
+				"krtheme":"krtheme",
+				"kuroir":"kuroir",
+				"lazy":"lazy",
+				"magicwb-amiga":"magicwb-amiga",
+				"merbivore-soft":"merbivore-soft",
+				"merbivore":"merbivore",
+				"monokai":"monokai",
+				"monokai-bright":"monokai-bright",
+				"monoindustrial":"monoindustrial",
+				"night-owl":"night-owl",
+				"nord":"nord",
+				"oceanic-next":"oceanic-next",
+				"pastels-on-dark":"pastels-on-dark",
+				"slush-and-poppies":"slush-and-poppies",
+				"solarized-dark":"solarized-dark",
+				"solarized-light":"solarized-light",
+				"spacecadet":"spacecadet",
+				"sunburst":"sunburst",
+				"textmate-mac-classic":"textmate-mac-classic",
+				"tomorrow":"tomorrow",
+				"tomorrow-night":"tomorrow-night",
+				"tomorrow-night-blue":"tomorrow-night-blue",
+				"tomorrow-night-bright":"tomorrow-night-bright",
+				"tomorrow-night-eighties":"tomorrow-night-eighties",
+				"twilight":"twilight",
+				"upstream-sunburst":"upstream-sunburst",
+				"vibrant-ink":"vibrant-ink",
+				"vs":"vs",
+				"vs-dark":"vs-dark",
+				"xcode-default":"xcode-default",
+				"zenburnesque":"zenburnesque",
+			})
+			.setValue(this.plugin.settings.editorTheme)
+			.onChange(async (value) => {
+				this.plugin.settings.editorTheme = value;
+				await this.plugin.saveSettings();
+			});
+		});
+
 	}
 	
 }

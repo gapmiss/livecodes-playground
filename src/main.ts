@@ -1,4 +1,4 @@
-import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder } from "obsidian";
+import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, debounce } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { ProjectView, VIEW_TYPE_PROJECT } from "./views/project";
 import { LivecodesSettingsTab } from './settings';
@@ -27,7 +27,7 @@ interface LivecodesSettings {
 	trailingComma: boolean;
 	wordWrap: boolean;
 	autoUpdate: boolean;
-	// editorTheme: any;
+	editorTheme: any;
 	delay: number;
 	template: TFile | undefined;
 	dataHeight: any;
@@ -50,7 +50,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	trailingComma: true,
 	wordWrap: false,
 	autoUpdate: true,
-	// editorTheme: ["vs@light", "vs-dark@dark"],
+	editorTheme: ["vs@light", "vs-dark@dark"],
 	delay: 1500,
 	template: undefined,
 	dataHeight: "300",
@@ -77,7 +77,7 @@ export default class LivecodesPlugin extends Plugin {
 	trailingComma: boolean;
 	wordWrap: boolean;
 	autoUpdate: boolean;
-	// editorTheme: any;
+	editorTheme: any;
 	delay: number = 1500;
 	d: any = new Date();
 	template: TFile | undefined;
@@ -186,7 +186,7 @@ export default class LivecodesPlugin extends Plugin {
 
         const f = this.app.vault.getAbstractFileByPath(file.path);
 
-        if (f instanceof TFolder && f.children.length > 1) {
+        if (f instanceof TFolder && f.children.length > 1 && f.children.length <= 3) {
 					const ALLOWED_EXTS = ["html","css","js","ts","json"];
 					let showMenu = false;
 					f.children.forEach((f) => {
@@ -201,7 +201,7 @@ export default class LivecodesPlugin extends Plugin {
 
             menu.addItem( (item) => {
               item
-                .setTitle("Livecodes: Open this project")
+                .setTitle("Livecodes: Open as a new project")
                 .setIcon("file-code-2")
                 .onClick(async () => {
 									
@@ -242,6 +242,105 @@ export default class LivecodesPlugin extends Plugin {
 											newTemplate.fontFamily = this.settings.fontFamily;
 											newTemplate.fontSize = this.settings.fontSize;
 											newTemplate.editor = this.settings.editor;
+											newTemplate.editorTheme = this.settings.editorTheme;
+											newTemplate.lineNumbers = this.settings.lineNumbers;
+											newTemplate.theme = this.settings.darkTheme ? "dark" : "light";
+											newTemplate.useTabs = this.settings.useTabs;
+											newTemplate.tabSize = this.settings.tabSize;
+											newTemplate.closeBrackets = this.settings.closeBrackets;
+											newTemplate.semicolons = this.settings.semicolons;
+											newTemplate.singleQuote = this.settings.singleQuote;
+											newTemplate.trailingComma = this.settings.trailingComma;
+											newTemplate.wordWrap = this.settings.wordWrap;
+											newTemplate.autoupdate = this.settings.autoUpdate;
+											newTemplate.delay = this.settings.delay;
+
+											let prettyCfg: string | undefined = JSON.stringify(newTemplate, null, 2);
+											try {
+												await this.app.vault
+													.create(
+														this.settings.templateFolder+'/'+fName + ".json",
+														await this.createText(
+															prettyCfg
+														)
+													).then(async (f:TFile) => {
+															this.settings.template = f;
+															await this.saveSettings();
+															await this.activateView();
+														}
+													);
+												new Notice("Template saved as: " + this.settings.templateFolder+'/'+fName + ".json");
+											} catch (error) {
+												new Notice("❌ " + error + " Click this message to dismiss.", 0);
+											}
+										});
+                });
+            });
+					}
+        }
+      })
+    );
+
+
+    this.registerEvent(
+      this.app.workspace.on("file-menu", async (menu, file) => {
+
+        const f = this.app.vault.getAbstractFileByPath(file.path);
+
+        if (f instanceof TFile) {
+					const ALLOWED_EXTS = ["html","css","js","ts"];
+					let showMenu = false;					
+					let fileExt = f.name.split('.').pop();
+					if (ALLOWED_EXTS.includes(fileExt as string)) {
+						showMenu = true;
+					}
+
+					if (showMenu) {
+
+            menu.addItem( (item) => {
+              item
+                .setTitle("Livecodes: Open as a new project")
+                .setIcon("file-code-2")
+                .onClick(async () => {
+									
+									await openPromptModal(this.app, "Livecodes", "Save template as:", "", "e.g. New Project", false)
+										.then(async (fName:string) => {
+											if (fName?.length === 0) {
+												return;
+											}
+											let newTemplate = blankTemplate;
+
+											let foundMarkup: boolean = fileExt === 'html';
+											let foundStyle: boolean = fileExt === 'css';
+											let foundScript: boolean = fileExt === 'js';
+											let foundTypeScript: boolean = fileExt === 'ts';
+											if (foundMarkup) {
+												let c = this.app.vault.getAbstractFileByPath(f.path);
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.markup.content = t;
+											}
+											if (foundStyle) {
+												let c = this.app.vault.getAbstractFileByPath(f.path);
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.style.content = t;
+											}
+											if (foundScript) {
+												let c = this.app.vault.getAbstractFileByPath(f.path);
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.script.content = t;
+											}
+											if (foundTypeScript) {
+												let c = this.app.vault.getAbstractFileByPath(f.path);
+												let t = await this.app.vault.read(c as TFile)
+												newTemplate.script.content = t;
+												newTemplate.script.language = "typescript";
+											}
+											newTemplate.title = fName;
+											newTemplate.appUrl = this.settings.appUrl;
+											newTemplate.fontFamily = this.settings.fontFamily;
+											newTemplate.fontSize = this.settings.fontSize;
+											newTemplate.editor = this.settings.editor;
+											newTemplate.editorTheme = this.settings.editorTheme;
 											newTemplate.lineNumbers = this.settings.lineNumbers;
 											newTemplate.theme = this.settings.darkTheme ? "dark" : "light";
 											newTemplate.useTabs = this.settings.useTabs;
@@ -331,7 +430,7 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   public async saveSettings() {
-    await this.saveData(this.settings);
+    await this.saveData(this.settings)
   }
 
   static foo() {

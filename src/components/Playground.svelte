@@ -2,7 +2,7 @@
 	import {Notice, setIcon} from 'obsidian';
 	import { createPlayground, EmbedOptions } from "livecodes";
 	import { onMount } from 'svelte';
-	import {saveJson, downloadFile, copyStringToClipboard}  from "../util";
+	import {saveJson, downloadFile, copyStringToClipboard, postToCodepen}  from "../util";
 	import { openPromptModal } from "../modals/prompt-modal";
 	
 	const app = this.app;
@@ -20,6 +20,7 @@
 	let copyShareUrl:HTMLButtonElement;
 	let toggleTheme:HTMLButtonElement;
 	let onWatch:HTMLButtonElement;
+	let openInCodepen:HTMLButtonElement;
 
 	const options: EmbedOptions = {
 		config: template!,
@@ -29,6 +30,8 @@
 			// https://github.com/live-codes/livecodes/commit/fd09b34#diff-f560a5347277991a51f28ea87e4980c282447dffefb1b58902a01009eb751466
 			// editorTheme: ["monaco:kuroir@light", "monaco:dracula@dark"],
 			// editorTheme: ["monaco:clouds@light", "monaco:monoindustrial@dark"],
+			// @ts-ignore
+			editorTheme: plugin.settings.editorTheme,
 			autoupdate: plugin.settings.autoUpdate,
 			delay: plugin.settings.delay,
 			theme: plugin.settings.darkTheme ? "dark" : "light",
@@ -190,6 +193,22 @@
 				}
 			);
 
+			setIcon(openInCodepen, 'codepen');
+			openInCodepen.addEventListener(
+				"click", 
+				async (e) => {
+					e.preventDefault();
+					try {
+						let json = {"title": "New Pen!", "html": "<div>Hello, World!</div>"};
+						postToCodepen(container, JSON.stringify(json));
+						const shareUrl = await playground.getShareUrl();
+						await copyStringToClipboard(shareUrl, "Share URL");
+					} catch (error) {
+						console.log(error.message || error);
+					}
+				}
+			);
+
 	})
 
 });
@@ -242,6 +261,12 @@ const createText = async (
 		<button
 			aria-label="Save as HTML file"
 			bind:this={downloadHTML}
+			data-tooltip-position="bottom">
+			<!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> -->
+		</button>
+		<button
+			aria-label="Open in Codepen"
+			bind:this={openInCodepen}
 			data-tooltip-position="bottom">
 			<!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> -->
 		</button>
