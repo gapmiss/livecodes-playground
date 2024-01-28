@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {Notice, setIcon} from 'obsidian';
-	import { createPlayground, EmbedOptions } from "livecodes";
+	import { createPlayground, EmbedOptions, getPlaygroundUrl } from "livecodes";
 	import { onMount } from 'svelte';
 	import {saveJson, downloadFile, copyStringToClipboard, postToCodepen}  from "../util";
 	import { openPromptModal } from "../modals/prompt-modal";
@@ -21,6 +21,7 @@
 	let toggleTheme:HTMLButtonElement;
 	let onWatch:HTMLButtonElement;
 	let openInCodepen:HTMLButtonElement;
+	let playgroundUrl:HTMLButtonElement;
 
 	const options: EmbedOptions = {
 		config: template!,
@@ -71,6 +72,23 @@
 					}
 				}
 			);
+
+			/*/
+			setIcon(playgroundUrl, 'power');
+			playgroundUrl.addEventListener(
+				"click", 
+				async (e) => {
+					e.preventDefault();
+					try {
+						const config:EmbedOptions = await playground.getConfig();
+						const url = getPlaygroundUrl(config);
+						await copyStringToClipboard(url, "Playground URL");
+					} catch (error) {
+						console.log(error.message || error);
+					}
+				}
+			);
+			/**/
 
 			setIcon(downloadHTML, 'file-code-2');
 			downloadHTML.addEventListener(
@@ -262,14 +280,17 @@ const createText = async (
 			aria-label="Save as HTML file"
 			bind:this={downloadHTML}
 			data-tooltip-position="bottom">
-			<!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> -->
 		</button>
 		<button
 			aria-label="Open in Codepen"
 			bind:this={openInCodepen}
 			data-tooltip-position="bottom">
-			<!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> -->
 		</button>
+		<!-- <button
+			aria-label="getPlaygroundUrl"
+			bind:this={playgroundUrl}
+			data-tooltip-position="bottom">
+		</button> -->
 	</div>
 </div>
 
