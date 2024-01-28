@@ -55,3 +55,7 @@ span.button-divider {
 	height:20px;
 	margin-top:4px;
 }
+
+.choiceHidden {
+	display:none;
+}

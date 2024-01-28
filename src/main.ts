@@ -28,6 +28,12 @@ interface LivecodesSettings {
 	wordWrap: boolean;
 	autoUpdate: boolean;
 	editorTheme: any;
+	monacoDarkTheme: any;
+	monacoLightTheme: any;
+	codemirrorDarkTheme: any;
+	codemirrorLightTheme: any;
+	codejarDarkTheme: any;
+	codejarLightTheme: any;
 	delay: number;
 	template: TFile | undefined;
 	dataHeight: any;
@@ -51,6 +57,12 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	wordWrap: false,
 	autoUpdate: true,
 	editorTheme: ["vs@light", "vs-dark@dark"],
+	monacoDarkTheme: "",
+	monacoLightTheme: "",
+	codemirrorDarkTheme: "",
+	codemirrorLightTheme: "",
+	codejarDarkTheme: "",
+	codejarLightTheme: "",
 	delay: 1500,
 	template: undefined,
 	dataHeight: "300",
@@ -78,6 +90,12 @@ export default class LivecodesPlugin extends Plugin {
 	wordWrap: boolean;
 	autoUpdate: boolean;
 	editorTheme: any;
+	monacoDarkTheme: any;
+	monacoLightTheme: any;
+	codemirrorDarkTheme: any;
+	codemirrorLightTheme: any;
+	codejarDarkTheme: any;
+	codejarLightTheme: any;
 	delay: number = 1500;
 	d: any = new Date();
 	template: TFile | undefined;

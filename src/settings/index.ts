@@ -1,6 +1,12 @@
-import { App, PluginSettingTab, Setting, debounce, Notice } from 'obsidian';
+import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent } from 'obsidian';
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
+import { monacoDarkThemes } from "../themes/monacoDarkThemes";
+import { monacoLightThemes } from "../themes/monacoLightThemes";
+import { codemirrorDarkThemes } from "../themes/codemirrorDarkThemes";
+import { codemirrorLightThemes } from "../themes/codemirrorLightThemes";
+import { codejarDarkThemes } from "../themes/codejarDarkThemes";
+import { codejarLightThemes } from "../themes/codejarLightThemes";
 
 export class LivecodesSettingsTab extends PluginSettingTab {
 	plugin: LivecodesPlugin;
@@ -83,6 +89,142 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			})
 		);
 		*/
+
+			
+		new Setting(containerEl)
+		.setName('Editor')
+		.setDesc('Choice of code editor.')
+		.setClass("dropdownEditor")
+		.addDropdown((dropdown) => {
+			dropdown
+			.addOptions({
+				"monaco":"monaco",
+				"codemirror":"codemirror",
+				"codejar":"codejar",
+			})
+			.setValue(this.plugin.settings.editor)
+			.onChange(async (newValue) => {
+				this.plugin.settings.editor = newValue;
+				await this.plugin.saveSettings().then(
+					await toggleChoices(newValue)
+				);
+			});
+		});
+
+		const dropdownMonacoDark = new Setting(containerEl)
+		.setName('Monaco theme (dark mode)')
+		.setDesc('Choice of monaco editor theme.')
+		.setClass("dropdownMonacoDark")
+		.addDropdown((dropdown: DropdownComponent) => {
+			monacoDarkThemes.forEach(({ name, desc }) => {
+				dropdown
+				.addOption(name, desc)
+			})
+			dropdown
+			.setValue(this.plugin.settings.monacoDarkTheme)
+			.onChange(async (newValue) => {
+				this.plugin.settings.monacoDarkTheme = newValue;
+				await this.plugin.saveSettings().then(
+					await toggleChoices(this.plugin.settings.editor)
+				);
+			});
+		});
+
+		const dropdownMonacoLight = new Setting(containerEl)
+		.setName('Monaco theme (light mode)')
+		.setDesc('Choice of monaco editor theme.')
+		.setClass("dropdownMonacoLight")
+		.addDropdown((dropdown: DropdownComponent) => {
+			monacoLightThemes.forEach(({ name, desc }) => {
+				dropdown
+				.addOption(name, desc)
+			})
+			dropdown
+			.setValue(this.plugin.settings.monacoLightTheme)
+			.onChange(async (newValue) => {
+				this.plugin.settings.monacoLightTheme = newValue;
+				await this.plugin.saveSettings().then(
+					await toggleChoices(this.plugin.settings.editor)
+				);
+			});
+		});
+
+		const dropdownCodemirrorDark = new Setting(containerEl)
+		.setName('Codemirror theme (dark mode)')
+		.setDesc('Choice of codemirror editor theme.')
+		.setClass("dropdownCodemirrorDark")
+		.addDropdown((dropdown: DropdownComponent) => {
+			codemirrorDarkThemes.forEach(({ name, desc }) => {
+				dropdown
+				.addOption(name, desc)
+			})
+			dropdown
+			.setValue(this.plugin.settings.codemirrorDarkTheme)
+			.onChange(async (newValue) => {
+				this.plugin.settings.codemirrorDarkTheme = newValue;
+				await this.plugin.saveSettings().then(
+					await toggleChoices(this.plugin.settings.editor)
+				);
+			});
+		});
+
+		const dropdownCodemirrorLight = new Setting(containerEl)
+		.setName('Codemirror theme (light mode)')
+		.setDesc('Choice of codemirror editor theme.')
+		.setClass("dropdownCodemirrorLight")
+		.addDropdown((dropdown: DropdownComponent) => {
+			codemirrorLightThemes.forEach(({ name, desc }) => {
+				dropdown
+				.addOption(name, desc)
+			})
+			dropdown
+			.setValue(this.plugin.settings.codemirrorLightTheme)
+			.onChange(async (newValue) => {
+				this.plugin.settings.codemirrorLightTheme = newValue;
+				await this.plugin.saveSettings().then(
+					await toggleChoices(this.plugin.settings.editor)
+				);
+			});
+		});
+
+		const dropdownCodejarDark = new Setting(containerEl)
+		.setName('Codejar theme (dark mode)')
+		.setDesc('Choice of codejar editor theme.')
+		.setClass("dropdownCodejarDark")
+		.addDropdown((dropdown: DropdownComponent) => {
+			codejarDarkThemes.forEach(({ name, desc }) => {
+				dropdown
+				.addOption(name, desc)
+			})
+			dropdown
+			.setValue(this.plugin.settings.codejarDarkTheme)
+			.onChange(async (newValue) => {
+				this.plugin.settings.codejarDarkTheme = newValue;
+				await this.plugin.saveSettings().then(
+					await toggleChoices(this.plugin.settings.editor)
+				);
+			});
+		});
+
+		const dropdownCodejarLight = new Setting(containerEl)
+		.setName('Codejar theme (light mode)')
+		.setDesc('Choice of codejar editor theme.')
+		.setClass("dropdownCodejarLight")
+		.addDropdown((dropdown: DropdownComponent) => {
+			codejarLightThemes.forEach(({ name, desc }) => {
+				dropdown
+				.addOption(name, desc)
+			})
+			dropdown
+			.setValue(this.plugin.settings.codejarLightTheme)
+			.onChange(async (newValue) => {
+				this.plugin.settings.codejarLightTheme = newValue;
+				await this.plugin.saveSettings().then(
+					await toggleChoices(this.plugin.settings.editor)
+				);
+			});
+		});
+		
 		new Setting(containerEl)
 		.setName('Dark Theme')
 		.setDesc('Enable dark theme')
@@ -189,8 +331,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 				"4":"4",				
 			})
 			.setValue(this.plugin.settings.tabSize)
-			.onChange(async (value) => {
-				this.plugin.settings.tabSize = value;
+			.onChange(async (newValue) => {
+				this.plugin.settings.tabSize = newValue;
 				await this.plugin.saveSettings();
 			});
 		});
@@ -214,8 +356,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setLimits(500, 3000, 500)
 			.setValue(this.plugin.settings.delay)
 			.setDynamicTooltip()
-			.onChange(async (value) => {
-					this.plugin.settings.delay = value;
+			.onChange(async (newValue) => {
+					this.plugin.settings.delay = newValue;
 					await this.plugin.saveSettings();
 			}));
 
@@ -272,8 +414,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 				"Victor Mono":"Victor Mono",
 			})
 			.setValue(this.plugin.settings.fontFamily)
-			.onChange(async (value) => {
-				this.plugin.settings.fontFamily = value;
+			.onChange(async (newValue) => {
+				this.plugin.settings.fontFamily = newValue;
 				await this.plugin.saveSettings();
 			});
 		});
@@ -300,381 +442,60 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 				"26":"26",				
 			})
 			.setValue(this.plugin.settings.fontSize)
-			.onChange(async (value) => {
-				this.plugin.settings.fontSize = value;
-				await this.plugin.saveSettings();
-			});
-		});
-	
-		new Setting(containerEl)
-		.setName('Editor')
-		.setDesc('Choice of code editor.')
-		.addDropdown((dropdown) => {
-			dropdown
-			.addOptions({
-				"monaco":"monaco",
-				"codemirror":"codemirror",
-				"codejar":"codejar",
-			})
-			.setValue(this.plugin.settings.editor)
-			.onChange(async (value) => {
-				this.plugin.settings.editor = value;
+			.onChange(async (newValue) => {
+				this.plugin.settings.fontSize = newValue;
 				await this.plugin.saveSettings();
 			});
 		});
 
-		new Setting(containerEl)
-		.setName('Editor theme')
-		.setDesc('Choice of editor theme.')
-		.addDropdown((dropdown) => {
-			dropdown
-			.addOptions({
-				"active4d":"active4d",
-				"all-hallows-eve":"all-hallows-eve",
-				"amy":"amy",
-				"birds-of-paradise":"birds-of-paradise",
-				"blackboard":"blackboard",
-				"brilliance-black":"brilliance-black",
-				"brilliance-dull":"brilliance-dull",
-				"chrome-devtools":"chrome-devtools",
-				"clouds-midnight":"clouds-midnight",
-				"clouds":"clouds",
-				"cobalt":"cobalt",
-				"cobalt2":"cobalt2",
-				"dawn":"dawn",
-				"dracula":"dracula",
-				"dreamweaver":"dreamweaver",
-				"eiffel":"eiffel",
-				"espresso-libre":"espresso-libre",
-				"github":"github",
-				"github-dark":"github-dark",
-				"github-light":"github-light",
-				"hc-black":"hc-black",
-				"hc-light":"hc-light",
-				"idle":"idle",
-				"idlefingers":"idlefingers",
-				"iplastic":"iplastic",
-				"katzenmilch":"katzenmilch",
-				"krtheme":"krtheme",
-				"kuroir":"kuroir",
-				"lazy":"lazy",
-				"magicwb-amiga":"magicwb-amiga",
-				"merbivore-soft":"merbivore-soft",
-				"merbivore":"merbivore",
-				"monokai":"monokai",
-				"monokai-bright":"monokai-bright",
-				"monoindustrial":"monoindustrial",
-				"night-owl":"night-owl",
-				"nord":"nord",
-				"oceanic-next":"oceanic-next",
-				"pastels-on-dark":"pastels-on-dark",
-				"slush-and-poppies":"slush-and-poppies",
-				"solarized-dark":"solarized-dark",
-				"solarized-light":"solarized-light",
-				"spacecadet":"spacecadet",
-				"sunburst":"sunburst",
-				"textmate-mac-classic":"textmate-mac-classic",
-				"tomorrow":"tomorrow",
-				"tomorrow-night":"tomorrow-night",
-				"tomorrow-night-blue":"tomorrow-night-blue",
-				"tomorrow-night-bright":"tomorrow-night-bright",
-				"tomorrow-night-eighties":"tomorrow-night-eighties",
-				"twilight":"twilight",
-				"upstream-sunburst":"upstream-sunburst",
-				"vibrant-ink":"vibrant-ink",
-				"vs":"vs",
-				"vs-dark":"vs-dark",
-				"xcode-default":"xcode-default",
-				"zenburnesque":"zenburnesque",
-			})
-			.setValue(this.plugin.settings.editorTheme)
-			.onChange(async (value) => {
-				this.plugin.settings.editorTheme = value;
-				await this.plugin.saveSettings();
-			});
-		});
+		
+
+		const toggleChoices = async (choice: string): Promise<any> => {
+			switch (choice) {
+				case "monaco":
+					dropdownCodejarDark.setClass("choiceHidden");
+					dropdownCodejarLight.setClass("choiceHidden");
+					dropdownCodemirrorDark.setClass("choiceHidden");
+					dropdownCodemirrorLight.setClass("choiceHidden");
+					document.querySelector(".dropdownMonacoDark")?.removeClass("choiceHidden");
+					document.querySelector(".dropdownMonacoLight")?.removeClass("choiceHidden");
+					break;
+				case "codemirror":
+					dropdownCodejarDark.setClass("choiceHidden");
+					dropdownCodejarLight.setClass("choiceHidden");
+					dropdownMonacoDark.setClass("choiceHidden");
+					dropdownMonacoLight.setClass("choiceHidden");
+					document.querySelector(".dropdownCodemirrorDark")?.removeClass("choiceHidden");
+					document.querySelector(".dropdownCodemirrorLight")?.removeClass("choiceHidden");
+					break;
+				case "codejar":
+					dropdownCodemirrorDark.setClass("choiceHidden");
+					dropdownCodemirrorLight.setClass("choiceHidden");
+					dropdownMonacoDark.setClass("choiceHidden");
+					dropdownMonacoLight.setClass("choiceHidden");
+					document.querySelector(".dropdownCodejarDark")?.removeClass("choiceHidden");
+					document.querySelector(".dropdownCodejarLight")?.removeClass("choiceHidden");
+					break;
+				default:
+					break;
+			}
+			let allThemes = [
+				this.plugin.settings.monacoDarkTheme,
+				this.plugin.settings.monacoLightTheme,
+				this.plugin.settings.codemirrorDarkTheme,
+				this.plugin.settings.codemirrorLightTheme,
+				this.plugin.settings.codejarDarkTheme,
+				this.plugin.settings.codejarLightTheme,
+			]
+			this.plugin.settings.editorTheme = allThemes.join(",");
+			
+			await this.plugin.saveSettings();
+		}
+
+		toggleChoices(this.plugin.settings.editor);
 
 	}
+
 	
+
 }
-
-
-/*/
-"editor-settings-editorTheme-monaco-dark":"",
-	"monaco:active4d@dark":"Active4D",
-	"monaco:all-hallows-eve@dark":"All Hallows Eve",
-	"monaco:amy@dark":"Amy",
-	"monaco:birds-of-paradise@dark":"Birds of Paradise",
-	"monaco:blackboard@dark":"Blackboard",
-	"monaco:brilliance-black@dark":"Brilliance Black",
-	"monaco:brilliance-dull@dark":"Brilliance Dull",
-	"monaco:chrome-devtools@dark":"Chrome DevTools",
-	"monaco:clouds-midnight@dark":"Clouds Midnight",
-	"monaco:clouds@dark":"Clouds",
-	"monaco:cobalt@dark":"Cobalt",
-	"monaco:cobalt2@dark":"Cobalt2",
-	"monaco:dawn@dark":"Dawn",
-	"monaco:dracula@dark":"Dracula",
-	"monaco:dreamweaver@dark":"Dreamweaver",
-	"monaco:eiffel@dark":"Eiffel",
-	"monaco:espresso-libre@dark":"Espresso Libre",
-	"monaco:github@dark":"GitHub",
-	"monaco:github-dark@dark":"GitHub Dark",
-	"monaco:github-light@dark":"GitHub Light",
-	"monaco:hc-black@dark":"High Contrast (Black)",
-	"monaco:hc-light@dark":"High Contrast (Light)",
-	"monaco:idle@dark":"Idle",
-	"monaco:idlefingers@dark":"Idle Fingers",
-	"monaco:iplastic@dark":"iPlastic",
-	"monaco:katzenmilch@dark":"Katzenmilch",
-	"monaco:krtheme@dark":"krTheme",
-	"monaco:kuroir@dark":"Kuroir Theme",
-	"monaco:lazy@dark":"Lazy",
-	"monaco:magicwb-amiga@dark":"MagicWB (Amiga)",
-	"monaco:merbivore-soft@dark":"Merbivore Soft",
-	"monaco:merbivore@dark":"Merbivore",
-	"monaco:monoindustrial@dark":"monoindustrial",
-	"monaco:monokai@dark":"Monokai",
-	"monaco:monokai-bright@dark":"Monokai Bright",
-	"monaco:night-owl@dark":"Night Owl",
-	"monaco:nord@dark":"Nord",
-	"monaco:oceanic-next@dark":"Oceanic Next",
-	"monaco:pastels-on-dark@dark":"Pastels on Dark",
-	"monaco:slush-and-poppies@dark":"Slush and Poppies",
-	"monaco:solarized-dark@dark":"Solarized Dark",
-	"monaco:solarized-light@dark":"Solarized Light",
-	"monaco:spacecadet@dark":"SpaceCadet",
-	"monaco:sunburst@dark":"Sunburst",
-	"monaco:textmate-mac-classic@dark":"Textmate (Mac Classic)",
-	"monaco:tomorrow@dark":"Tomorrow",
-	"monaco:tomorrow-night@dark":"Tomorrow Night",
-	"monaco:tomorrow-night-blue@dark":"Tomorrow Night Blue",
-	"monaco:tomorrow-night-bright@dark":"Tomorrow Night Bright",
-	"monaco:tomorrow-night-eighties@dark":"Tomorrow Night Eighties",
-	"monaco:twilight@dark":"Twilight",
-	"monaco:upstream-sunburst@dark":"Upstream Sunburst",
-	"monaco:vibrant-ink@dark":"Vibrant Ink",
-	"monaco:vs@dark":"VS",
-	"monaco:vs-dark@dark":"VS Dark",
-	"monaco:xcode-default@dark":"Xcode Default",
-	"monaco:zenburnesque@dark":"Zenburnesque",
-"editor-settings-editorTheme-monaco-light":""
-	"":"Default",
-	"monaco:active4d@light":"Active4D",
-	"monaco:all-hallows-eve@light":"All Hallows Eve",
-	"monaco:amy@light":"Amy",
-	"monaco:birds-of-paradise@light":"Birds of Paradise",
-	"monaco:blackboard@light":"Blackboard",
-	"monaco:brilliance-black@light":"Brilliance Black",
-	"monaco:brilliance-dull@light":"Brilliance Dull",
-	"monaco:chrome-devtools@light":"Chrome DevTools",
-	"monaco:clouds-midnight@light":"Clouds Midnight",
-	"monaco:clouds@light":"Clouds",
-	"monaco:cobalt@light":"Cobalt",
-	"monaco:cobalt2@light":"Cobalt2",
-	"monaco:dawn@light":"Dawn",
-	"monaco:dracula@light":"Dracula",
-	"monaco:dreamweaver@light":"Dreamweaver",
-	"monaco:eiffel@light":"Eiffel",
-	"monaco:espresso-libre@light":"Espresso Libre",
-	"monaco:github@light":"GitHub",
-	"monaco:github-dark@light":"GitHub Dark",
-	"monaco:github-light@light":"GitHub Light",
-	"monaco:hc-black@light":"High Contrast (Black)",
-	"monaco:hc-light@light":"High Contrast (Light)",
-	"monaco:idle@light":"Idle",
-	"monaco:idlefingers@light":"Idle Fingers",
-	"monaco:iplastic@light":"iPlastic",
-	"monaco:katzenmilch@light":"Katzenmilch",
-	"monaco:krtheme@light":"krTheme",
-	"monaco:kuroir@light":"Kuroir Theme",
-	"monaco:lazy@light":"Lazy",
-	"monaco:magicwb-amiga@light":"MagicWB (Amiga)",
-	"monaco:merbivore-soft@light":"Merbivore Soft",
-	"monaco:merbivore@light":"Merbivore",
-	"monaco:monoindustrial@light":"monoindustrial",
-	"monaco:monokai@light":"Monokai",
-	"monaco:monokai-bright@light":"Monokai Bright",
-	"monaco:night-owl@light":"Night Owl",
-	"monaco:nord@light":"Nord",
-	"monaco:oceanic-next@light":"Oceanic Next",
-	"monaco:pastels-on-dark@light":"Pastels on Dark",
-	"monaco:slush-and-poppies@light":"Slush and Poppies",
-	"monaco:solarized-dark@light":"Solarized Dark",
-	"monaco:solarized-light@light":"Solarized Light",
-	"monaco:spacecadet@light":"SpaceCadet",
-	"monaco:sunburst@light":"Sunburst",
-	"monaco:textmate-mac-classic@light":"Textmate (Mac Classic)",
-	"monaco:tomorrow@light":"Tomorrow",
-	"monaco:tomorrow-night@light":"Tomorrow Night",
-	"monaco:tomorrow-night-blue@light":"Tomorrow Night Blue",
-	"monaco:tomorrow-night-bright@light":"Tomorrow Night Bright",
-	"monaco:tomorrow-night-eighties@light":"Tomorrow Night Eighties",
-	"monaco:twilight@light":"Twilight",
-	"monaco:upstream-sunburst@light":"Upstream Sunburst",
-	"monaco:vibrant-ink@light":"Vibrant Ink",
-	"monaco:vs@light":"VS",
-	"monaco:vs-dark@light":"VS Dark",
-	"monaco:xcode-default@light":"Xcode Default",
-	"monaco:zenburnesque@light":"Zenburnesque",
-"editor-settings-editorTheme-codemirror-dark":"",
-	"":"Default",
-	"codemirror:amy@dark":"Amy",
-	"codemirror:aura@dark":"Aura",
-	"codemirror:ayu-light@dark":"Ayu Light",
-	"codemirror:barf@dark":"Barf",
-	"codemirror:basic-light@dark":"Basic Light",
-	"codemirror:basic-dark@dark":"Basic Dark",
-	"codemirror:bespin@dark":"Bespin",
-	"codemirror:birds-of-paradise@dark":"Birds of Paradise",
-	"codemirror:boys-and-girls@dark":"Boys and Girls",
-	"codemirror:clouds@dark":"Clouds",
-	"codemirror:cobalt@dark":"Cobalt",
-	"codemirror:cm-light@dark":"Codemirror Light",
-	"codemirror:cool-glow@dark":"Cool Glow",
-	"codemirror:dracula@dark":"Dracula",
-	"codemirror:espresso@dark":"Espresso",
-	"codemirror:github-dark@dark":"GitHub Dark",
-	"codemirror:github-light@dark":"GitHub Light",
-	"codemirror:gruvbox-dark@dark":"Gruvbox Dark",
-	"codemirror:gruvbox-light@dark":"Gruvbox Light",
-	"codemirror:material-dark@dark":"Material Dark",
-	"codemirror:material-light@dark":"Material Light",
-	"codemirror:noctis-lilac@dark":"Noctis Lilac",
-	"codemirror:nord@dark":"Nord",
-	"codemirror:one-dark@dark":"One Dark",
-	"codemirror:rose-pine-dawn@dark":"Rosé Pine Dawn",
-	"codemirror:smoothy@dark":"Smoothy",
-	"codemirror:solarized-dark@dark":"Solarized Dark",
-	"codemirror:solarized-light@dark":"Solarized Light",
-	"codemirror:tokyo-night@dark":"Tokyo Night",
-	"codemirror:tokyo-night-day@dark":"Tokyo Night Day",
-	"codemirror:tokyo-night-storm@dark":"Tokyo Night Storm",
-	"codemirror:tomorrow@dark":"Tomorrow",
-"editor-settings-editorTheme-codemirror-light":"",
-	"":"Default",
-	"codemirror:amy@light":"Amy",
-	"codemirror:aura@light":"Aura",
-	"codemirror:ayu-light@light":"Ayu Light",
-	"codemirror:barf@light":"Barf",
-	"codemirror:basic-light@light":"Basic Light",
-	"codemirror:basic-dark@light":"Basic Dark",
-	"codemirror:bespin@light":"Bespin",
-	"codemirror:birds-of-paradise@light":"Birds of Paradise",
-	"codemirror:boys-and-girls@light":"Boys and Girls",
-	"codemirror:clouds@light":"Clouds",
-	"codemirror:cobalt@light":"Cobalt",
-	"codemirror:cm-light@light":"Codemirror Light",
-	"codemirror:cool-glow@light":"Cool Glow",
-	"codemirror:dracula@light":"Dracula",
-	"codemirror:espresso@light":"Espresso",
-	"codemirror:github-dark@light":"GitHub Dark",
-	"codemirror:github-light@light":"GitHub Light",
-	"codemirror:gruvbox-dark@light":"Gruvbox Dark",
-	"codemirror:gruvbox-light@light":"Gruvbox Light",
-	"codemirror:material-dark@light":"Material Dark",
-	"codemirror:material-light@light":"Material Light",
-	"codemirror:noctis-lilac@light":"Noctis Lilac",
-	"codemirror:nord@light":"Nord",
-	"codemirror:one-dark@light":"One Dark",
-	"codemirror:rose-pine-dawn@light":"Rosé Pine Dawn",
-	"codemirror:smoothy@light":"Smoothy",
-	"codemirror:solarized-dark@light":"Solarized Dark",
-	"codemirror:solarized-light@light":"Solarized Light",
-	"codemirror:tokyo-night@light":"Tokyo Night",
-	"codemirror:tokyo-night-day@light":"Tokyo Night Day",
-	"codemirror:tokyo-night-storm@light":"Tokyo Night Storm",
-	"codemirror:tomorrow@light":"Tomorrow",
-"editor-settings-editorTheme-codejar-dark":"",
-	"":"Default",
-	"codejar:a11y-dark@dark":"A11y Dark",
-	"codejar:atom-dark@dark":"Atom Dark",
-	"codejar:base16-ateliersulphurpool-light@dark":"Base16 Ateliersulphurpool Light",
-	"codejar:cb@dark":"CB",
-	"codejar:coldark-cold@dark":"Coldark Cold",
-	"codejar:coldark-dark@dark":"Coldark Dark",
-	"codejar:coy@dark":"Coy",
-	"codejar:coy-without-shadows@dark":"Coy Without Shadows",
-	"codejar:darcula@dark":"Darcula",
-	"codejar:dark@dark":"Dark",
-	"codejar:dracula@dark":"Dracula",
-	"codejar:duotone-dark@dark":"Duotone Dark",
-	"codejar:duotone-earth@dark":"Duotone Earth",
-	"codejar:duotone-forest@dark":"Duotone Forest",
-	"codejar:duotone-light@dark":"Duotone Light",
-	"codejar:duotone-sea@dark":"Duotone Sea",
-	"codejar:duotone-space@dark":"Duotone Space",
-	"codejar:funky@dark":"Funky",
-	"codejar:ghcolors@dark":"GH Colors",
-	"codejar:gruvbox-dark@dark":"Gruvbox Dark",
-	"codejar:gruvbox-light@dark":"Gruvbox Light",
-	"codejar:holi-theme@dark":"Holi Theme",
-	"codejar:hopscotch@dark":"Hopscotch",
-	"codejar:laserwave@dark":"Laserwave",
-	"codejar:lucario@dark":"Lucario",
-	"codejar:material-dark@dark":"Material Dark",
-	"codejar:material-light@dark":"Material Light",
-	"codejar:material-oceanic@dark":"Material Oceanic",
-	"codejar:night-owl@dark":"Night Owl",
-	"codejar:nord@dark":"Nord",
-	"codejar:okaidia@dark":"Okaidia",
-	"codejar:one-dark@dark":"One Dark",
-	"codejar:one-light@dark":"One Light",
-	"codejar:pojoaque@dark":"Pojoaque",
-	"codejar:shades-of-purple@dark":"Shades of Purple",
-	"codejar:solarized-dark-atom@dark":"Solarized Dark Atom",
-	"codejar:solarized-light@dark":"Solarized Light",
-	"codejar:synthwave84@dark":"Synthwave 84",
-	"codejar:tomorrow@dark":"Tomorrow",
-	"codejar:twilight@dark":"Twilight",
-	"codejar:vs@dark":"VS",
-	"codejar:vsc-dark-plus@dark":"VSC Dark Plus",
-	"codejar:xonokai@dark":"Xonokai",
-	"codejar:z-touchs@dark":"Z-Touchs",
-"editor-settings-editorTheme-codejar-light":"",
-	"":"Default",
-	"codejar:a11y-dark@light":"A11y Dark",
-	"codejar:atom-dark@light":"Atom Dark",
-	"codejar:base16-ateliersulphurpool-light@light":"Base16 Ateliersulphurpool Light",
-	"codejar:cb@light":"CB",
-	"codejar:coldark-cold@light":"Coldark Cold",
-	"codejar:coldark-dark@light":"Coldark Dark",
-	"codejar:coy@light":"Coy",
-	"codejar:coy-without-shadows@light":"Coy Without Shadows",
-	"codejar:darcula@light":"Darcula",
-	"codejar:dark@light":"Dark",
-	"codejar:dracula@light":"Dracula",
-	"codejar:duotone-dark@light":"Duotone Dark",
-	"codejar:duotone-earth@light":"Duotone Earth",
-	"codejar:duotone-forest@light":"Duotone Forest",
-	"codejar:duotone-light@light":"Duotone Light",
-	"codejar:duotone-sea@light":"Duotone Sea",
-	"codejar:duotone-space@light":"Duotone Space",
-	"codejar:funky@light":"Funky",
-	"codejar:ghcolors@light":"GH Colors",
-	"codejar:gruvbox-dark@light":"Gruvbox Dark",
-	"codejar:gruvbox-light@light":"Gruvbox Light",
-	"codejar:holi-theme@light":"Holi Theme",
-	"codejar:hopscotch@light":"Hopscotch",
-	"codejar:laserwave@light":"Laserwave",
-	"codejar:lucario@light":"Lucario",
-	"codejar:material-dark@light":"Material Dark",
-	"codejar:material-light@light":"Material Light",
-	"codejar:material-oceanic@light":"Material Oceanic",
-	"codejar:night-owl@light":"Night Owl",
-	"codejar:nord@light":"Nord",
-	"codejar:okaidia@light":"Okaidia",
-	"codejar:one-dark@light":"One Dark",
-	"codejar:one-light@light":"One Light",
-	"codejar:pojoaque@light":"Pojoaque",
-	"codejar:shades-of-purple@light":"Shades of Purple",
-	"codejar:solarized-dark-atom@light":"Solarized Dark Atom",
-	"codejar:solarized-light@light":"Solarized Light",
-	"codejar:synthwave84@light":"Synthwave 84",
-	"codejar:tomorrow@light":"Tomorrow",
-	"codejar:twilight@light":"Twilight",
-	"codejar:vs@light":"VS",
-	"codejar:vsc-dark-plus@light":"VSC Dark Plus",
-	"codejar:xonokai@light":"Xonokai",
-	"codejar:z-touchs@light":"Z-Touchs",
-/**/
