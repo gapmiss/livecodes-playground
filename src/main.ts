@@ -65,7 +65,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	codejarLightTheme: "",
 	delay: 1500,
 	template: undefined,
-	dataHeight: "300",
+	dataHeight: "600",
 	projectOptions: {},
 };
 
@@ -117,9 +117,59 @@ export default class LivecodesPlugin extends Plugin {
 
 		this.addCommand({
 			id: "open-template-select-modal",
-			name: "Open template in playground",
+			name: "Open template in livecodes playground",
 			callback: async () => {
 				new TemplateSelectModal(this).open();
+			},
+		});
+
+		this.addCommand({
+			id: "new-project-in-livecodes",
+			name: "New project in livecodes playground",
+			callback: async () => {
+				await openPromptModal(this.app, "Livecodes", "Save new project as:", "", "e.g. New Project", false)
+					.then(async (fName:string) => {
+						if (fName?.length === 0) {
+							return;
+						}
+						let newTemplate = blankTemplate;
+						newTemplate.title = fName;
+						newTemplate.appUrl = this.settings.appUrl;
+						newTemplate.fontFamily = this.settings.fontFamily;
+						newTemplate.fontSize = this.settings.fontSize;
+						newTemplate.editor = this.settings.editor;
+						newTemplate.editorTheme = this.settings.editorTheme;
+						newTemplate.lineNumbers = this.settings.lineNumbers;
+						newTemplate.theme = this.settings.darkTheme ? "dark" : "light";
+						newTemplate.useTabs = this.settings.useTabs;
+						newTemplate.tabSize = this.settings.tabSize;
+						newTemplate.closeBrackets = this.settings.closeBrackets;
+						newTemplate.semicolons = this.settings.semicolons;
+						newTemplate.singleQuote = this.settings.singleQuote;
+						newTemplate.trailingComma = this.settings.trailingComma;
+						newTemplate.wordWrap = this.settings.wordWrap;
+						newTemplate.autoupdate = this.settings.autoUpdate;
+						newTemplate.delay = this.settings.delay;
+
+						let prettyCfg: string | undefined = JSON.stringify(newTemplate, null, 2);
+						try {
+							await this.app.vault
+								.create(
+									this.settings.templateFolder+'/'+fName + ".json",
+									await this.createText(
+										prettyCfg
+									)
+								).then(async (f:TFile) => {
+										this.settings.template = f;
+										await this.saveSettings();
+										await this.activateView();
+									}
+								);
+							new Notice("New project saved as: " + this.settings.templateFolder+'/'+fName + ".json");
+						} catch (error) {
+							new Notice("❌ " + error + " Click this message to dismiss.", 0);
+						}
+					});
 			},
 		});
 
@@ -151,6 +201,7 @@ export default class LivecodesPlugin extends Plugin {
 			}
 		);
 
+		// need to test hacked URI i.e. obsidian://playground?vault=Playground&tplPath=some-malicious-URI
 		this.registerObsidianProtocolHandler("playground", async (e) => {
 			const parameters = e as unknown as Parameters;
 			const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);

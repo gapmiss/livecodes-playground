@@ -35,16 +35,16 @@ async function saveTemplateToFile(
  * 
  */
 export async function downloadFile(data: BlobPart, fileName: string, type="text/plain") {
-	const a = window.document.createElement("a");
+	const a = activeDocument.createElement("a");
 	a.style.display = "none";
-	window.document.body.appendChild(a);
+	activeDocument.body.appendChild(a);
 	a.href = window.URL.createObjectURL(
 		new Blob([data], { type })
 	);
 	a.setAttribute("download", fileName);
 	a.click();
 	window.URL.revokeObjectURL(a.href);
-	window.document.body.removeChild(a);
+	activeDocument.body.removeChild(a);
 	return;
 }
 
@@ -62,19 +62,19 @@ export function postToCodepen(ele: HTMLElement, params: string, path: string = "
 
   // The rest of this code assumes you are not using a library.
   // It can be made less wordy if you use one.
-  const form = window.document.createElement('form');
+  const form = activeDocument.createElement('form');
   form.method = method;
   form.action = path;
 	form.target = '_blank';
 	// form.setAttribute("style", 'display:none;');
 //  for (const key in params) {
 //    if (params.hasOwnProperty(key)) {
-      const hiddenField = window.document.createElement('input');
+      const hiddenField = activeDocument.createElement('input');
       hiddenField.type = 'hidden';
       hiddenField.name = 'data';
       hiddenField.value = params;
       form.appendChild(hiddenField);
-			const submitBttn = window.document.createElement('input');
+			const submitBttn = activeDocument.createElement('input');
 			submitBttn.type = 'submit';
       submitBttn.value = "Create New Pen with Prefilled Data";
 			form.appendChild(submitBttn);

@@ -82,7 +82,7 @@ export const Hello = ({name}) => {
 
 // the code editor
 // const editor = CodeMirror.fromTextArea(
-//   document.querySelector(".editor")!,
+//   activeDocument.querySelector(".editor")!,
 //   {
 //     lineNumbers: true,
 //     mode: "markdown",
@@ -137,7 +137,7 @@ export const Hello = ({name}) => {
 
 			// create a sandbox for safe execution of compiled code
 			function createSandbox (container:any, html:any) {
-				const iframe = document.createElement("iframe");
+				const iframe = activeDocument.createElement("iframe");
 				iframe.src = "https://livecodes-sandbox.pages.dev/v7/";
 				// @ts-ignore
 				iframe.sandbox = "allow-same-origin allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-scripts";

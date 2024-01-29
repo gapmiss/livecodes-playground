@@ -59,3 +59,51 @@ span.button-divider {
 .choiceHidden {
 	display:none;
 }
+
+.title-setting input,
+.livecodes-settings-input input,
+.livecodes-settings-input .search-input-container {
+	/* color:red; */
+	width: 100%;
+	min-width: 10em;
+}
+
+.head-setting textarea,
+textarea.playground-editor-settings-textarea {
+	width: 100%;
+	/* min-width: 20em; */
+	font-family: monospace;
+	font-size: var(--font-smaller);
+	height: 12ch;
+	margin-top: .25em;
+	
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: scroll;
+}
+
+.description-setting textarea,
+.htmlattrs-setting textarea,
+textarea.playground-editor-settings-textarea {
+	width: 100%;
+	/* min-width: 20em; */
+	font-family: monospace;
+	font-size: var(--font-smaller);
+	height: 5ch;
+	margin-top: .25em;
+	
+  white-space: pre;
+  /* overflow-wrap: normal; */
+  /* overflow-x: scroll; */
+}
+
+
+div.livecodes-editor-settings-modal .description-setting,
+div.livecodes-editor-settings-modal .head-setting,
+div.livecodes-editor-settings-modal .htmlattrs-setting {
+	display: block;
+}
+
+div.modal-content.livecodes-editor-settings-modal .setting-item {
+	/* border-bottom: 1px solid transparent; */
+}

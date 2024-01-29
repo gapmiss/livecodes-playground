@@ -47,7 +47,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('App URL')
-			.setDesc('URL for serving livecodes static codebase. e.g. https://v19.livecodes.io/')
+			.setDesc('URL for serving livecodes static codebase, e.g. https://v21.livecodes.io/')
+			.setClass("livecodes-settings-input")
 			.addText(text =>
 			text
 			.setPlaceholder('https://v19.livecodes.io/')
@@ -65,7 +66,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 		.setName('Template folder')
-		.setDesc('The vault folder for JSON templates.')
+		.setDesc('The vault folder for JSON project templates.')
+		.setClass("livecodes-settings-input")
 		.addSearch((cb) => {
 			new FolderSuggest(cb.inputEl);
 			cb
@@ -227,7 +229,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 		
 		new Setting(containerEl)
 		.setName('Dark Theme')
-		.setDesc('Enable dark theme')
+		.setDesc('Enable dark theme as default')
 		.addToggle(toggle =>
 			toggle
 			.setValue(this.plugin.settings.darkTheme)
@@ -363,7 +365,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Playground height')
-			.setDesc('CSS height for livecodes playground component. e.g. 600 or 100% (default: 300)')
+			.setDesc('CSS height for livecodes playground component. e.g. 600 or 100% (default: 600)')
 			.addText(text =>
 			text
 			.setPlaceholder('e.g. 600 or 100%')
@@ -457,24 +459,24 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 					dropdownCodejarLight.setClass("choiceHidden");
 					dropdownCodemirrorDark.setClass("choiceHidden");
 					dropdownCodemirrorLight.setClass("choiceHidden");
-					document.querySelector(".dropdownMonacoDark")?.removeClass("choiceHidden");
-					document.querySelector(".dropdownMonacoLight")?.removeClass("choiceHidden");
+					activeDocument.querySelector(".dropdownMonacoDark")?.removeClass("choiceHidden");
+					activeDocument.querySelector(".dropdownMonacoLight")?.removeClass("choiceHidden");
 					break;
 				case "codemirror":
 					dropdownCodejarDark.setClass("choiceHidden");
 					dropdownCodejarLight.setClass("choiceHidden");
 					dropdownMonacoDark.setClass("choiceHidden");
 					dropdownMonacoLight.setClass("choiceHidden");
-					document.querySelector(".dropdownCodemirrorDark")?.removeClass("choiceHidden");
-					document.querySelector(".dropdownCodemirrorLight")?.removeClass("choiceHidden");
+					activeDocument.querySelector(".dropdownCodemirrorDark")?.removeClass("choiceHidden");
+					activeDocument.querySelector(".dropdownCodemirrorLight")?.removeClass("choiceHidden");
 					break;
 				case "codejar":
 					dropdownCodemirrorDark.setClass("choiceHidden");
 					dropdownCodemirrorLight.setClass("choiceHidden");
 					dropdownMonacoDark.setClass("choiceHidden");
 					dropdownMonacoLight.setClass("choiceHidden");
-					document.querySelector(".dropdownCodejarDark")?.removeClass("choiceHidden");
-					document.querySelector(".dropdownCodejarLight")?.removeClass("choiceHidden");
+					activeDocument.querySelector(".dropdownCodejarDark")?.removeClass("choiceHidden");
+					activeDocument.querySelector(".dropdownCodejarLight")?.removeClass("choiceHidden");
 					break;
 				default:
 					break;
