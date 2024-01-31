@@ -9,17 +9,17 @@ export const VIEW_TYPE_PLAYGROUND = "Livecodes-view";
 export class PlaygroundView extends ItemView {
 	plugin: LivecodesPlugin;
   component: Component;
-  template: TFile | undefined;
+  jsonTemplate: TFile | undefined;
 	adapter: FileSystemAdapter;
 
   constructor(
     app: App,
     leaf: WorkspaceLeaf, 
-    template: TFile|undefined,
+    jsonTemplate: TFile|undefined,
     private settings: any,
   ) {
     super(leaf);
-    this.template = template;
+    this.jsonTemplate = jsonTemplate;
 		this.adapter = this.app.vault.adapter as FileSystemAdapter;
   }
 
@@ -28,10 +28,10 @@ export class PlaygroundView extends ItemView {
   }
 
   getDisplayText() {
-    let fileName = this.template?.path
+    let fileName = this.jsonTemplate?.path
       .substring(
-        this.template?.path.lastIndexOf("/") + 1, 
-        this.template?.path.length
+        this.jsonTemplate?.path.lastIndexOf("/") + 1, 
+        this.jsonTemplate?.path.length
       );
     return "Livecodes / "+fileName;
   }
@@ -45,14 +45,14 @@ export class PlaygroundView extends ItemView {
 			this.contentEl.empty();
 		}
   
-    let foundTemplate: boolean = (this.template !== undefined);
+    let foundTemplate: boolean = (this.jsonTemplate !== undefined);
     
-		let tplPath = this.template?.path;
+		let tplPath = this.jsonTemplate?.path;
 		let tpl = await this.adapter.read(tplPath!);
     let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
 		
     if (foundTemplate) {
-			let tplPath = normalizePath((this.template!).path);
+			let tplPath = normalizePath((this.jsonTemplate!).path);
       let tpl = await this.adapter.read(tplPath);
       newTemplate = JSON.parse(tpl) as Partial<config>;
     }
@@ -60,7 +60,7 @@ export class PlaygroundView extends ItemView {
     this.component = new Component({
       target: this.contentEl,
       props: {
-        template: newTemplate,
+        jsonTemplate: newTemplate,
         tplPath: tplPath!
       },
     });

@@ -1,13 +1,13 @@
 import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
-import { TemplateSelectModal } from "./modals/template-select-modal";
+import { PlaygroundSelectModal } from "./modals/playground-select-modal";
 import { openPromptModal } from "./modals/prompt-modal";
-import { blankTemplate } from "./util";
+import { blankPlayground } from "./util";
 import { Parameters } from "./types";
 
 interface LivecodesSettings {
-	templateFolder: string;
+	playgroundFolder: string;
 	autoWatch: boolean;
 	appUrl: string;
 	fontFamily: string;
@@ -31,12 +31,12 @@ interface LivecodesSettings {
 	codejarDarkTheme: any;
 	codejarLightTheme: any;
 	delay: number;
-	template: TFile | undefined;
+	jsonTemplate: TFile | undefined;
 	dataHeight: any;
 }
 
 const DEFAULT_SETTINGS: LivecodesSettings = {
-	templateFolder: "livecodes",
+	playgroundFolder: "livecodes",
 	autoWatch: true,
 	appUrl: "https://v19.livecodes.io/",
 	fontFamily: "Default",
@@ -60,7 +60,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	codejarDarkTheme: "",
 	codejarLightTheme: "",
 	delay: 1500,
-	template: undefined,
+	jsonTemplate: undefined,
 	dataHeight: "600",
 };
 
@@ -93,7 +93,7 @@ export default class LivecodesPlugin extends Plugin {
 	codejarLightTheme: any;
 	delay: number = 1500;
 	d: any = new Date();
-	template: TFile | undefined;
+	jsonTemplate: TFile | undefined;
 	dataHeight: string | undefined;
 	logDebug: boolean = true;
 
@@ -102,11 +102,11 @@ export default class LivecodesPlugin extends Plugin {
 
     this.registerView(
       VIEW_TYPE_PLAYGROUND,
-      (leaf) => new PlaygroundView(this.app, leaf, this.settings.template, this.settings),
+      (leaf) => new PlaygroundView(this.app, leaf, this.settings.jsonTemplate, this.settings),
     );
 
     this.addRibbonIcon("file-code-2", "Open Livecodes playground", async () => {
-      new TemplateSelectModal(this).open();
+      new PlaygroundSelectModal(this).open();
     });
 
 		this.addRibbonIcon("code", "New Livecodes playground", async () => {
@@ -114,10 +114,10 @@ export default class LivecodesPlugin extends Plugin {
     });
 
 		this.addCommand({
-			id: "open-template-select-modal",
+			id: "open-playground-select-modal",
 			name: "Open Livecodes playground",
 			callback: async () => {
-				new TemplateSelectModal(this).open();
+				new PlaygroundSelectModal(this).open();
 			},
 		});
 
@@ -137,7 +137,7 @@ export default class LivecodesPlugin extends Plugin {
 			const parameters = e as unknown as Parameters;
 			const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);
 			if (f instanceof TFile) {
-				this.settings.template = f;
+				this.settings.jsonTemplate = f;
 				await this.saveSettings();
 				await this.activateView();
 			}
@@ -147,13 +147,13 @@ export default class LivecodesPlugin extends Plugin {
       this.app.workspace.on("file-menu", (menu, file) => {
         const f = this.app.vault.getAbstractFileByPath(file.path);
         if (f instanceof TFile) {
-          if (f.extension.toLowerCase() === "json" && f.path.contains(this.settings.templateFolder)) {
+          if (f.extension.toLowerCase() === "json" && f.path.contains(this.settings.playgroundFolder)) {
             menu.addItem((item) => {
               item
                 .setTitle("Open playground")
                 .setIcon("code")
                 .onClick(async () => {
-									this.settings.template = f;
+									this.settings.jsonTemplate = f;
 									await this.saveSettings();
 									await this.activateView();
                 });
@@ -228,7 +228,7 @@ export default class LivecodesPlugin extends Plugin {
 					if (showMenu) {
             menu.addItem( (item) => {
               item
-                .setTitle("Open in Livecodes")
+                .setTitle("Open in Livecodes playground")
                 .setIcon("file-code-2")
                 .onClick(async () => {
 									await this.newLivecodesPlayground(true, f);
@@ -294,7 +294,7 @@ export default class LivecodesPlugin extends Plugin {
 					return;
 				}
 				
-				let newTemplate = blankTemplate;
+				let newPlayground = blankPlayground;
 
 				if (fromMenu && file !== null && (file instanceof TFile || file instanceof TFolder)) {
 					let foundMarkup: boolean = false;
@@ -317,59 +317,59 @@ export default class LivecodesPlugin extends Plugin {
 					if (foundMarkup) {
 						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/index.html") : this.app.vault.getAbstractFileByPath(file.path);
 						let t = await this.app.vault.read(c as TFile)
-						newTemplate.markup.content = t;
+						newPlayground.markup.content = t;
 					}
 					if (foundStyle) {
 						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/style.css") : this.app.vault.getAbstractFileByPath(file.path);
 						let t = await this.app.vault.read(c as TFile)
-						newTemplate.style.content = t;
+						newPlayground.style.content = t;
 					}
 					if (foundScript) {
 						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.js") : this.app.vault.getAbstractFileByPath(file.path);
 						let t = await this.app.vault.read(c as TFile)
-						newTemplate.script.content = t;
+						newPlayground.script.content = t;
 					}
 					if (foundTypeScript) {
 						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.ts") : this.app.vault.getAbstractFileByPath(file.path);
 						let t = await this.app.vault.read(c as TFile)
-						newTemplate.script.content = t;
-						newTemplate.script.language = "typescript";
+						newPlayground.script.content = t;
+						newPlayground.script.language = "typescript";
 					}
 				}
 
-				newTemplate.title = fName;
-				newTemplate.appUrl = this.settings.appUrl;
-				newTemplate.fontFamily = this.settings.fontFamily;
-				newTemplate.fontSize = this.settings.fontSize;
-				newTemplate.editor = this.settings.editor;
-				newTemplate.editorTheme = this.settings.editorTheme;
-				newTemplate.lineNumbers = this.settings.lineNumbers;
-				newTemplate.theme = this.settings.darkTheme ? "dark" : "light";
-				newTemplate.useTabs = this.settings.useTabs;
-				newTemplate.tabSize = this.settings.tabSize;
-				newTemplate.closeBrackets = this.settings.closeBrackets;
-				newTemplate.semicolons = this.settings.semicolons;
-				newTemplate.singleQuote = this.settings.singleQuote;
-				newTemplate.trailingComma = this.settings.trailingComma;
-				newTemplate.wordWrap = this.settings.wordWrap;
-				newTemplate.autoupdate = this.settings.autoUpdate;
-				newTemplate.delay = this.settings.delay;
+				newPlayground.title = fName;
+				newPlayground.appUrl = this.settings.appUrl;
+				newPlayground.fontFamily = this.settings.fontFamily;
+				newPlayground.fontSize = this.settings.fontSize;
+				newPlayground.editor = this.settings.editor;
+				newPlayground.editorTheme = this.settings.editorTheme;
+				newPlayground.lineNumbers = this.settings.lineNumbers;
+				newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+				newPlayground.useTabs = this.settings.useTabs;
+				newPlayground.tabSize = this.settings.tabSize;
+				newPlayground.closeBrackets = this.settings.closeBrackets;
+				newPlayground.semicolons = this.settings.semicolons;
+				newPlayground.singleQuote = this.settings.singleQuote;
+				newPlayground.trailingComma = this.settings.trailingComma;
+				newPlayground.wordWrap = this.settings.wordWrap;
+				newPlayground.autoupdate = this.settings.autoUpdate;
+				newPlayground.delay = this.settings.delay;
 
-				let prettyCfg: string | undefined = JSON.stringify(newTemplate, null, 2);
+				let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
 				try {
 					await this.app.vault
 						.create(
-							this.settings.templateFolder+'/'+fName + ".json",
+							this.settings.playgroundFolder+'/'+fName + ".json",
 							await this.createText(
 								prettyCfg
 							)
 						).then(async (f:TFile) => {
-								this.settings.template = f;
+								this.settings.jsonTemplate = f;
 								await this.saveSettings();
 								await this.activateView();
 							}
 						);
-					new Notice("New project saved as: " + this.settings.templateFolder+'/'+fName + ".json");
+					new Notice("New project saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
 				} catch (error) {
 					new Notice("❌ " + error + " Click this message to dismiss.", 0);
 				}

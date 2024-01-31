@@ -58,23 +58,22 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 				if ( newAppUrl.split("").pop() != '/' ) {
 					debounceNotice();
-					// text.setValue(this.plugin.settings.appUrl);
 					return;
 				}
 			})
 		);
 
 		new Setting(containerEl)
-		.setName('Template folder')
-		.setDesc('The vault folder for JSON project templates.')
+		.setName('Playgrounds folder')
+		.setDesc('The vault folder for saving playground JSON files.')
 		.setClass("livecodes-settings-input")
 		.addSearch((cb) => {
 			new FolderSuggest(cb.inputEl);
 			cb
-			.setPlaceholder("e.g. templates")
-			.setValue(this.plugin.settings.templateFolder)
+			.setPlaceholder("e.g. playgrounds")
+			.setValue(this.plugin.settings.playgroundFolder)
 			.onChange(async (newPath) => {
-				this.plugin.settings.templateFolder = newPath;
+				this.plugin.settings.playgroundFolder = newPath;
 				await this.plugin.saveSettings();
 			});
 		});

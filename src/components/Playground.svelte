@@ -20,7 +20,7 @@
 	let playground: any;
 	let watcher: { remove: () => void } | null;
 
-	export let template: any;
+	export let jsonTemplate: any;
 	export let tplPath: string;
 
 	let copyHTML: HTMLButtonElement;
@@ -33,7 +33,7 @@
 	let openProjectSettings: HTMLButtonElement;
 
 	const options: EmbedOptions = {
-		config: template!,
+		config: jsonTemplate!,
 		appUrl: plugin.settings.appUrl,
 		params: {
 			editorTheme: plugin.settings.editorTheme,
@@ -167,7 +167,7 @@
 				let fName = await openPromptModal(
 					this.app,
 					"Livecodes",
-					"Save template as:",
+					"Save playground as:",
 					"",
 					"e.g. New Project",
 					false
@@ -182,12 +182,12 @@
 				);
 				try {
 					await this.app.vault.create(
-						plugin.settings.templateFolder + "/" + fName + ".json",
+						plugin.settings.playgroundFolder + "/" + fName + ".json",
 						await createText(prettyCfg)
 					);
 					new Notice(
 						"Template saved as: " +
-							plugin.settings.templateFolder +
+							plugin.settings.playgroundFolder +
 							"/" +
 							fName +
 							".json"
@@ -324,17 +324,17 @@
 			data-tooltip-position="bottom"
 		/>
 		<button
-			aria-label="Save as JSON template"
+			aria-label="Save as JSON"
 			bind:this={saveAsJSON}
 			data-tooltip-position="bottom"
 		/>
 		<button
-			aria-label="Save as HTML file"
+			aria-label="Save as HTML"
 			bind:this={downloadHTML}
 			data-tooltip-position="bottom"
 		/>
 		<button
-			aria-label="Copy as HTML to clipboard"
+			aria-label="Copy HTML to clipboard"
 			bind:this={copyHTML}
 			data-tooltip-position="bottom"
 		/>

@@ -1,27 +1,14 @@
 import { normalizePath, Notice, type App } from "obsidian";
 
-/**
- * 
- * derived from https://github.com/DaRae-00/obsidian-sketch-md-plugin/blob/main/src/util/features.ts
- * 
- */
 export function saveJson(
 	app: App,
 	path: string,
 	content: string
 ) {
-	// const markdownView = app.workspace.getActiveViewOfType(MarkdownView);
-	// if (!markdownView) {
-	// 	return;
-	// }
-	// const editor = markdownView.editor;
-	// if (!editor) {
-	// 	return;
-	// }
-	saveTemplateToFile(app, path, content);
+	savePlaygroundToFile(app, path, content);
 }
 
-async function saveTemplateToFile(
+async function savePlaygroundToFile(
 	app: App,
 	path: string,
 	content: string
@@ -49,45 +36,6 @@ export async function downloadFile(data: BlobPart, fileName: string, type="text/
 }
 
 /**
- * sends a request to the specified url from a form. this will change the window location.
- * @param {string} path the path to send the post request to
- * @param {object} params the paramiters to add to the url
- * @param {string} [method=post] the method to use on the form
- */
-
-export function postToCodepen(ele: HTMLElement, params: string, path: string = "https://codepen.io/pen/define", method: string='POST') {
-	/**
-	 * https://blog.codepen.io/documentation/prefill/
-	 */
-
-  // The rest of this code assumes you are not using a library.
-  // It can be made less wordy if you use one.
-  const form = activeDocument.createElement('form');
-  form.method = method;
-  form.action = path;
-	form.target = '_blank';
-	// form.setAttribute("style", 'display:none;');
-//  for (const key in params) {
-//    if (params.hasOwnProperty(key)) {
-      const hiddenField = activeDocument.createElement('input');
-      hiddenField.type = 'hidden';
-      hiddenField.name = 'data';
-      hiddenField.value = params;
-      form.appendChild(hiddenField);
-			const submitBttn = activeDocument.createElement('input');
-			submitBttn.type = 'submit';
-      submitBttn.value = "Create New Pen with Prefilled Data";
-			form.appendChild(submitBttn);
-//     }
-//   }
-
-  
-  ele.appendChild(form);
-  form.submit();
-	// form.detach();
-}
-
-/**
  * from: https://github.com/Obsidian-TTRPG-Community/TTRPG-Community-Admin/
  */
 export async function copyStringToClipboard(text:string, topic:string|undefined=undefined) {
@@ -101,7 +49,7 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
 		})
 }
 
-export const blankTemplate = {
+export const blankPlayground = {
 	appUrl: "https://v21.livecodes.io/",
 	title: "New Project",
 	description: "",

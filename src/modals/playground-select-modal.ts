@@ -13,7 +13,7 @@ export const TEMPLATE_FORMATS = [
 	"json"
 ];
 
-export class TemplateSelectModal extends FuzzySuggestModal<TFile> {
+export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
 	plugin: LivecodesPlugin;
 	vault: Vault;
 	adapter: FileSystemAdapter;
@@ -23,17 +23,17 @@ export class TemplateSelectModal extends FuzzySuggestModal<TFile> {
 		this.plugin = plugin;
 		this.vault = plugin.app.vault;
 		this.adapter = plugin.app.vault.adapter as FileSystemAdapter;
-		this.containerEl.addClass("template-select-modal");
+		this.containerEl.addClass("playground-select-modal");
 		this.setPlaceholder("Select a playground or type to search");
 	}
 
 	getItems(): TFile[] {
-		const templateFolder = this.plugin.settings.templateFolder;
-		const folder = this.vault.getAbstractFileByPath(templateFolder);
+		const playgroundFolder = this.plugin.settings.playgroundFolder;
+		const folder = this.vault.getAbstractFileByPath(playgroundFolder);
 		if (!folder || !(folder instanceof TFolder)) {
 			new Notice(
 				createFragment((frag) => {
-					frag.appendText(" ❗ ERROR ❗\n'"+templateFolder+"'");
+					frag.appendText(" ❗ ERROR ❗\n'"+playgroundFolder+"'");
 					frag.appendText(" is not a valid folder in the plugin settings.");
 				}),
 				0
@@ -41,11 +41,11 @@ export class TemplateSelectModal extends FuzzySuggestModal<TFile> {
 			this.close();
 			return [];
 		}
-		return this.getTemplatesInFolder(folder);
+		return this.getPlaygroundsInFolder(folder);
 	}
 
 	getItemText(item: TFile): string {
-		var regex = new RegExp(this.plugin.settings.templateFolder+"\/", "g");
+		var regex = new RegExp(this.plugin.settings.playgroundFolder+"\/", "g");
 		return item.path.replace(regex, "").replace(".json", "");
 	}
 
@@ -55,7 +55,7 @@ export class TemplateSelectModal extends FuzzySuggestModal<TFile> {
 
 	async onChooseItem(f: TFile) {
 		if (f.path) {
-			this.plugin.settings.template = f;
+			this.plugin.settings.jsonTemplate = f;
 			this.plugin.saveSettings;
 			await this.plugin.activateView();
 			return Promise.resolve;
@@ -66,7 +66,7 @@ export class TemplateSelectModal extends FuzzySuggestModal<TFile> {
 		}
 	}
 
-	private getTemplatesInFolder(folder: TFolder): TFile[] {
+	private getPlaygroundsInFolder(folder: TFolder): TFile[] {
 		let files: TFile[] = [];
 		Vault.recurseChildren(folder, (file) => {
 			if (file instanceof TFile) {
