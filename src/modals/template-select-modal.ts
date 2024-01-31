@@ -24,7 +24,7 @@ export class TemplateSelectModal extends FuzzySuggestModal<TFile> {
 		this.vault = plugin.app.vault;
 		this.adapter = plugin.app.vault.adapter as FileSystemAdapter;
 		this.containerEl.addClass("template-select-modal");
-		this.setPlaceholder("Select a template or type to search");
+		this.setPlaceholder("Select a playground or type to search");
 	}
 
 	getItems(): TFile[] {
@@ -46,7 +46,7 @@ export class TemplateSelectModal extends FuzzySuggestModal<TFile> {
 
 	getItemText(item: TFile): string {
 		var regex = new RegExp(this.plugin.settings.templateFolder+"\/", "g");
-		return item.path.replace(regex, "");
+		return item.path.replace(regex, "").replace(".json", "");
 	}
 
 	renderSuggestion(match: FuzzyMatch<TFile>, el: HTMLElement) {

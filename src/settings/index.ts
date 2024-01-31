@@ -21,7 +21,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			() => {
 				new Notice("Trailing slash is required");
 			},
-			500
+			1000
 		);
 		let { containerEl } = this;
 		containerEl.addClass("livecodes-settings-tab");
@@ -449,8 +449,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			});
 		});
 
-		
-
 		const toggleChoices = async (choice: string): Promise<any> => {
 			switch (choice) {
 				case "monaco":
@@ -496,7 +494,5 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 		toggleChoices(this.plugin.settings.editor);
 
 	}
-
-	
 
 }
