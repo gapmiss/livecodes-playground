@@ -13,6 +13,7 @@ import { Parameters } from "./types";
 
 interface LivecodesSettings {
 	templateFolder: string;
+	autoWatch: boolean;
 	appUrl: string;
 	fontFamily: string;
 	fontSize: any;
@@ -37,11 +38,11 @@ interface LivecodesSettings {
 	delay: number;
 	template: TFile | undefined;
 	dataHeight: any;
-	projectOptions: Partial<config>;
 }
 
 const DEFAULT_SETTINGS: LivecodesSettings = {
 	templateFolder: "livecodes",
+	autoWatch: true,
 	appUrl: "https://v19.livecodes.io/",
 	fontFamily: "Default",
 	fontSize: "12",
@@ -66,7 +67,6 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
 	delay: 1500,
 	template: undefined,
 	dataHeight: "600",
-	projectOptions: {},
 };
 
 export default class LivecodesPlugin extends Plugin {
@@ -101,7 +101,6 @@ export default class LivecodesPlugin extends Plugin {
 	template: TFile | undefined;
 	dataHeight: string | undefined;
 	logDebug: boolean = true;
-	projectOptions: Partial<config>;
 
   async onload() {
     await this.loadSettings();
@@ -111,7 +110,7 @@ export default class LivecodesPlugin extends Plugin {
       (leaf) => new PlaygroundView(this.app, leaf, this.settings.template, this.settings),
     );
 
-    this.addRibbonIcon("code", "Playground: Open Template", async () => {
+    this.addRibbonIcon("code", "Open template in livecodes playground", async () => {
       new TemplateSelectModal(this).open();
     });
 
@@ -219,7 +218,7 @@ export default class LivecodesPlugin extends Plugin {
           if (f.extension.toLowerCase() === "json" && f.path.contains(this.settings.templateFolder)) {
             menu.addItem((item) => {
               item
-                .setTitle("Livecodes: Open this template")
+                .setTitle("Livecodes: Open template in livecodes")
                 .setIcon("code")
                 .onClick(async () => {
 									this.settings.template = f;
@@ -461,7 +460,6 @@ export default class LivecodesPlugin extends Plugin {
 				leaf.detach();
 			}
 		});
-		// this.app.workspace.getLeavesOfType(VIEW_TYPE_TOGGL).forEach((leaf) => leaf.detach());
     console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
   }
 

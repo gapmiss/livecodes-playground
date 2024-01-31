@@ -2,18 +2,17 @@
 	import { Notice, setIcon } from "obsidian";
 	import {
 		createPlayground,
-		EmbedOptions,
-		// getPlaygroundUrl,
+		EmbedOptions
 	} from "livecodes";
 	import { onMount } from "svelte";
 	import {
 		saveJson,
 		downloadFile,
-		copyStringToClipboard,
-		// postToCodepen,
+		copyStringToClipboard
 	} from "../util";
 	import { openPromptModal } from "../modals/prompt-modal";
-	import { openEditorSettingsModal } from "../modals/editor-settings-modal";
+	import { openExternalResourcesModal } from "../modals/external-resources-modal";
+	import { openProjectSettingsModal } from "../modals/project-settings-modal";
 
 	const app = this.app;
 	const plugin = app.plugins.plugins["livecodes-for-obsidian"];
@@ -30,11 +29,8 @@
 	let copyShareUrl: HTMLButtonElement;
 	let toggleTheme: HTMLButtonElement;
 	let onWatch: HTMLButtonElement;
-	// let openInCodepen:HTMLButtonElement;
+	let openExternalResources: HTMLButtonElement;
 	let openProjectSettings: HTMLButtonElement;
-	// let playgroundUrl: HTMLButtonElement;
-	// let updateHeadSetting: HTMLTextAreaElement;
-	// let updateHtmlAttrSetting: HTMLTextAreaElement;
 
 	const options: EmbedOptions = {
 		config: template!,
@@ -65,7 +61,7 @@
 		createPlayground(container, options).then((p) => {
 			playground = p;
 
-			setIcon(copyHTML, "clipboard-copy");
+			setIcon(copyHTML, "clipboard");
 			copyHTML.addEventListener("click", async (e) => {
 				e.preventDefault();
 				try {
@@ -75,23 +71,6 @@
 					console.log(error.message || error);
 				}
 			});
-
-			/*/
-			setIcon(playgroundUrl, 'power');
-			playgroundUrl.addEventListener(
-				"click", 
-				async (e) => {
-					e.preventDefault();
-					try {
-						const config:EmbedOptions = await playground.getConfig();
-						const url = getPlaygroundUrl(config);
-						await copyStringToClipboard(url, "Playground URL");
-					} catch (error) {
-						console.log(error.message || error);
-					}
-				}
-			);
-			/**/
 
 			setIcon(downloadHTML, "file-code-2");
 			downloadHTML.addEventListener("click", async (e) => {
@@ -127,7 +106,6 @@
 							}
 						);
 						setIcon(onWatch, "eye-off");
-						// onWatch.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>';
 						onWatch.setAttribute(
 							"aria-label",
 							"Stop watching for changes"
@@ -140,7 +118,6 @@
 						watcher?.remove();
 						watcher = null;
 						setIcon(onWatch, "eye");
-						// onWatch.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
 						onWatch.setAttribute(
 							"aria-label",
 							"Watch for changes and SAVE"
@@ -183,7 +160,7 @@
 				}
 			});
 
-			setIcon(saveAsJSON, "download");
+			setIcon(saveAsJSON, "braces");
 			saveAsJSON.addEventListener("click", async (e) => {
 				e.preventDefault();
 				const cfg = await playground.getConfig();
@@ -234,19 +211,47 @@
 				}
 			});
 
+			setIcon(openExternalResources, "terminal");
+			openExternalResources.addEventListener("click", async (e) => {
+				e.preventDefault();
+				try {
+					let conf = {
+						stylesheets: await playground.getConfig().then((t: any) => {return t.stylesheets}),
+						scripts: await playground.getConfig().then((t: any) => {return t.scripts}),
+						cssPreset: await playground.getConfig().then((t: any) => {return t.cssPreset})
+					};
+					await openExternalResourcesModal(
+							this.app,
+							this.plugin,
+							"External resources",
+							conf
+						)
+						.then(
+							async (setting) => {
+								let newConfig = JSON.parse(setting as unknown as string);
+								await playground.setConfig({ 
+									stylesheets: newConfig.stylesheets,
+									scripts: newConfig.scripts,
+									cssPreset: newConfig.cssPreset
+								});
+							}
+						);
+				} catch (error) {
+					console.log(error.message || error);
+				}
+			});
+
 			setIcon(openProjectSettings, "settings");
 			openProjectSettings.addEventListener("click", async (e) => {
 				e.preventDefault();
 				try {
-					// activeDocument.querySelector('.settings-wrapper')?.classList.toggle('choiceHidden');
 					let conf = {
 						title: await playground.getConfig().then((t: any) => {return t.title}),
 						description: await playground.getConfig().then((t: any) => {return t.description}),
 						head: await playground.getConfig().then((t: any) => {return t.head}),
 						htmlAttrs: await playground.getConfig().then((t: any) => {return t.htmlAttrs})
 					};
-					// console.log(conf);
-					let updatedSettings = await openEditorSettingsModal(
+					await openProjectSettingsModal(
 							this.app,
 							this.plugin,
 							"Project settings",
@@ -255,18 +260,12 @@
 						.then(
 							async (setting) => {
 								let newConfig = JSON.parse(setting as unknown as string);
-								if (newConfig.title !== null) {
-									await playground.setConfig({ title: newConfig.title });
-								}
-								if (newConfig.description !== null) {
-									await playground.setConfig({ description: newConfig.description });
-								}
-								if (newConfig.head !== null) {
-									await playground.setConfig({ head: newConfig.head });
-								}
-								if (newConfig.htmlAttrs !== null) {
-									await playground.setConfig({ htmlAttrs: newConfig.htmlAttrs });
-								}
+								await playground.setConfig({ 
+									title: newConfig.title,
+									description: newConfig.description,
+									head: newConfig.head,
+									htmlAttrs: newConfig.htmlAttrs
+								});
 							}
 						);
 				} catch (error) {
@@ -274,43 +273,34 @@
 				}
 			});
 
-			// updateHeadSetting.addEventListener("input", async (e) => {
-			// 	// @ts-ignore
-			// 	let headContent = (e.target as HTMLElement).value;
-			// 	// console.log(headContent);
-			// 	await playground.setConfig({ head: headContent });
-			// });
-// 
-// 
-			// updateHtmlAttrSetting.addEventListener("input", async (e) => {
-			// 	// @ts-ignore
-			// 	let htmlAttrsContent = (e.target as HTMLElement).value;
-			// 	// console.log(htmlAttrsContent);
-			// 	await playground.setConfig({ htmlAttrs: htmlAttrsContent });
-			// });
-
-			/*/
-			setIcon(openInCodepen, 'codepen');
-			openInCodepen.addEventListener(
-				"click", 
-				async (e) => {
-					e.preventDefault();
-					try {
-						let json = {"title": "New Pen!", "html": "<div>Hello, World!</div>"};
-						postToCodepen(container, JSON.stringify(json));
-						const shareUrl = await playground.getShareUrl();
-						await copyStringToClipboard(shareUrl, "Share URL");
-					} catch (error) {
-						console.log(error.message || error);
-					}
+			if (plugin.settings.autoWatch) {
+				try {
+					setIcon(onWatch, "eye-off");
+					onWatch.setAttribute(
+						"aria-label",
+						"Stop watching for changes"
+					);
+					onWatch.setAttribute(
+						"style",
+						"color:var(--text-error);"
+					);
+					watcher = playground.watch(
+						"code",
+						//@ts-ignore
+						({ config }) => {
+							handleWatchedTemplate(tplPath, config);
+							new Notice("Changes saved");
+						}
+					);
+				} catch (error) {
+					console.log(error.message || error);
 				}
-			);
-			/**/
+			}
+
 		});
 	});
 
 	const handleWatchedTemplate = (tplPath: string, output: any) => {
-		// output.config.head = ""; // manipulate the config object
 		saveJson(app, tplPath, JSON.stringify(output, null, 2));
 	};
 
@@ -339,13 +329,8 @@
 			data-tooltip-position="bottom"
 		/>
 		<button
-			aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
-			bind:this={toggleTheme}
-			data-tooltip-position="bottom"
-		/>
-		<button
-			aria-label="Copy share URL to clipboard"
-			bind:this={copyShareUrl}
+			aria-label="Save as HTML file"
+			bind:this={downloadHTML}
 			data-tooltip-position="bottom"
 		/>
 		<button
@@ -354,8 +339,18 @@
 			data-tooltip-position="bottom"
 		/>
 		<button
-			aria-label="Save as HTML file"
-			bind:this={downloadHTML}
+			aria-label="Copy share URL to clipboard"
+			bind:this={copyShareUrl}
+			data-tooltip-position="bottom"
+		/>
+		<button
+			aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
+			bind:this={toggleTheme}
+			data-tooltip-position="bottom"
+		/>
+		<button
+			aria-label="External resources"
+			bind:this={openExternalResources}
 			data-tooltip-position="bottom"
 		/>
 		<button
@@ -363,28 +358,7 @@
 			bind:this={openProjectSettings}
 			data-tooltip-position="bottom"
 		/>
-		<!-- <button
-			aria-label="Open in Codepen"
-			bind:this={openInCodepen}
-			data-tooltip-position="bottom">
-		</button> -->
-		<!-- <button
-			aria-label="getPlaygroundUrl"
-			bind:this={playgroundUrl}
-			data-tooltip-position="bottom">
-		</button> -->
 	</div>
-	<!-- <div class="settings-wrapper choiceHidden">
-		<div>
-			<label for="headSettings">Content added to the result page &lt;head&gt; element.</label>
-			<textarea name="head" id="headSettings" bind:this={updateHeadSetting}><meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" /></textarea>
-		</div>
-		<div>
-			<label for="htmlAttrsSettings">Attributes added to the result page &lt;html&gt; element.</label>
-			<textarea name="htmlAttrs" id="htmlAttrsSettings" bind:this={updateHtmlAttrSetting}>lang="en" class=""</textarea>
-		</div>
-	</div> -->
 </div>
 
 <style>

@@ -102,7 +102,7 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
 }
 
 export const blankTemplate = {
-	appUrl: "https://v20.livecodes.io/",
+	appUrl: "https://v21.livecodes.io/",
 	title: "New Project",
 	description: "",
 	head: "<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",
@@ -162,6 +162,6 @@ export const blankTemplate = {
 	singleQuote: false,
 	trailingComma: true,
 	emmet: true,
-	editorTheme: ["vs@light", "vs-dark@dark"],
-	version: "20"
+	editorTheme: [],
+	version: "21"
 };

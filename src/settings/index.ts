@@ -78,21 +78,20 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 			});
 		});
-		/*
+
+
 		new Setting(containerEl)
-		.setName('Code blocks')
-		.setDesc('Enable "Open with livecodes" button in  code blocks. Currently, only works with "js" and "javascript"')
+		.setName('Automatically watch for changes')
+		.setDesc('Enable to watch for changes and automatically save projects.')
 		.addToggle(toggle =>
 			toggle
-			.setValue(this.plugin.settings.codeBlocks)
+			.setValue(this.plugin.settings.autoWatch)
 			.onChange(async newValue => {
-				this.plugin.settings.codeBlocks = newValue;
+				this.plugin.settings.autoWatch = newValue;
 				await this.plugin.saveSettings();
 			})
 		);
-		*/
 
-			
 		new Setting(containerEl)
 		.setName('Editor')
 		.setDesc('Choice of code editor.')

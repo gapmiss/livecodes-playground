@@ -1,21 +1,21 @@
 .livecodes-wrapper {
 	resize: both !important;
 	overflow: hidden;
-	/* overflow: scroll; */
 	padding:1em !important;
-	/* padding-bottom:4em !important; */
 	border: 1px solid var(--interactive-accent) !important;
 	background-color: var(--background-primary) !important;
-	/* margin-bottom: 3em; */
 	margin-bottom: 1em;
 	border-radius: var(--size-2-3);
 }
+
 .open-with-livecodes-wrap {
 	position: relative;
 }
+
 .open-with-livecodes-wrap:hover .open-with-livecodes-button {
 	opacity: .8;
 }
+
 .open-with-livecodes-button {
 	position: absolute;
 	top: -15px;
@@ -26,6 +26,7 @@
 	border-radius: 15px;
 	padding: .5em;
 }
+
 .livecodes-prompt-modal input.prompt-input {
   width: 100%;
   padding: var(--size-4-6);
@@ -36,13 +37,14 @@
   border-radius: var(--radius-m);
   border-bottom: none !important;
 }
+
 .livecodes-prompt-modal input.prompt-input:hover,
 .livecodes-prompt-modal input.prompt-input:focus,
 .livecodes-prompt-modal input.prompt-input:focus-visible {
   border-bottom: none !important;
-  /* box-shadow: none; */
 	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
+
 .buttons-wrapper {
 	margin-top: 1em;
 }
@@ -63,20 +65,18 @@ span.button-divider {
 .title-setting input,
 .livecodes-settings-input input,
 .livecodes-settings-input .search-input-container {
-	/* color:red; */
 	width: 100%;
 	min-width: 10em;
 }
-
+.scripts-setting textarea,
+.stylesheets-setting textarea,
 .head-setting textarea,
 textarea.playground-editor-settings-textarea {
 	width: 100%;
-	/* min-width: 20em; */
 	font-family: monospace;
 	font-size: var(--font-smaller);
 	height: 12ch;
 	margin-top: .25em;
-	
   white-space: pre;
   overflow-wrap: normal;
   overflow-x: scroll;
@@ -86,24 +86,17 @@ textarea.playground-editor-settings-textarea {
 .htmlattrs-setting textarea,
 textarea.playground-editor-settings-textarea {
 	width: 100%;
-	/* min-width: 20em; */
 	font-family: monospace;
 	font-size: var(--font-smaller);
 	height: 5ch;
 	margin-top: .25em;
-	
   white-space: pre;
-  /* overflow-wrap: normal; */
-  /* overflow-x: scroll; */
 }
 
-
-div.livecodes-editor-settings-modal .description-setting,
+div.livecodes-external-resources-modal .stylesheets-setting,
+div.livecodes-external-resources-modal .scripts-setting,
 div.livecodes-editor-settings-modal .head-setting,
+div.livecodes-editor-settings-modal .description-setting,
 div.livecodes-editor-settings-modal .htmlattrs-setting {
 	display: block;
-}
-
-div.modal-content.livecodes-editor-settings-modal .setting-item {
-	/* border-bottom: 1px solid transparent; */
 }

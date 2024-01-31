@@ -1,20 +1,20 @@
 import { App, Modal, Setting, ButtonComponent, TextComponent, TextAreaComponent } from "obsidian";
 import LivecodesPlugin from '../main';
 
-type EditorSettingsCallback = (text: string | null) => void;
+type ProjectSettingsCallback = (text: string | null) => void;
 
-export class EditorSettingsModal extends Modal {
+export class ProjectSettingsModal extends Modal {
 		plugin: LivecodesPlugin;
     title: string | null;
     changes: {title: string, description: string, head: string, htmlAttrs: string};
-		callback: EditorSettingsCallback;
+		callback: ProjectSettingsCallback;
 
     constructor(
         app: App,
 				plugin: LivecodesPlugin,
         title: string | null,
         changes: {title: string, description: string, head: string, htmlAttrs: string},
-				callback: EditorSettingsCallback,
+				callback: ProjectSettingsCallback,
     ) {
 				super(app);
 				this.plugin = plugin;
@@ -32,7 +32,7 @@ export class EditorSettingsModal extends Modal {
 
 			const titleInput = new Setting(this.contentEl)
 				.setName('title')
-				.setDesc('Title of project')
+				.setDesc('Project title')
 				.setClass("title-setting")
 				.addText(text =>
 					text
@@ -44,7 +44,7 @@ export class EditorSettingsModal extends Modal {
 
 			const descriptionInput = new Setting(this.contentEl)
 				.setName('description')
-				.setDesc('Description of project')
+				.setDesc('Project description')
 				.setClass("description-setting")
 				.addTextArea(text =>
 					text
@@ -106,15 +106,15 @@ export class EditorSettingsModal extends Modal {
     }
 }
 
-export async function openEditorSettingsModal(
+export async function openProjectSettingsModal(
     app: App,
     plugin: LivecodesPlugin,
     title: string | null,
     changes: {title: string, description: string, head: string, htmlAttrs: string},
-		callback?: EditorSettingsCallback
+		callback?: ProjectSettingsCallback
 ): Promise<any[] | null> {
     return await new Promise((resolve, reject) => {
-        new EditorSettingsModal(
+        new ProjectSettingsModal(
             app,
 						plugin,
             title,
