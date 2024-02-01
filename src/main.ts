@@ -8,6 +8,7 @@ import { Parameters } from "./types";
 
 interface LivecodesSettings {
 	playgroundFolder: string;
+	notesFolder: string;
 	autoWatch: boolean;
 	appUrl: string;
 	fontFamily: string;
@@ -36,7 +37,8 @@ interface LivecodesSettings {
 }
 
 const DEFAULT_SETTINGS: LivecodesSettings = {
-	playgroundFolder: "livecodes",
+	playgroundFolder: "playgrounds",
+	notesFolder: "playgrounds/notes",
 	autoWatch: true,
 	appUrl: "https://v19.livecodes.io/",
 	fontFamily: "Default",

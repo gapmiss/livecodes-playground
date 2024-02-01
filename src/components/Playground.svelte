@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Notice, setIcon } from "obsidian";
+	import { Notice, WorkspaceLeaf, setIcon } from "obsidian";
 	import {
 		createPlayground,
 		EmbedOptions
@@ -13,6 +13,7 @@
 	import { openPromptModal } from "../modals/prompt-modal";
 	import { openExternalResourcesModal } from "../modals/external-resources-modal";
 	import { openProjectSettingsModal } from "../modals/project-settings-modal";
+	import moment from "moment";
 
 	const app = this.app;
 	const plugin = app.plugins.plugins["livecodes-for-obsidian"];
@@ -25,12 +26,14 @@
 
 	let copyHTML: HTMLButtonElement;
 	let downloadHTML: HTMLButtonElement;
+	let createNote: HTMLButtonElement;
 	let saveAsJSON: HTMLButtonElement;
 	let copyShareUrl: HTMLButtonElement;
 	let toggleTheme: HTMLButtonElement;
 	let onWatch: HTMLButtonElement;
 	let openExternalResources: HTMLButtonElement;
 	let openProjectSettings: HTMLButtonElement;
+	let leaf: WorkspaceLeaf; 
 
 	const options: EmbedOptions = {
 		config: jsonTemplate!,
@@ -160,7 +163,7 @@
 				}
 			});
 
-			setIcon(saveAsJSON, "braces");
+			setIcon(saveAsJSON, "file-json-2");
 			saveAsJSON.addEventListener("click", async (e) => {
 				e.preventDefault();
 				const cfg = await playground.getConfig();
@@ -199,6 +202,59 @@
 					);
 				}
 			});
+			// addIcon("notebook-pen", '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notebook-pen"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M18.4 2.6a2.17 2.17 0 0 1 3 3L16 11l-4 1 1-4Z"/></svg>');
+			setIcon(createNote, "file-plus-2");
+			createNote.addEventListener("click", async (e) => {
+				e.preventDefault();
+				const cfg = await playground.getConfig();
+				let fName = await openPromptModal(
+					this.app,
+					"Livecodes",
+					"Save note as:",
+					tplPath.substring(tplPath.lastIndexOf("/") + 1, tplPath.length).replace(/\.json/, ""),
+					"e.g. New Playground README",
+					false
+				);
+				if (fName?.length === 0) {
+					return;
+				}
+				// let prettyCfg: string | undefined = JSON.stringify(
+				// 	cfg,
+				// 	null,
+				// 	2
+				// );
+				try {
+					let markDown:string = '';
+					let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath);
+					markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
+					if (cfg.markup.content !== "") {
+						markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
+					}
+					if (cfg.style.content !== "") {
+						markDown += "## "+cfg.style.language+"\n\n```"+cfg.style.language+"\n"+cfg.style.content+"\n```\n\n";
+					}
+					if (cfg.script.content !== "") {
+						markDown += "## "+cfg.script.language+"\n\n```"+cfg.script.language+"\n"+cfg.script.content+"\n```\n\n";
+					}
+					await this.app.vault.create(
+						plugin.settings.notesFolder + "/" + fName + ".md",
+						await createText(markDown)
+					);
+					new Notice(
+						"Note saved as: " +
+							plugin.settings.notesFolder +
+							"/" +
+							fName
+					);
+					// await this.leaf.open(plugin.settings.notesFolder + "/" + fName + ".md")
+					await this.app.workspace.openLinkText(fName, plugin.settings.notesFolder);
+				} catch (error) {
+					new Notice(
+						"❌ " + error + " Click this message to dismiss.",
+						0
+					);
+				}
+			});
 
 			setIcon(copyShareUrl, "link");
 			copyShareUrl.addEventListener("click", async (e) => {
@@ -211,7 +267,7 @@
 				}
 			});
 
-			setIcon(openExternalResources, "terminal");
+			setIcon(openExternalResources, "folder-cog");
 			openExternalResources.addEventListener("click", async (e) => {
 				e.preventDefault();
 				try {
@@ -241,7 +297,7 @@
 				}
 			});
 
-			setIcon(openProjectSettings, "settings");
+			setIcon(openProjectSettings, "cog");
 			openProjectSettings.addEventListener("click", async (e) => {
 				e.preventDefault();
 				try {
@@ -321,6 +377,11 @@
 		<button
 			aria-label="Watch for changes & SAVE"
 			bind:this={onWatch}
+			data-tooltip-position="bottom"
+		/>
+		<button
+			aria-label="Create note"
+			bind:this={createNote}
 			data-tooltip-position="bottom"
 		/>
 		<button

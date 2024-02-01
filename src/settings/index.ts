@@ -78,6 +78,20 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			});
 		});
 
+		new Setting(containerEl)
+		.setName('Notes folder')
+		.setDesc('The vault folder for saving playground notes.')
+		.setClass("livecodes-settings-input")
+		.addSearch((cb) => {
+			new FolderSuggest(cb.inputEl);
+			cb
+			.setPlaceholder("e.g. playgrounds/notes")
+			.setValue(this.plugin.settings.notesFolder)
+			.onChange(async (newPath) => {
+				this.plugin.settings.notesFolder = newPath;
+				await this.plugin.saveSettings();
+			});
+		});
 
 		new Setting(containerEl)
 		.setName('Automatically watch for changes')
