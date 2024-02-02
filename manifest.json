@@ -1,7 +1,7 @@
 {
 	"id": "livecodes-for-obsidian",
 	"name": "Livecodes",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"minAppVersion": "0.15.0",
 	"description": "Livecodes plugin for Obsidian.md",
 	"author": "@gapmiss",
