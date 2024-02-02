@@ -2,6 +2,7 @@ import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFol
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/playground-select-modal";
+import { StarterSelectModal } from "./modals/starter-select-modal";
 import { openPromptModal } from "./modals/prompt-modal";
 import { blankPlayground } from "./util";
 import { Parameters } from "./types";
@@ -120,6 +121,14 @@ export default class LivecodesPlugin extends Plugin {
 			name: "Open Livecodes playground",
 			callback: async () => {
 				new PlaygroundSelectModal(this).open();
+			},
+		});
+
+		this.addCommand({
+			id: "open-starter-select-modal",
+			name: "Open Livecodes starter",
+			callback: async () => {
+				new StarterSelectModal(this).open();
 			},
 		});
 

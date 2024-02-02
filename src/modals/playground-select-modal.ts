@@ -9,10 +9,6 @@ import {
 	Vault
 } from "obsidian";
 
-export const TEMPLATE_FORMATS = [
-	"json"
-];
-
 export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
 	plugin: LivecodesPlugin;
 	vault: Vault;
