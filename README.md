@@ -8,5 +8,5 @@
 
 Read about [why Livecodes](https://livecodes.io/docs/why), it's [features](https://livecodes.io/docs/features/) and [how to self-host](https://livecodes.io/docs/features/self-hosting)
 
-> [!WARNING]
-> ⚠️ Notice: The Livecodes codebase can be self-hosted but is not 100% off-line. Internet connection is required.
+> [!IMPORTANT]
+> The Livecodes codebase can be self-hosted but is not 100% off-line. Internet connection is required.
