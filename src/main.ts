@@ -41,7 +41,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   playgroundFolder: "playgrounds",
   notesFolder: "playgrounds/notes",
   autoWatch: true,
-  appUrl: "https://v19.livecodes.io/",
+  appUrl: "https://v21.livecodes.io/",
   fontFamily: "Default",
   fontSize: "12",
   editor: "monaco",
