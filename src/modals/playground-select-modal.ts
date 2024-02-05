@@ -65,7 +65,7 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
 	private getPlaygroundsInFolder(folder: TFolder): TFile[] {
 		let files: TFile[] = [];
 		Vault.recurseChildren(folder, (file) => {
-			if (file instanceof TFile) {
+			if (file instanceof TFile && file.extension === 'json') {
 				files.push(file);
 			}
 		});

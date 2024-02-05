@@ -7,9 +7,9 @@ import {
 	Notice,
 	TFile
 } from "obsidian";
-import { livecodesStarters } from "src/util/starters";
+import { livecodesStarters } from "src/utils/starters";
 import { openPromptModal } from "./prompt-modal";
-import { blankPlayground } from "../util";
+import { blankPlayground } from "../utils";
 
 export class StarterSelectModal extends FuzzySuggestModal<string> {
 	plugin: LivecodesPlugin;
@@ -56,15 +56,11 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
 	}
 
 	async onChooseItem(starter: any) {
-		// console.log(starter);
-		// return starter;
 		await openPromptModal(this.app, "Livecodes playground", "Save as:", "", "e.g. New Project", false)
-			.then(async (fName:string) => {
-				
+			.then(async (fName:string) => {				
 				if (fName?.length === 0) {
 					return;
 				}
-				
 				let newPlayground = blankPlayground;
 				let foundHead: boolean = starter.head !== undefined;
 				let foundProcessors: boolean = starter.processors !== undefined;
@@ -138,17 +134,5 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
 				}
 			});
 	}
-
-	// private getPlaygroundsInFolder(folder: TFolder): TFile[] {
-	// 	let files: TFile[] = [];
-	// 	Vault.recurseChildren(folder, (file) => {
-	// 		if (file instanceof TFile) {
-	// 			files.push(file);
-	// 		}
-	// 	});
-	// 	return files.sort( (a: { name: string; },b: { name: string; }) => {
-	// 		return a.name.localeCompare(b.name);
-	// 	});
-	// }
 
 }

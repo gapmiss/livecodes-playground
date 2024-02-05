@@ -119,9 +119,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setValue(this.plugin.settings.editor)
 			.onChange(async (newValue) => {
 				this.plugin.settings.editor = newValue;
-				await this.plugin.saveSettings().then(
-					await toggleChoices(newValue)
-				);
+				await toggleChoices(this.plugin.settings.editor);
+				await this.plugin.saveSettings();
 			});
 		});
 
@@ -138,9 +137,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setValue(this.plugin.settings.monacoDarkTheme)
 			.onChange(async (newValue) => {
 				this.plugin.settings.monacoDarkTheme = newValue;
-				await this.plugin.saveSettings().then(
-					await toggleChoices(this.plugin.settings.editor)
-				);
+				await toggleChoices(this.plugin.settings.editor);
+				await this.plugin.saveSettings();
 			});
 		});
 
@@ -157,9 +155,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setValue(this.plugin.settings.monacoLightTheme)
 			.onChange(async (newValue) => {
 				this.plugin.settings.monacoLightTheme = newValue;
-				await this.plugin.saveSettings().then(
-					await toggleChoices(this.plugin.settings.editor)
-				);
+				await toggleChoices(this.plugin.settings.editor);
+				await this.plugin.saveSettings();
 			});
 		});
 
@@ -176,9 +173,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setValue(this.plugin.settings.codemirrorDarkTheme)
 			.onChange(async (newValue) => {
 				this.plugin.settings.codemirrorDarkTheme = newValue;
-				await this.plugin.saveSettings().then(
-					await toggleChoices(this.plugin.settings.editor)
-				);
+				await toggleChoices(this.plugin.settings.editor);
+				await this.plugin.saveSettings();
 			});
 		});
 
@@ -195,9 +191,9 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setValue(this.plugin.settings.codemirrorLightTheme)
 			.onChange(async (newValue) => {
 				this.plugin.settings.codemirrorLightTheme = newValue;
-				await this.plugin.saveSettings().then(
-					await toggleChoices(this.plugin.settings.editor)
-				);
+				await toggleChoices(this.plugin.settings.editor);
+				await this.plugin.saveSettings();
+				
 			});
 		});
 
@@ -214,9 +210,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setValue(this.plugin.settings.codejarDarkTheme)
 			.onChange(async (newValue) => {
 				this.plugin.settings.codejarDarkTheme = newValue;
-				await this.plugin.saveSettings().then(
-					await toggleChoices(this.plugin.settings.editor)
-				);
+				await toggleChoices(this.plugin.settings.editor);
+				await this.plugin.saveSettings();
 			});
 		});
 
@@ -233,9 +228,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 			.setValue(this.plugin.settings.codejarLightTheme)
 			.onChange(async (newValue) => {
 				this.plugin.settings.codejarLightTheme = newValue;
-				await this.plugin.saveSettings().then(
-					await toggleChoices(this.plugin.settings.editor)
-				);
+				await toggleChoices(this.plugin.settings.editor);
+				await this.plugin.saveSettings();
 			});
 		});
 		
@@ -465,26 +459,20 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 		const toggleChoices = async (choice: string): Promise<any> => {
 			switch (choice) {
 				case "monaco":
-					dropdownCodejarDark.setClass("choiceHidden");
-					dropdownCodejarLight.setClass("choiceHidden");
-					dropdownCodemirrorDark.setClass("choiceHidden");
-					dropdownCodemirrorLight.setClass("choiceHidden");
+					let monacodd = [dropdownCodejarDark, dropdownCodejarLight, dropdownCodemirrorDark, dropdownCodemirrorLight];
+					monacodd.forEach((dd) => { dd.setClass("choiceHidden") });
 					activeDocument.querySelector(".dropdownMonacoDark")?.removeClass("choiceHidden");
 					activeDocument.querySelector(".dropdownMonacoLight")?.removeClass("choiceHidden");
 					break;
 				case "codemirror":
-					dropdownCodejarDark.setClass("choiceHidden");
-					dropdownCodejarLight.setClass("choiceHidden");
-					dropdownMonacoDark.setClass("choiceHidden");
-					dropdownMonacoLight.setClass("choiceHidden");
+					let cmdd = [dropdownCodejarDark, dropdownCodejarLight, dropdownMonacoDark, dropdownMonacoLight];
+					cmdd.forEach((dd) => { dd.setClass("choiceHidden") });
 					activeDocument.querySelector(".dropdownCodemirrorDark")?.removeClass("choiceHidden");
 					activeDocument.querySelector(".dropdownCodemirrorLight")?.removeClass("choiceHidden");
 					break;
 				case "codejar":
-					dropdownCodemirrorDark.setClass("choiceHidden");
-					dropdownCodemirrorLight.setClass("choiceHidden");
-					dropdownMonacoDark.setClass("choiceHidden");
-					dropdownMonacoLight.setClass("choiceHidden");
+					let cjdd = [dropdownCodemirrorDark, dropdownCodemirrorLight, dropdownMonacoDark, dropdownMonacoLight]
+					cjdd.forEach((dd) => { dd.setClass("choiceHidden"); });
 					activeDocument.querySelector(".dropdownCodejarDark")?.removeClass("choiceHidden");
 					activeDocument.querySelector(".dropdownCodejarLight")?.removeClass("choiceHidden");
 					break;
@@ -499,7 +487,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 				this.plugin.settings.codejarDarkTheme,
 				this.plugin.settings.codejarLightTheme,
 			]
-			this.plugin.settings.editorTheme = allThemes.join(",");
+			this.plugin.settings.editorTheme = allThemes.filter(n => n);
 			
 			await this.plugin.saveSettings();
 		}

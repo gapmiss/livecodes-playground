@@ -4,7 +4,7 @@ import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/playground-select-modal";
 import { StarterSelectModal } from "./modals/starter-select-modal";
 import { openPromptModal } from "./modals/prompt-modal";
-import { blankPlayground } from "./util";
+import { blankPlayground } from "./utils";
 import { Parameters } from "./types";
 
 interface LivecodesSettings {
@@ -222,7 +222,6 @@ export default class LivecodesPlugin extends Plugin {
       })
     );
 
-
     this.registerEvent(
       this.app.workspace.on("file-menu", async (menu, file) => {
 
@@ -286,16 +285,9 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   public async saveSettings() {
-    await this.saveData(this.settings)
+    await this.saveData(this.settings);
+		// new Notice("Settings saved");
   }
-
-  static foo() {
-    return "bar";
-  }
-
-	static buildOptions() {
-
-	}
 
 	async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
 		await openPromptModal(this.app, "Livecodes playground", "Save as:", "", "e.g. New Project", false)
@@ -347,6 +339,17 @@ export default class LivecodesPlugin extends Plugin {
 						newPlayground.script.language = "typescript";
 					}
 				}
+				else {
+					newPlayground.markup.content = '';
+					newPlayground.style.content = '';
+					newPlayground.script.content = '';
+					newPlayground.script.content = '';
+					newPlayground.script.language = '';
+					newPlayground.activeEditor = '';
+					newPlayground.stylesheets = [];
+					newPlayground.cssPreset = '';
+					newPlayground.scripts = [];
+				}
 
 				newPlayground.title = fName;
 				newPlayground.appUrl = this.settings.appUrl;
@@ -381,6 +384,12 @@ export default class LivecodesPlugin extends Plugin {
 							}
 						);
 					new Notice("New project saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
+					// const allProperties = Object.getOwnPropertyNames(newPlayground);
+					// console.log('allProperties');
+					// console.log(allProperties);
+					// allProperties.forEach(property => {
+					// 	delete newPlayground[property];
+					// });
 				} catch (error) {
 					new Notice("❌ " + error + " Click this message to dismiss.", 0);
 				}

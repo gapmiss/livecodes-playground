@@ -120,6 +120,14 @@ export const codejarDarkThemes = [
 		desc: "Material Oceanic"
 	},
 	{
+		name: "codejar:monochrome@dark",
+		desc: "Monochrome"
+	},
+	{
+		name: "codejar:monochrome-dark@dark",
+		desc: "Monochrome Dark"
+	},
+	{
 		name: "codejar:night-owl@dark",
 		desc: "Night Owl"
 	},

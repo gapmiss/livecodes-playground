@@ -320,6 +320,7 @@ export const livecodesStarters = [
 	},
 	{
 		name: "Svelte",
+		activeEditor: "script",
 		script: {
 			language: "svelte",
 			content: "<script>\n  let title = \"Svelte\";\n  let counter = 0;\n  function increment() {\n    counter += 1;\n  }\n</script>\n\n<style>\n  .container,\n  .container button {\n    text-align: center;\n    font: 1em sans-serif;\n  }\n  .logo {\n    width: 150px;\n  }\n</style>\n\n<div class=\"container\">\n  <h1>Hello, {title}!</h1>\n  <img class=\"logo\" alt=\"logo\" src=\"https://v21.livecodes.io/livecodes/assets/templates/svelte.svg\" />\n  <p>You clicked {counter} times.</p>\n  <button on:click=\"{increment}\">Click me</button>\n</div>\n"

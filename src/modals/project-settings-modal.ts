@@ -30,7 +30,7 @@ export class ProjectSettingsModal extends Modal {
 			contentEl.empty();
 			if (this.title) this.titleEl.setText(this.title);
 
-			const titleInput = new Setting(this.contentEl)
+			new Setting(this.contentEl)
 				.setName('Title')
 				.setDesc('Project title')
 				.setClass("title-setting")
@@ -42,7 +42,7 @@ export class ProjectSettingsModal extends Modal {
 					})
 				);
 
-			const descriptionInput = new Setting(this.contentEl)
+			new Setting(this.contentEl)
 				.setName('Description')
 				.setDesc('Project description')
 				.setClass("description-setting")
@@ -54,7 +54,7 @@ export class ProjectSettingsModal extends Modal {
 					})
 				);
 
-			const headTextArea = new Setting(this.contentEl)
+			new Setting(this.contentEl)
 				.setName('<head>')
 				.setDesc('Content for <head> element')
 				.setClass("head-setting")
@@ -66,7 +66,7 @@ export class ProjectSettingsModal extends Modal {
 					})
 				);
 
-			const htmlAttrsTextArea = new Setting(this.contentEl)
+			new Setting(this.contentEl)
 				.setName('<html> Attrs')
 				.setDesc('Attributes for <html> element.')
 				.setClass("htmlattrs-setting")

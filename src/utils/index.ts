@@ -1,4 +1,5 @@
-import { normalizePath, Notice, type App } from "obsidian";
+import { normalizePath, Notice, requestUrl, type App } from "obsidian";
+// import form2buffer from "./Form2Buffer";
 
 export function saveJson(
 	app: App,
@@ -17,10 +18,6 @@ async function savePlaygroundToFile(
 	await app.vault.adapter.write(filePath, content);
 }
 
-/**
- * 
- * 
- */
 export async function downloadFile(data: BlobPart, fileName: string, type="text/plain") {
 	const a = activeDocument.createElement("a");
 	a.style.display = "none";
@@ -48,6 +45,49 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
 			console.error('Failed to copy to clipboard: ', error)
 		})
 }
+
+export async function postToCodepen(ele: HTMLElement, params: string, path: string = "https://codepen.io/pen/define", method: string='POST') {
+	/**
+	 * https://blog.codepen.io/documentation/prefill/
+	 */
+  const form = window.document.createElement('form');
+  form.method = method;
+  form.action = path;
+	form.target = '_blank';
+	const hiddenField = window.document.createElement('input');
+	hiddenField.type = 'hidden';
+	hiddenField.name = 'data';
+	hiddenField.value = params;	
+	form.appendChild(hiddenField);
+	const submitBttn = window.document.createElement('input');
+	submitBttn.type = 'submit';
+	submitBttn.value = "Create New Pen with Prefilled Data";
+	form.appendChild(submitBttn);  
+  ele.appendChild(form);
+  form.submit();
+	// form.detach();
+
+	/*/
+	const form = new FormData();
+	form.append("data", params);
+	const buffer = await form2buffer(form);
+	console.log('buffer');
+	console.log(buffer);
+	const response = (
+		await requestUrl({
+			url: path,
+			method: "POST",
+			body: buffer.body,
+			headers: {
+				"Content-Type": buffer.contentType,
+			},
+		})
+	);
+	console.log('response');
+	console.log(response);
+	/**/
+}
+
 
 export const blankPlayground = {
 	appUrl: "https://v21.livecodes.io/",

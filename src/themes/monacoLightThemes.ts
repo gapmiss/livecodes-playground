@@ -132,6 +132,14 @@ export const monacoLightThemes = [
     desc: "Merbivore"
 	},
 	{
+		name: "monaco:monochrome@light",
+		desc: "Monochrome"
+	},
+	{
+		name: "monaco:monochrome-dark@light",
+		desc: "Monochrome Dark"
+	},
+	{
 		name: "monaco:monoindustrial@light",
     desc: "monoindustrial"
 	},

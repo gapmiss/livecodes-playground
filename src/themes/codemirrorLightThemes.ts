@@ -88,6 +88,14 @@ export const codemirrorLightThemes = [
 		desc: "Material Light"
 	},
 	{
+		name: "codemirror:monochrome@light",
+		desc: "Monochrome"
+	},
+	{
+		name: "codemirror:monochrome-dark@light",
+		desc: "Monochrome Dark"
+	},
+	{
 		name: "codemirror:noctis-lilac@light",
 		desc: "Noctis Lilac"
 	},

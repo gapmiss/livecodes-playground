@@ -30,7 +30,7 @@ export class ExternalResourcesModal extends Modal {
 			contentEl.empty();
 			if (this.title) this.titleEl.setText(this.title);
 
-			const stylesheetsInput = new Setting(this.contentEl)
+			new Setting(this.contentEl)
 				.setName('External stylesheets')
 				.setClass("stylesheets-setting")
 				.addTextArea(text =>
@@ -42,7 +42,7 @@ export class ExternalResourcesModal extends Modal {
 					})
 				);
 
-			const scriptsTextArea = new Setting(this.contentEl)
+			new Setting(this.contentEl)
 				.setName('External scripts')
 				.setClass("scripts-setting")
 				.addTextArea(text =>
@@ -54,7 +54,7 @@ export class ExternalResourcesModal extends Modal {
 					})
 				);
 
-			const cssPresetTextArea = new Setting(this.contentEl)
+			new Setting(this.contentEl)
 				.setName('CSS preset')
 				.setClass("cssPreset-setting")
 				.addDropdown((dropdown) => {

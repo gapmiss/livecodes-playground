@@ -8,8 +8,9 @@
 	import {
 		saveJson,
 		downloadFile,
-		copyStringToClipboard
-	} from "../util";
+		copyStringToClipboard,
+		// postToCodepen,
+	} from "../utils";
 	import { openPromptModal } from "../modals/prompt-modal";
 	import { openExternalResourcesModal } from "../modals/external-resources-modal";
 	import { openProjectSettingsModal } from "../modals/project-settings-modal";
@@ -31,6 +32,7 @@
 	let copyShareUrl: HTMLButtonElement;
 	let toggleTheme: HTMLButtonElement;
 	let onWatch: HTMLButtonElement;
+	let openInCodepen:HTMLButtonElement;
 	let openExternalResources: HTMLButtonElement;
 	let openProjectSettings: HTMLButtonElement;
 	let leaf: WorkspaceLeaf; 
@@ -202,7 +204,30 @@
 					);
 				}
 			});
-			// addIcon("notebook-pen", '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notebook-pen"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M18.4 2.6a2.17 2.17 0 0 1 3 3L16 11l-4 1 1-4Z"/></svg>');
+
+			/**
+			 * CANNOT POST FORM from Obsidian.md; CORS issue?
+			 */
+			// setIcon(openInCodepen, 'codepen');
+			// openInCodepen.addEventListener(
+			// 	"click", 
+			// 	async (e) => {
+			// 		e.preventDefault();
+			// 		try {
+			// 			let json = {"title": "New Pen", "html": "<div>Hello, World</div>"};
+			// 			postToCodepen(
+			// 				container, 
+			// 				JSON.stringify(json)
+			// 					// Quotes will screw up the JSON
+			// 					.replace(/"/g, "&​quot;")
+			// 					.replace(/'/g, "&apos;")
+			// 			);
+			// 		} catch (error) {
+			// 			console.log(error.message || error);
+			// 		}
+			// 	}
+			// );
+
 			setIcon(createNote, "file-plus-2");
 			createNote.addEventListener("click", async (e) => {
 				e.preventDefault();
@@ -404,6 +429,11 @@
 			bind:this={copyShareUrl}
 			data-tooltip-position="bottom"
 		/>
+		<!-- <button
+			aria-label="Open in Codepen"
+			bind:this={openInCodepen}
+			data-tooltip-position="bottom">
+		</button> -->
 		<button
 			aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
 			bind:this={toggleTheme}
@@ -431,5 +461,6 @@
 	}
 	.buttons-wrapper button {
 		margin-inline: 0.25em;
+		padding: .6em;
 	}
 </style>
