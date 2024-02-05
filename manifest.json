@@ -1,7 +1,7 @@
 {
 	"id": "livecodes-playground",
 	"name": "Livecodes",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"minAppVersion": "0.15.0",
 	"description": "Livecodes code playground",
 	"author": "@gapmiss",
