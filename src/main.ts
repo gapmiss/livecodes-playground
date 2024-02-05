@@ -8,63 +8,63 @@ import { blankPlayground } from "./utils";
 import { Parameters } from "./types";
 
 interface LivecodesSettings {
-	playgroundFolder: string;
-	notesFolder: string;
-	autoWatch: boolean;
-	appUrl: string;
-	fontFamily: string;
-	fontSize: any;
-	editor: any;
-	lineNumbers: boolean;
-	darkTheme: boolean;
-	useTabs: boolean;
-	tabSize: any;
-	closeBrackets: boolean;
-	semicolons: boolean;
-	singleQuote: boolean;
-	trailingComma: boolean;
-	wordWrap: boolean;
-	autoUpdate: boolean;
-	editorTheme: any;
-	monacoDarkTheme: any;
-	monacoLightTheme: any;
-	codemirrorDarkTheme: any;
-	codemirrorLightTheme: any;
-	codejarDarkTheme: any;
-	codejarLightTheme: any;
-	delay: number;
-	jsonTemplate: TFile | undefined;
-	dataHeight: any;
+  playgroundFolder: string;
+  notesFolder: string;
+  autoWatch: boolean;
+  appUrl: string;
+  fontFamily: string;
+  fontSize: any;
+  editor: any;
+  lineNumbers: boolean;
+  darkTheme: boolean;
+  useTabs: boolean;
+  tabSize: any;
+  closeBrackets: boolean;
+  semicolons: boolean;
+  singleQuote: boolean;
+  trailingComma: boolean;
+  wordWrap: boolean;
+  autoUpdate: boolean;
+  editorTheme: any;
+  monacoDarkTheme: any;
+  monacoLightTheme: any;
+  codemirrorDarkTheme: any;
+  codemirrorLightTheme: any;
+  codejarDarkTheme: any;
+  codejarLightTheme: any;
+  delay: number;
+  jsonTemplate: TFile | undefined;
+  dataHeight: any;
 }
 
 const DEFAULT_SETTINGS: LivecodesSettings = {
-	playgroundFolder: "playgrounds",
-	notesFolder: "playgrounds/notes",
-	autoWatch: true,
-	appUrl: "https://v19.livecodes.io/",
-	fontFamily: "Default",
-	fontSize: "12",
-	editor: "monaco",
-	lineNumbers: true,
-	darkTheme: true,
-	useTabs: false,
-	tabSize: "2",
-	closeBrackets: true,
-	semicolons: true,
-	singleQuote: false,
-	trailingComma: true,
-	wordWrap: false,
-	autoUpdate: true,
-	editorTheme: ["vs@light", "vs-dark@dark"],
-	monacoDarkTheme: "",
-	monacoLightTheme: "",
-	codemirrorDarkTheme: "",
-	codemirrorLightTheme: "",
-	codejarDarkTheme: "",
-	codejarLightTheme: "",
-	delay: 1500,
-	jsonTemplate: undefined,
-	dataHeight: "600",
+  playgroundFolder: "playgrounds",
+  notesFolder: "playgrounds/notes",
+  autoWatch: true,
+  appUrl: "https://v19.livecodes.io/",
+  fontFamily: "Default",
+  fontSize: "12",
+  editor: "monaco",
+  lineNumbers: true,
+  darkTheme: true,
+  useTabs: false,
+  tabSize: "2",
+  closeBrackets: true,
+  semicolons: true,
+  singleQuote: false,
+  trailingComma: true,
+  wordWrap: false,
+  autoUpdate: true,
+  editorTheme: ["vs@light", "vs-dark@dark"],
+  monacoDarkTheme: "",
+  monacoLightTheme: "",
+  codemirrorDarkTheme: "",
+  codemirrorLightTheme: "",
+  codejarDarkTheme: "",
+  codejarLightTheme: "",
+  delay: 1500,
+  jsonTemplate: undefined,
+  dataHeight: "600",
 };
 
 export default class LivecodesPlugin extends Plugin {
@@ -73,32 +73,32 @@ export default class LivecodesPlugin extends Plugin {
   plugin: LivecodesPlugin;
   public adapter: DataAdapter = this.app.vault.adapter;
   state: string = 'initial';
-	params: any;
-	fontFamily: any;
-	fontSize: any;
-	editor: any;
-	lineNumbers: boolean;
-	darkTheme: boolean;
-	useTabs: boolean;
-	tabSize: any;
-	closeBrackets: boolean;
-	semicolons: boolean;
-	singleQuote: boolean;
-	trailingComma: boolean;
-	wordWrap: boolean;
-	autoUpdate: boolean;
-	editorTheme: any;
-	monacoDarkTheme: any;
-	monacoLightTheme: any;
-	codemirrorDarkTheme: any;
-	codemirrorLightTheme: any;
-	codejarDarkTheme: any;
-	codejarLightTheme: any;
-	delay: number = 1500;
-	d: any = new Date();
-	jsonTemplate: TFile | undefined;
-	dataHeight: string | undefined;
-	logDebug: boolean = true;
+  params: any;
+  fontFamily: any;
+  fontSize: any;
+  editor: any;
+  lineNumbers: boolean;
+  darkTheme: boolean;
+  useTabs: boolean;
+  tabSize: any;
+  closeBrackets: boolean;
+  semicolons: boolean;
+  singleQuote: boolean;
+  trailingComma: boolean;
+  wordWrap: boolean;
+  autoUpdate: boolean;
+  editorTheme: any;
+  monacoDarkTheme: any;
+  monacoLightTheme: any;
+  codemirrorDarkTheme: any;
+  codemirrorLightTheme: any;
+  codejarDarkTheme: any;
+  codejarLightTheme: any;
+  delay: number = 1500;
+  d: any = new Date();
+  jsonTemplate: TFile | undefined;
+  dataHeight: string | undefined;
+  logDebug: boolean = true;
 
   async onload() {
     await this.loadSettings();
@@ -112,47 +112,47 @@ export default class LivecodesPlugin extends Plugin {
       new PlaygroundSelectModal(this).open();
     });
 
-		this.addRibbonIcon("code", "New Livecodes playground", async () => {
+    this.addRibbonIcon("code", "New Livecodes playground", async () => {
       await this.newLivecodesPlayground(false, null);
     });
 
-		this.addCommand({
-			id: "open-playground-select-modal",
-			name: "Open Livecodes playground",
-			callback: async () => {
-				new PlaygroundSelectModal(this).open();
-			},
-		});
+    this.addCommand({
+      id: "open-playground-select-modal",
+      name: "Open Livecodes playground",
+      callback: async () => {
+        new PlaygroundSelectModal(this).open();
+      },
+    });
 
-		this.addCommand({
-			id: "open-starter-select-modal",
-			name: "Open Livecodes starter",
-			callback: async () => {
-				new StarterSelectModal(this).open();
-			},
-		});
+    this.addCommand({
+      id: "open-starter-select-modal",
+      name: "Open Livecodes starter",
+      callback: async () => {
+        new StarterSelectModal(this).open();
+      },
+    });
 
-		this.addCommand({
-			id: "new-project-in-livecodes",
-			name: "New Livecodes playground",
-			callback: async () => {
-				await this.newLivecodesPlayground(false, null);
-			}
-		});
+    this.addCommand({
+      id: "new-project-in-livecodes",
+      name: "New Livecodes playground",
+      callback: async () => {
+        await this.newLivecodesPlayground(false, null);
+      }
+    });
 
-		/**
-		 * Test for malicious URI ?
-		 * i.e. obsidian://playground?vault=Playground&tplPath=some-malicious-URI
-		 */
-		this.registerObsidianProtocolHandler("playground", async (e) => {
-			const parameters = e as unknown as Parameters;
-			const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);
-			if (f instanceof TFile) {
-				this.settings.jsonTemplate = f;
-				await this.saveSettings();
-				await this.activateView();
-			}
-		});
+    /**
+     * Test for malicious URI ?
+     * i.e. obsidian://playground?vault=Playground&tplPath=some-malicious-URI
+     */
+    this.registerObsidianProtocolHandler("playground", async (e) => {
+      const parameters = e as unknown as Parameters;
+      const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);
+      if (f instanceof TFile) {
+        this.settings.jsonTemplate = f;
+        await this.saveSettings();
+        await this.activateView();
+      }
+    });
 
     this.registerEvent(
       this.app.workspace.on("file-menu", (menu, file) => {
@@ -164,9 +164,9 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Open playground")
                 .setIcon("code")
                 .onClick(async () => {
-									this.settings.jsonTemplate = f;
-									await this.saveSettings();
-									await this.activateView();
+                  this.settings.jsonTemplate = f;
+                  await this.saveSettings();
+                  await this.activateView();
                 });
             });
             menu.addItem((item) => {
@@ -174,8 +174,8 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Copy markdown link to playground")
                 .setIcon("link")
                 .onClick(async () => {
-									let tplPath = normalizePath(f.path);
-									await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath)+")");
+                  let tplPath = normalizePath(f.path);
+                  await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath)+")");
                 });
             });
             menu.addItem((item) => {
@@ -183,8 +183,8 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Copy Obsidian URL to playground")
                 .setIcon("link")
                 .onClick(async () => {
-									let tplPath = normalizePath(f.path);
-									await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath));
+                  let tplPath = normalizePath(f.path);
+                  await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath));
                 });
             });
           }
@@ -198,26 +198,26 @@ export default class LivecodesPlugin extends Plugin {
         const f = this.app.vault.getAbstractFileByPath(file.path);
 
         if (f instanceof TFolder && f.children.length > 1 && f.children.length <= 3) {
-					const ALLOWED_EXTS = ["html","css","js","ts","json"];
-					let showMenu = false;
-					f.children.forEach((f) => {
-						let fileExt = f.name.split('.').pop();
-						if (ALLOWED_EXTS.includes(fileExt as string)) {
-							showMenu = true;
-							return;
-						}
-					});
+          const ALLOWED_EXTS = ["html","css","js","ts","json"];
+          let showMenu = false;
+          f.children.forEach((f) => {
+            let fileExt = f.name.split('.').pop();
+            if (ALLOWED_EXTS.includes(fileExt as string)) {
+              showMenu = true;
+              return;
+            }
+          });
 
-					if (showMenu) {
+          if (showMenu) {
             menu.addItem( (item) => {
               item
                 .setTitle("Open in Livecodes playground")
                 .setIcon("file-code-2")
                 .onClick(async () => {
-									await this.newLivecodesPlayground(true, f);
+                  await this.newLivecodesPlayground(true, f);
                 });
             });
-					}
+          }
         }
       })
     );
@@ -228,23 +228,23 @@ export default class LivecodesPlugin extends Plugin {
         const f = this.app.vault.getAbstractFileByPath(file.path);
 
         if (f instanceof TFile) {
-					const ALLOWED_EXTS = ["html","css","js","ts"];
-					let showMenu = false;					
-					let fileExt = f.name.split('.').pop();
-					if (ALLOWED_EXTS.includes(fileExt as string)) {
-						showMenu = true;
-					}
+          const ALLOWED_EXTS = ["html","css","js","ts"];
+          let showMenu = false;					
+          let fileExt = f.name.split('.').pop();
+          if (ALLOWED_EXTS.includes(fileExt as string)) {
+            showMenu = true;
+          }
 
-					if (showMenu) {
+          if (showMenu) {
             menu.addItem( (item) => {
               item
                 .setTitle("Open in Livecodes playground")
                 .setIcon("file-code-2")
                 .onClick(async () => {
-									await this.newLivecodesPlayground(true, f);
+                  await this.newLivecodesPlayground(true, f);
                 });
             });
-					}
+          }
         }
       })
     );
@@ -257,16 +257,16 @@ export default class LivecodesPlugin extends Plugin {
 
   onunload() {
     this.state = "unloaded";
-		this.app.workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND).forEach((leaf) => {
-			if (leaf.view instanceof PlaygroundView) {
-				leaf.detach();
-			}
-		});
+    this.app.workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND).forEach((leaf) => {
+      if (leaf.view instanceof PlaygroundView) {
+        leaf.detach();
+      }
+    });
     console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
   }
 
   async activateView() {
-		new Notice("Loading playground…", 5000);
+    new Notice("Loading playground…", 5000);
 
     await this.app.workspace.getLeaf(true).setViewState({
       type: VIEW_TYPE_PLAYGROUND,
@@ -276,8 +276,8 @@ export default class LivecodesPlugin extends Plugin {
     const leaf = this.app.workspace.getMostRecentLeaf();
 
     if (leaf?.view instanceof PlaygroundView) {
-	    this.app.workspace.revealLeaf(leaf);
-		}
+      this.app.workspace.revealLeaf(leaf);
+    }
   }
 
   async loadSettings() {
@@ -286,128 +286,128 @@ export default class LivecodesPlugin extends Plugin {
 
   public async saveSettings() {
     await this.saveData(this.settings);
-		// new Notice("Settings saved");
+    // new Notice("Settings saved");
   }
 
-	async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
-		await openPromptModal(this.app, "Livecodes playground", "Save as:", "", "e.g. New Project", false)
-			.then(async (fName:string) => {
-				
-				if (fName?.length === 0) {
-					return;
-				}
-				
-				let newPlayground = blankPlayground;
+  async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
+    await openPromptModal(this.app, "Livecodes playground", "Save as:", "", "e.g. New Project", false)
+      .then(async (fName:string) => {
+        
+        if (fName?.length === 0) {
+          return;
+        }
+        
+        let newPlayground = blankPlayground;
 
-				if (fromMenu && file !== null && (file instanceof TFile || file instanceof TFolder)) {
-					let foundMarkup: boolean = false;
-					let foundStyle: boolean = false;
-					let foundScript: boolean = false;
-					let foundTypeScript: boolean = false;
-					if (file instanceof TFile) {
-						let fileExt = file.name.split('.').pop();
-						foundMarkup = fileExt === 'html';
-						foundStyle = fileExt === 'css';
-						foundScript = fileExt === 'js';
-						foundTypeScript = fileExt === 'ts';
-					} else if (file instanceof TFolder) {
-						foundMarkup = await this.adapter.exists(file.path+"/index.html");
-						foundStyle = await this.adapter.exists(file.path+"/style.css");
-						foundScript = await this.adapter.exists(file.path+"/script.js");
-						foundTypeScript = await this.adapter.exists(file.path+"/script.ts");							
-					}
+        if (fromMenu && file !== null && (file instanceof TFile || file instanceof TFolder)) {
+          let foundMarkup: boolean = false;
+          let foundStyle: boolean = false;
+          let foundScript: boolean = false;
+          let foundTypeScript: boolean = false;
+          if (file instanceof TFile) {
+            let fileExt = file.name.split('.').pop();
+            foundMarkup = fileExt === 'html';
+            foundStyle = fileExt === 'css';
+            foundScript = fileExt === 'js';
+            foundTypeScript = fileExt === 'ts';
+          } else if (file instanceof TFolder) {
+            foundMarkup = await this.adapter.exists(file.path+"/index.html");
+            foundStyle = await this.adapter.exists(file.path+"/style.css");
+            foundScript = await this.adapter.exists(file.path+"/script.js");
+            foundTypeScript = await this.adapter.exists(file.path+"/script.ts");							
+          }
 
-					if (foundMarkup) {
-						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/index.html") : this.app.vault.getAbstractFileByPath(file.path);
-						let t = await this.app.vault.read(c as TFile)
-						newPlayground.markup.content = t;
-					}
-					if (foundStyle) {
-						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/style.css") : this.app.vault.getAbstractFileByPath(file.path);
-						let t = await this.app.vault.read(c as TFile)
-						newPlayground.style.content = t;
-					}
-					if (foundScript) {
-						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.js") : this.app.vault.getAbstractFileByPath(file.path);
-						let t = await this.app.vault.read(c as TFile)
-						newPlayground.script.content = t;
-					}
-					if (foundTypeScript) {
-						let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.ts") : this.app.vault.getAbstractFileByPath(file.path);
-						let t = await this.app.vault.read(c as TFile)
-						newPlayground.script.content = t;
-						newPlayground.script.language = "typescript";
-					}
-				}
-				else {
-					newPlayground.markup.content = '';
-					newPlayground.style.content = '';
-					newPlayground.script.content = '';
-					newPlayground.script.content = '';
-					newPlayground.script.language = '';
-					newPlayground.activeEditor = '';
-					newPlayground.stylesheets = [];
-					newPlayground.cssPreset = '';
-					newPlayground.scripts = [];
-				}
+          if (foundMarkup) {
+            let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/index.html") : this.app.vault.getAbstractFileByPath(file.path);
+            let t = await this.app.vault.read(c as TFile)
+            newPlayground.markup.content = t;
+          }
+          if (foundStyle) {
+            let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/style.css") : this.app.vault.getAbstractFileByPath(file.path);
+            let t = await this.app.vault.read(c as TFile)
+            newPlayground.style.content = t;
+          }
+          if (foundScript) {
+            let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.js") : this.app.vault.getAbstractFileByPath(file.path);
+            let t = await this.app.vault.read(c as TFile)
+            newPlayground.script.content = t;
+          }
+          if (foundTypeScript) {
+            let c = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.ts") : this.app.vault.getAbstractFileByPath(file.path);
+            let t = await this.app.vault.read(c as TFile)
+            newPlayground.script.content = t;
+            newPlayground.script.language = "typescript";
+          }
+        }
+        else {
+          newPlayground.markup.content = '';
+          newPlayground.style.content = '';
+          newPlayground.script.content = '';
+          newPlayground.script.content = '';
+          newPlayground.script.language = '';
+          newPlayground.activeEditor = '';
+          newPlayground.stylesheets = [];
+          newPlayground.cssPreset = '';
+          newPlayground.scripts = [];
+        }
 
-				newPlayground.title = fName;
-				newPlayground.appUrl = this.settings.appUrl;
-				newPlayground.fontFamily = this.settings.fontFamily;
-				newPlayground.fontSize = this.settings.fontSize;
-				newPlayground.editor = this.settings.editor;
-				newPlayground.editorTheme = this.settings.editorTheme;
-				newPlayground.lineNumbers = this.settings.lineNumbers;
-				newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
-				newPlayground.useTabs = this.settings.useTabs;
-				newPlayground.tabSize = this.settings.tabSize;
-				newPlayground.closeBrackets = this.settings.closeBrackets;
-				newPlayground.semicolons = this.settings.semicolons;
-				newPlayground.singleQuote = this.settings.singleQuote;
-				newPlayground.trailingComma = this.settings.trailingComma;
-				newPlayground.wordWrap = this.settings.wordWrap;
-				newPlayground.autoupdate = this.settings.autoUpdate;
-				newPlayground.delay = this.settings.delay;
+        newPlayground.title = fName;
+        newPlayground.appUrl = this.settings.appUrl;
+        newPlayground.fontFamily = this.settings.fontFamily;
+        newPlayground.fontSize = this.settings.fontSize;
+        newPlayground.editor = this.settings.editor;
+        newPlayground.editorTheme = this.settings.editorTheme;
+        newPlayground.lineNumbers = this.settings.lineNumbers;
+        newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+        newPlayground.useTabs = this.settings.useTabs;
+        newPlayground.tabSize = this.settings.tabSize;
+        newPlayground.closeBrackets = this.settings.closeBrackets;
+        newPlayground.semicolons = this.settings.semicolons;
+        newPlayground.singleQuote = this.settings.singleQuote;
+        newPlayground.trailingComma = this.settings.trailingComma;
+        newPlayground.wordWrap = this.settings.wordWrap;
+        newPlayground.autoupdate = this.settings.autoUpdate;
+        newPlayground.delay = this.settings.delay;
 
-				let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
-				try {
-					await this.app.vault
-						.create(
-							this.settings.playgroundFolder+'/'+fName + ".json",
-							await this.createText(
-								prettyCfg
-							)
-						).then(async (f:TFile) => {
-								this.settings.jsonTemplate = f;
-								await this.saveSettings();
-								await this.activateView();
-							}
-						);
-					new Notice("New project saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
-					// const allProperties = Object.getOwnPropertyNames(newPlayground);
-					// console.log('allProperties');
-					// console.log(allProperties);
-					// allProperties.forEach(property => {
-					// 	delete newPlayground[property];
-					// });
-				} catch (error) {
-					new Notice("❌ " + error + " Click this message to dismiss.", 0);
-				}
-			});
-	};
+        let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
+        try {
+          await this.app.vault
+            .create(
+              this.settings.playgroundFolder+'/'+fName + ".json",
+              await this.createText(
+                prettyCfg
+              )
+            ).then(async (f:TFile) => {
+                this.settings.jsonTemplate = f;
+                await this.saveSettings();
+                await this.activateView();
+              }
+            );
+          new Notice("New project saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
+          // const allProperties = Object.getOwnPropertyNames(newPlayground);
+          // console.log('allProperties');
+          // console.log(allProperties);
+          // allProperties.forEach(property => {
+          // 	delete newPlayground[property];
+          // });
+        } catch (error) {
+          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        }
+      });
+  };
 
   /**
-	 * https://github.com/eoureo/obsidian-runjs/blob/master/src/main.ts#L1394
-	 */
+   * https://github.com/eoureo/obsidian-runjs/blob/master/src/main.ts#L1394
+   */
   async reload() {
     this.state = "start reloading";
     console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
 
-		this.app.workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND).forEach((leaf) => {
-			if (leaf.view instanceof PlaygroundView) {
-				leaf.detach();
-			}
-		});
+    this.app.workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND).forEach((leaf) => {
+      if (leaf.view instanceof PlaygroundView) {
+        leaf.detach();
+      }
+    });
 
     let manifest_id = this.manifest.id;
     // @ts-ignore
@@ -436,25 +436,25 @@ export default class LivecodesPlugin extends Plugin {
     }
   }
 
-	sleep(ms:number) {
+  sleep(ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-	async copyStringToClipboard(text:string, topic:string|undefined=undefined) {
-		navigator.clipboard
-			.writeText(text)
-			.then(function () {
-				new Notice((topic !== undefined ? topic + " " : "") + "copied to clipboard", 2500);
-			})
-			.catch(function (error) {
-				console.error('Failed to copy to clipboard: ', error)
-			})
-	}
+  async copyStringToClipboard(text:string, topic:string|undefined=undefined) {
+    navigator.clipboard
+      .writeText(text)
+      .then(function () {
+        new Notice((topic !== undefined ? topic + " " : "") + "copied to clipboard", 2500);
+      })
+      .catch(function (error) {
+        console.error('Failed to copy to clipboard: ', error)
+      })
+  }
 
-	createText = async (
-			fileContent: string|undefined
-		): Promise<string> => {
-			return fileContent?.trim() as string;
-	}
+  createText = async (
+      fileContent: string|undefined
+    ): Promise<string> => {
+      return fileContent?.trim() as string;
+  }
 
 }
