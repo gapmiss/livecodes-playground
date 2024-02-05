@@ -1,6 +1,6 @@
 {
-	"name": "livecodes-for-obsidian",
-	"version": "0.1.0",
+	"name": "livecodes-playgrounds",
+	"version": "0.7.0",
 	"description": "Livecodes plugin for Obsidian.md",
 	"main": "main.js",
 	"scripts": {
