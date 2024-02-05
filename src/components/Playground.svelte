@@ -17,7 +17,7 @@
   import moment from "moment";
 
   const app = this.app;
-  const plugin = app.plugins.plugins["livecodes-for-obsidian"];
+  const plugin = app.plugins.plugins["livecodes-playground"];
   let container: any;
   let playground: any;
   let watcher: { remove: () => void } | null;
