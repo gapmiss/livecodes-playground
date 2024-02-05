@@ -7,10 +7,10 @@ import Component from "../components/Playground.svelte";
 export const VIEW_TYPE_PLAYGROUND = "Livecodes-view";
 
 export class PlaygroundView extends ItemView {
-	plugin: LivecodesPlugin;
+  plugin: LivecodesPlugin;
   component: Component;
   jsonTemplate: TFile | undefined;
-	adapter: FileSystemAdapter;
+  adapter: FileSystemAdapter;
 
   constructor(
     app: App,
@@ -20,7 +20,7 @@ export class PlaygroundView extends ItemView {
   ) {
     super(leaf);
     this.jsonTemplate = jsonTemplate;
-		this.adapter = this.app.vault.adapter as FileSystemAdapter;
+    this.adapter = this.app.vault.adapter as FileSystemAdapter;
   }
 
   getViewType() {
@@ -41,18 +41,18 @@ export class PlaygroundView extends ItemView {
   }
 
   async onOpen() {
-		if (this.contentEl) {
-			this.contentEl.empty();
-		}
+    if (this.contentEl) {
+      this.contentEl.empty();
+    }
   
     let foundTemplate: boolean = (this.jsonTemplate !== undefined);
     
-		let tplPath = this.jsonTemplate?.path;
-		let tpl = await this.adapter.read(tplPath!);
+    let tplPath = this.jsonTemplate?.path;
+    let tpl = await this.adapter.read(tplPath!);
     let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
-		
+    
     if (foundTemplate) {
-			let tplPath = normalizePath((this.jsonTemplate!).path);
+      let tplPath = normalizePath((this.jsonTemplate!).path);
       let tpl = await this.adapter.read(tplPath);
       newTemplate = JSON.parse(tpl) as Partial<config>;
     }

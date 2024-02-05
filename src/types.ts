@@ -1,3 +1,3 @@
 export interface Parameters {
-	tplPath: string;
+  tplPath: string;
 }

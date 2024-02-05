@@ -39,6 +39,11 @@ or:
 4. Settings > Community plugins > reload **Installed plugins**
 5. enable plugin
 
+
+## 🚧 ROADMAP
+
+- [ ] test on Obsidian.md mobile app
+
 ## Issues and bug reports
 
 Please submit issues, bug reports, feature requests, etc. to [gapmiss/livecodes-playground/issues](https://github.com/gapmiss/livecodes-playground/issues)
