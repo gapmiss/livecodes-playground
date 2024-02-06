@@ -32,6 +32,9 @@ export class PlaygroundView extends ItemView {
       .substring(
         this.jsonTemplate?.path.lastIndexOf("/") + 1, 
         this.jsonTemplate?.path.length
+      ).replace(
+        ".json",
+        ""
       );
     return "Livecodes / "+fileName;
   }
