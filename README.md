@@ -43,6 +43,7 @@ or:
 ## 🚧 ROADMAP
 
 - [ ] test on Obsidian.md mobile app
+- [X] driver.js onboarding
 
 ## Issues and bug reports
 

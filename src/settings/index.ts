@@ -1,4 +1,5 @@
 import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent } from 'obsidian';
+import { driverObj } from "../utils";
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
 import { monacoDarkThemes } from "../themes/monacoDarkThemes";
@@ -17,6 +18,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
   }
 
   display(): void {
+
     let debounceNotice = debounce(
       () => {
         new Notice("Trailing slash is required");
@@ -26,6 +28,23 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     let { containerEl } = this;
     containerEl.addClass("livecodes-settings-tab");
     containerEl.empty();
+
+    new Setting(containerEl)
+    .setName(this.plugin.manifest.name)
+    .setDesc("Take a tour bitches.")
+    .setClass("setting-item-heading")
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Take a tour")
+      .onClick(() => {
+        driverObj.drive();
+      });
+      component.extraSettingsEl.classList.add("tour-button");
+    })
+    .then(cb => {
+      cb.settingEl.classList.add("setting-head");
+    });
 
     new Setting(containerEl)
     .setName(this.plugin.manifest.name)
@@ -48,7 +67,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('App URL')
       .setDesc('URL for serving livecodes static codebase, e.g. https://v21.livecodes.io/')
-      .setClass("livecodes-settings-input")
+      .setClass("livecodes-settings-input-appurl")
       .addText(text =>
       text
       .setPlaceholder('https://v19.livecodes.io/')
@@ -66,7 +85,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
     .setName('Playgrounds folder')
     .setDesc('The vault folder for saving playground JSON files.')
-    .setClass("livecodes-settings-input")
+    .setClass("livecodes-settings-input-playgrounds")
     .addSearch((cb) => {
       new FolderSuggest(cb.inputEl);
       cb
@@ -81,7 +100,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
     .setName('Notes folder')
     .setDesc('The vault folder for saving playground notes.')
-    .setClass("livecodes-settings-input")
+    .setClass("livecodes-settings-input-notes")
     .addSearch((cb) => {
       new FolderSuggest(cb.inputEl);
       cb
@@ -96,6 +115,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
     .setName('Automatically watch for changes')
     .setDesc('Enable to watch for changes and automatically save projects.')
+    .setClass("livecodes-settings-input-autowatch")
     .addToggle(toggle =>
       toggle
       .setValue(this.plugin.settings.autoWatch)
