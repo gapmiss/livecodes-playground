@@ -42,8 +42,16 @@ or:
 
 ## 🚧 ROADMAP
 
-- [ ] test on Obsidian.md mobile app
-- [X] driver.js onboarding
+- [X] test Obsidian.md mobile app
+- [ ] onboarding
+- [ ] search playgrounds
+- [ ] save as gist
+- [ ] project/playground tags
+- [ ] add tour to playground buttons
+
+## Tips
+
+- [ ] cursor position and Obsidian.md commands when inside the playground iframe
 
 ## Issues and bug reports
 

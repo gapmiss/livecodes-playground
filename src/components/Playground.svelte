@@ -4,6 +4,7 @@
     createPlayground,
     EmbedOptions
   } from "livecodes";
+  import { Boarding } from "boarding.js";
   import { onMount } from "svelte";
   import {
     saveJson,
@@ -11,10 +12,12 @@
     copyStringToClipboard,
     // postToCodepen,
   } from "../utils";
+  import { buttonTour } from "../settings/onboarding";
   import { openPromptModal } from "../modals/prompt-modal";
   import { openExternalResourcesModal } from "../modals/external-resources-modal";
-  import { openProjectSettingsModal } from "../modals/project-settings-modal";
+  import { openPlaygroundSettingsModal } from "../modals/playground-settings-modal";
   import moment from "moment";
+	
 
   const app = this.app;
   const plugin = app.plugins.plugins["livecodes-playground"];
@@ -33,8 +36,9 @@
   let toggleTheme: HTMLButtonElement;
   let onWatch: HTMLButtonElement;
   let openInCodepen:HTMLButtonElement;
+  let showHelp:HTMLButtonElement;
   let openExternalResources: HTMLButtonElement;
-  let openProjectSettings: HTMLButtonElement;
+  let openPlaygroundSettings: HTMLButtonElement;
   let leaf: WorkspaceLeaf; 
 
   const options: EmbedOptions = {
@@ -285,7 +289,7 @@
       copyShareUrl.addEventListener("click", async (e) => {
         e.preventDefault();
         try {
-          const shareUrl = await playground.getShareUrl();
+          const shareUrl = await playground.getShareUrl(plugin.settings.shortUrl);
           await copyStringToClipboard(shareUrl, "Share URL");
         } catch (error) {
           console.log(error.message || error);
@@ -322,8 +326,8 @@
         }
       });
 
-      setIcon(openProjectSettings, "cog");
-      openProjectSettings.addEventListener("click", async (e) => {
+      setIcon(openPlaygroundSettings, "cog");
+      openPlaygroundSettings.addEventListener("click", async (e) => {
         e.preventDefault();
         try {
           let conf = {
@@ -332,10 +336,10 @@
             head: await playground.getConfig().then((t: any) => {return t.head}),
             htmlAttrs: await playground.getConfig().then((t: any) => {return t.htmlAttrs})
           };
-          await openProjectSettingsModal(
+          await openPlaygroundSettingsModal(
               this.app,
               this.plugin,
-              "Project settings",
+              "Playground settings",
               conf
             )
             .then(
@@ -378,6 +382,30 @@
         }
       }
 
+      setIcon(showHelp, "help-circle");
+      showHelp.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          const boarding = new Boarding({
+            onPopoverRender: (popoverElements) => {
+              // setTimeout, so we the count runs immediatly after all internal boarding logic has run. Otherwise we would get an outdated boarding.currentStep number
+              setTimeout(() => {
+                popoverElements.popoverTitle.innerText = `${
+                  popoverElements.popoverTitle.innerText
+                } (${boarding.currentStep + 1}/${
+                  boarding.getSteps().length
+                })`;
+              }, 0);
+            },
+            opacity: 0.75,
+          });
+          boarding.defineSteps(buttonTour);
+          boarding.start();
+        } catch (error) {
+          console.log(error.message || error);
+        }
+      });
+
     });
   });
 
@@ -403,31 +431,37 @@
       aria-label="Watch for changes & SAVE"
       bind:this={onWatch}
       data-tooltip-position="bottom"
+      class="watch-button"
     />
     <button
       aria-label="Create note"
       bind:this={createNote}
       data-tooltip-position="bottom"
+      class="create-note-button"
     />
     <button
       aria-label="Save as JSON"
       bind:this={saveAsJSON}
       data-tooltip-position="bottom"
+      class="save-json-button"
     />
     <button
       aria-label="Save as HTML"
       bind:this={downloadHTML}
       data-tooltip-position="bottom"
+      class="save-html-button"
     />
     <button
       aria-label="Copy HTML to clipboard"
       bind:this={copyHTML}
       data-tooltip-position="bottom"
+      class="copy-html-button"
     />
     <button
       aria-label="Copy share URL to clipboard"
       bind:this={copyShareUrl}
       data-tooltip-position="bottom"
+      class="share-url-button"
     />
     <!-- <button
       aria-label="Open in Codepen"
@@ -438,15 +472,23 @@
       aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
       bind:this={toggleTheme}
       data-tooltip-position="bottom"
+      class="theme-mode-button"
     />
     <button
       aria-label="External resources"
       bind:this={openExternalResources}
       data-tooltip-position="bottom"
+      class="external-resources-button"
     />
     <button
-      aria-label="Project settings"
-      bind:this={openProjectSettings}
+      aria-label="Playground settings"
+      bind:this={openPlaygroundSettings}
+      data-tooltip-position="bottom"
+      class="playground-settings-button"
+    />
+    <button
+      aria-label="Help"
+      bind:this={showHelp}
       data-tooltip-position="bottom"
     />
   </div>

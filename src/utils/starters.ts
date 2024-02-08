@@ -396,7 +396,7 @@ export const livecodesStarters = [
     }
   },
   {
-    name: "Typescripts",
+    name: "Typescript",
     markup: {
       language: "html",
       content: "<div class=\"container\">\n  <h1>Hello, <span id=\"title\">World</span>!</h1>\n  <img class=\"logo\" alt=\"logo\" src=\"https://v21.livecodes.io/livecodes/assets/templates/typescript.svg\" />\n  <p>You clicked <span id=\"counter\">0</span> times.</p>\n  <button id=\"counter-button\">Click me</button>\n</div>\n"

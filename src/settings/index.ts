@@ -1,5 +1,5 @@
 import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent } from 'obsidian';
-import { driverObj } from "../utils";
+import { onboardingSteps, helpPopovers } from "./onboarding";
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
 import { monacoDarkThemes } from "../themes/monacoDarkThemes";
@@ -8,6 +8,7 @@ import { codemirrorDarkThemes } from "../themes/codemirrorDarkThemes";
 import { codemirrorLightThemes } from "../themes/codemirrorLightThemes";
 import { codejarDarkThemes } from "../themes/codejarDarkThemes";
 import { codejarLightThemes } from "../themes/codejarLightThemes";
+import { Boarding } from "boarding.js";
 
 export class LivecodesSettingsTab extends PluginSettingTab {
   plugin: LivecodesPlugin;
@@ -30,35 +31,30 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     new Setting(containerEl)
-    .setName(this.plugin.manifest.name)
-    .setDesc("Take a tour bitches.")
-    .setClass("setting-item-heading")
+    .setName("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version)
+    .setDesc("Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options.")
+    .setClass("setting-item-heading-onboarding")
     .addExtraButton((component) => {
       component
       .setIcon("help-circle")
       .setTooltip("Take a tour")
       .onClick(() => {
-        driverObj.drive();
+        const boarding = new Boarding({
+          onPopoverRender: (popoverElements) => {
+            setTimeout(() => {
+              popoverElements.popoverTitle.innerText = `${
+                popoverElements.popoverTitle.innerText
+              } (${boarding.currentStep + 1}/${
+                boarding.getSteps().length
+              })`;
+            }, 0);
+          },
+          opacity: 0.75,
+        });
+        boarding.defineSteps(onboardingSteps);
+        boarding.start();
       });
-      component.extraSettingsEl.classList.add("tour-button");
-    })
-    .then(cb => {
-      cb.settingEl.classList.add("setting-head");
-    });
-
-    new Setting(containerEl)
-    .setName(this.plugin.manifest.name)
-    .setDesc("(v" + this.plugin.manifest.version + ") ⚠️ NOTE: All settings changes are applied to future Livecodes playgrounds. Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
-    .setClass("setting-item-heading")
-    .addExtraButton((component) => {
-      component
-      .setIcon("refresh-cw")
-      .setTooltip("Reload plugin")
-      .onClick(async () => {
-        await this.plugin.reload();
-        new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
-      });
-      component.extraSettingsEl.classList.add("mod-warning");
+      component.extraSettingsEl.classList.add("onboarding-button");
     })
     .then(cb => {
       cb.settingEl.classList.add("setting-head");
@@ -66,7 +62,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName('App URL')
-      .setDesc('URL for serving livecodes static codebase, e.g. https://v21.livecodes.io/')
+      .setDesc('URL for serving livecodes static codebase')
       .setClass("livecodes-settings-input-appurl")
       .addText(text =>
       text
@@ -80,11 +76,53 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           return;
         }
       })
-    );
+    )
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.livecodes-settings-input-appurl', 
+            popover: helpPopovers.appUrl
+          }
+        )
+      })
+    });
+
 
     new Setting(containerEl)
-    .setName('Playgrounds folder')
-    .setDesc('The vault folder for saving playground JSON files.')
+    .setName('Short share URL')
+    .setDesc('Enable short URL service for sharing a playground URL. Click the help icon for privacy implications.')
+    .setClass("livecodes-settings-input-shorturl")
+    .addToggle((toggle) => {
+      toggle
+      .setValue(this.plugin.settings.shortUrl)
+      .onChange(async newValue => {
+        this.plugin.settings.shortUrl = newValue;
+        await this.plugin.saveSettings();
+      })
+    })
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.livecodes-settings-input-shorturl', 
+            popover: helpPopovers.shortUrl
+          }
+        )
+      })
+    });
+
+    new Setting(containerEl)
+    .setName('Playground folder')
+    .setDesc('Vault folder for saving playground JSON files.')
     .setClass("livecodes-settings-input-playgrounds")
     .addSearch((cb) => {
       new FolderSuggest(cb.inputEl);
@@ -95,11 +133,55 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         this.plugin.settings.playgroundFolder = newPath;
         await this.plugin.saveSettings();
       });
+    })
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.livecodes-settings-input-playgrounds', 
+            popover: helpPopovers.playgroundFolder
+          }
+        )
+      })
     });
+
+
+    new Setting(containerEl)
+    .setName('Auto watch')
+    .setDesc('Enable to watch for playground changes and save')
+    .setClass("livecodes-settings-input-autowatch")
+    .addToggle((toggle) => {
+      toggle
+      .setValue(this.plugin.settings.autoWatch)
+      .onChange(async newValue => {
+        this.plugin.settings.autoWatch = newValue;
+        await this.plugin.saveSettings();
+      })
+    })
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.livecodes-settings-input-autowatch', 
+            popover: helpPopovers.autoWatch
+          }
+        )
+      })
+    });
+
+
 
     new Setting(containerEl)
     .setName('Notes folder')
-    .setDesc('The vault folder for saving playground notes.')
+    .setDesc('Vault folder for saving playground notes.')
     .setClass("livecodes-settings-input-notes")
     .addSearch((cb) => {
       new FolderSuggest(cb.inputEl);
@@ -110,24 +192,25 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         this.plugin.settings.notesFolder = newPath;
         await this.plugin.saveSettings();
       });
+    })
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.livecodes-settings-input-notes', 
+            popover: helpPopovers.notesFolder
+          }
+        )
+      })
     });
 
-    new Setting(containerEl)
-    .setName('Automatically watch for changes')
-    .setDesc('Enable to watch for changes and automatically save projects.')
-    .setClass("livecodes-settings-input-autowatch")
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.autoWatch)
-      .onChange(async newValue => {
-        this.plugin.settings.autoWatch = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
 
     new Setting(containerEl)
-    .setName('Editor')
-    .setDesc('Choice of code editor.')
+    .setName('Code editor')
     .setClass("dropdownEditor")
     .addDropdown((dropdown) => {
       dropdown
@@ -142,11 +225,24 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         await toggleChoices(this.plugin.settings.editor);
         await this.plugin.saveSettings();
       });
+    })
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.dropdownEditor', 
+            popover: helpPopovers.editor
+          }
+        )
+      })
     });
 
     const dropdownMonacoDark = new Setting(containerEl)
     .setName('Monaco theme (dark mode)')
-    .setDesc('Choice of monaco editor theme.')
     .setClass("dropdownMonacoDark")
     .addDropdown((dropdown: DropdownComponent) => {
       monacoDarkThemes.forEach(({ name, desc }) => {
@@ -164,7 +260,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     const dropdownMonacoLight = new Setting(containerEl)
     .setName('Monaco theme (light mode)')
-    .setDesc('Choice of monaco editor theme.')
     .setClass("dropdownMonacoLight")
     .addDropdown((dropdown: DropdownComponent) => {
       monacoLightThemes.forEach(({ name, desc }) => {
@@ -182,7 +277,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     const dropdownCodemirrorDark = new Setting(containerEl)
     .setName('Codemirror theme (dark mode)')
-    .setDesc('Choice of codemirror editor theme.')
     .setClass("dropdownCodemirrorDark")
     .addDropdown((dropdown: DropdownComponent) => {
       codemirrorDarkThemes.forEach(({ name, desc }) => {
@@ -200,7 +294,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     const dropdownCodemirrorLight = new Setting(containerEl)
     .setName('Codemirror theme (light mode)')
-    .setDesc('Choice of codemirror editor theme.')
     .setClass("dropdownCodemirrorLight")
     .addDropdown((dropdown: DropdownComponent) => {
       codemirrorLightThemes.forEach(({ name, desc }) => {
@@ -219,7 +312,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     const dropdownCodejarDark = new Setting(containerEl)
     .setName('Codejar theme (dark mode)')
-    .setDesc('Choice of codejar editor theme.')
     .setClass("dropdownCodejarDark")
     .addDropdown((dropdown: DropdownComponent) => {
       codejarDarkThemes.forEach(({ name, desc }) => {
@@ -237,7 +329,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     const dropdownCodejarLight = new Setting(containerEl)
     .setName('Codejar theme (light mode)')
-    .setDesc('Choice of codejar editor theme.')
     .setClass("dropdownCodejarLight")
     .addDropdown((dropdown: DropdownComponent) => {
       codejarLightThemes.forEach(({ name, desc }) => {
@@ -266,132 +357,9 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     );
 
     new Setting(containerEl)
-    .setName('Line numbers')
-    .setDesc('Enable line numbers in editor pane')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.lineNumbers)
-      .onChange(async newValue => {
-        this.plugin.settings.lineNumbers = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Word wrap')
-    .setDesc('Enable word wrapping in editor pane.')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.wordWrap)
-      .onChange(async newValue => {
-        this.plugin.settings.wordWrap = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Auto close brackets')
-    .setDesc('Use auto-complete to close brackets and quotes.')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.closeBrackets)
-      .onChange(async newValue => {
-        this.plugin.settings.closeBrackets = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Semi-colons')
-    .setDesc('Enable code formatter to use semi-colons.')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.semicolons)
-      .onChange(async newValue => {
-        this.plugin.settings.semicolons = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Single quotes')
-    .setDesc('Enable code formatter to use single quotes instead of double quotes.')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.singleQuote)
-      .onChange(async newValue => {
-        this.plugin.settings.singleQuote = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Trailing commas')
-    .setDesc('Enable code formatter to use trailing commas.')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.trailingComma)
-      .onChange(async newValue => {
-        this.plugin.settings.trailingComma = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Use tabs')
-    .setDesc('Enable tabs instead of spaces')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.useTabs)
-      .onChange(async newValue => {
-        this.plugin.settings.useTabs = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Tab size')
-    .setDesc('Choice of tab size')
-    .addDropdown((dropdown) => {
-      dropdown
-      .addOptions({
-        "2":"2",
-        "4":"4",				
-      })
-      .setValue(this.plugin.settings.tabSize)
-      .onChange(async (newValue) => {
-        this.plugin.settings.tabSize = newValue;
-        await this.plugin.saveSettings();
-      });
-    });
-
-    new Setting(containerEl)
-    .setName('Auto update')
-    .setDesc('Enable auto updates after editor code changes.')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.autoUpdate)
-      .onChange(async newValue => {
-        this.plugin.settings.autoUpdate = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setName('Delay')
-    .setDesc('Time delay (in milliseconds) follwing code change, after which the result is updated.')
-    .addSlider(slider => slider
-      .setLimits(500, 3000, 500)
-      .setValue(this.plugin.settings.delay)
-      .setDynamicTooltip()
-      .onChange(async (newValue) => {
-          this.plugin.settings.delay = newValue;
-          await this.plugin.saveSettings();
-      }));
-
-    new Setting(containerEl)
       .setName('Playground height')
-      .setDesc('CSS height for livecodes playground component. e.g. 600 or 100% (default: 600)')
+      .setDesc('CSS height for livecodes playground. e.g. 600 or 100% (default: 600)')
+      .setClass('livecodes-setting-input-height')
       .addText(text =>
       text
       .setPlaceholder('e.g. 600 or 100%')
@@ -475,6 +443,148 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         await this.plugin.saveSettings();
       });
     });
+
+    new Setting(containerEl)
+    .setName('Line numbers')
+    .setDesc('Enable line numbers in editor pane')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.lineNumbers)
+      .onChange(async newValue => {
+        this.plugin.settings.lineNumbers = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+
+    new Setting(containerEl)
+    .setName('Word wrap')
+    .setDesc('Enable word wrapping in editor pane.')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.wordWrap)
+      .onChange(async newValue => {
+        this.plugin.settings.wordWrap = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+
+    new Setting(containerEl)
+    .setName('Auto close brackets')
+    .setDesc('Use auto-complete to close brackets and quotes.')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.closeBrackets)
+      .onChange(async newValue => {
+        this.plugin.settings.closeBrackets = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+
+    new Setting(containerEl)
+    .setName('Semi-colons')
+    .setDesc('Enable code formatter to use semi-colons.')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.semicolons)
+      .onChange(async newValue => {
+        this.plugin.settings.semicolons = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+
+    new Setting(containerEl)
+    .setName('Single quotes')
+    .setDesc('Enable code formatter to use single quotes instead of double quotes.')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.singleQuote)
+      .onChange(async newValue => {
+        this.plugin.settings.singleQuote = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+
+    new Setting(containerEl)
+    .setName('Trailing commas')
+    .setDesc('Enable code formatter to use trailing commas.')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.trailingComma)
+      .onChange(async newValue => {
+        this.plugin.settings.trailingComma = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+
+    new Setting(containerEl)
+    .setName('Use tabs')
+    .setDesc('Enable tabs instead of spaces')
+    .setClass("livecodes-settings-input-usetabs")
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.useTabs)
+      .onChange(async newValue => {
+        this.plugin.settings.useTabs = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+    
+
+    new Setting(containerEl)
+    .setName('Tab size')
+    .addDropdown((dropdown) => {
+      dropdown
+      .addOptions({
+        "2":"2",
+        "4":"4",				
+      })
+      .setValue(this.plugin.settings.tabSize)
+      .onChange(async (newValue) => {
+        this.plugin.settings.tabSize = newValue;
+        await this.plugin.saveSettings();
+      });
+    });
+
+    new Setting(containerEl)
+    .setName('Auto update')
+    .setDesc('Enable auto updates of results pane after editor code changes.')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.autoUpdate)
+      .onChange(async newValue => {
+        this.plugin.settings.autoUpdate = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+
+    new Setting(containerEl)
+    .setName('Delay')
+    .setDesc('Time delay (in milliseconds) follwing code change, after which the result is updated.')
+    .addSlider(slider => slider
+      .setLimits(500, 3000, 500)
+      .setValue(this.plugin.settings.delay)
+      .setDynamicTooltip()
+      .onChange(async (newValue) => {
+          this.plugin.settings.delay = newValue;
+          await this.plugin.saveSettings();
+      }));
+
+      new Setting(containerEl)
+      .setName("Reload plugin")
+      .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ All settings changes are applied to future Livecodes playgrounds. Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+      .addExtraButton((component) => {
+        component
+        .setIcon("refresh-cw")
+        .setTooltip("Reload plugin")
+        .onClick(async () => {
+          await this.plugin.reload();
+          new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
+        });
+        component.extraSettingsEl.classList.add("mod-warning");
+      })
+      .then(cb => {
+        cb.settingEl.classList.add("setting-head");
+      });
 
     const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {

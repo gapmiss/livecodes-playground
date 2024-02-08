@@ -1,20 +1,20 @@
 import { App, Modal, Setting, ButtonComponent, TextComponent, TextAreaComponent } from "obsidian";
 import LivecodesPlugin from '../main';
 
-type ProjectSettingsCallback = (text: string | null) => void;
+type PlaygroundSettingsCallback = (text: string | null) => void;
 
-export class ProjectSettingsModal extends Modal {
+export class PlaygroundSettingsModal extends Modal {
     plugin: LivecodesPlugin;
     title: string | null;
     changes: {title: string, description: string, head: string, htmlAttrs: string};
-    callback: ProjectSettingsCallback;
+    callback: PlaygroundSettingsCallback;
 
     constructor(
         app: App,
         plugin: LivecodesPlugin,
         title: string | null,
         changes: {title: string, description: string, head: string, htmlAttrs: string},
-        callback: ProjectSettingsCallback,
+        callback: PlaygroundSettingsCallback,
     ) {
         super(app);
         this.plugin = plugin;
@@ -32,7 +32,6 @@ export class ProjectSettingsModal extends Modal {
 
       new Setting(this.contentEl)
         .setName('Title')
-        .setDesc('Project title')
         .setClass("title-setting")
         .addText(text =>
           text
@@ -44,7 +43,6 @@ export class ProjectSettingsModal extends Modal {
 
       new Setting(this.contentEl)
         .setName('Description')
-        .setDesc('Project description')
         .setClass("description-setting")
         .addTextArea(text =>
           text
@@ -106,15 +104,15 @@ export class ProjectSettingsModal extends Modal {
     }
 }
 
-export async function openProjectSettingsModal(
+export async function openPlaygroundSettingsModal(
     app: App,
     plugin: LivecodesPlugin,
     title: string | null,
     changes: {title: string, description: string, head: string, htmlAttrs: string},
-    callback?: ProjectSettingsCallback
+    callback?: PlaygroundSettingsCallback
 ): Promise<any[] | null> {
     return await new Promise((resolve, reject) => {
-        new ProjectSettingsModal(
+        new PlaygroundSettingsModal(
             app,
             plugin,
             title,

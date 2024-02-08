@@ -1,6 +1,4 @@
 import { normalizePath, Notice, requestUrl, type App } from "obsidian";
-import { driver } from "driver.js";
-// import form2buffer from "./Form2Buffer";
 
 export function saveJson(
   app: App,
@@ -88,42 +86,6 @@ export async function postToCodepen(ele: HTMLElement, params: string, path: stri
   console.log(response);
   /**/
 }
-
-/**
- * https://driverjs.com/docs/api
- */
-export const driverObj = driver({
-  // popoverClass: 'driverjs-theme',
-  showProgress: true,
-  steps: [
-    {
-      popover:
-      {
-        title: "Welcome to the Livecodes playground tour!",
-        description: "Click the <strong>Next →</strong> button to start the tour. HINT: Use your keyboard's <kbd>←</kbd> and <kbd>→</kbd> arrow keys to navigate the tour.",
-      }
-    },
-    { 
-      element: '.livecodes-settings-input-appurl', 
-      popover:
-      { 
-        title: 'App URL', 
-        description: 'Load the playground from a custom URL (e.g. <a href="https://livecodes.io/docs/features/self-hosting" class="external-link">self-hosted app</a>, <a href="https://livecodes.io/docs/features/permanent-url" class="external-link">permanent URL</a>)' 
-      }
-    },
-    { element: '.livecodes-settings-input-playgrounds', popover: { title: 'Title', description: 'Description' } },
-    { element: '.livecodes-settings-input-notes', popover: { title: 'Title', description: 'Description' } },
-    { element: '.livecodes-settings-input-autowatch', popover: { title: 'Title', description: 'Description' } },
-    { 
-      element: '.dropdownEditor', 
-      popover:
-      { 
-        title: 'Code Editor', 
-        description: '<p>The following code editors are supported:</p><ul><li><strong>Monaco Editor</strong>: This is the code editor that powers <strong>VS Code</strong>. It is feature-rich and supports autocomplete with <strong>IntelliSense</strong> (including types for custom libraries). <!-- However, it requires a relatively large download and is not supported in mobile browsers. --></li><li><strong>CodeMirror</strong>: Has many editing features, including autocomplete, with good <strong>mobile support</strong>.</li><li><strong>CodeJar</strong>: A <strong>lightweight</strong> code editor with very basic editing features. PrismJs is used for syntax highlighting. Please note that some editor settings are not supported in CodeJar</li></ul>' 
-      } 
-    },
-  ]
-});
 
 export const blankPlayground = {
   appUrl: "https://v21.livecodes.io/",

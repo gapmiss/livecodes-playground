@@ -1,5 +1,6 @@
-import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder } from "obsidian";
+import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, WorkspaceLeaf } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
+import { LivecodesSearchView, VIEW_TYPE_SEARCH } from "./views/search";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/playground-select-modal";
 import { StarterSelectModal } from "./modals/starter-select-modal";
@@ -12,6 +13,7 @@ interface LivecodesSettings {
   notesFolder: string;
   autoWatch: boolean;
   appUrl: string;
+  shortUrl: boolean;
   fontFamily: string;
   fontSize: any;
   editor: any;
@@ -42,6 +44,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   notesFolder: "playgrounds/notes",
   autoWatch: true,
   appUrl: "https://v21.livecodes.io/",
+  shortUrl: false,
   fontFamily: "Default",
   fontSize: "12",
   editor: "monaco",
@@ -108,12 +111,25 @@ export default class LivecodesPlugin extends Plugin {
       (leaf) => new PlaygroundView(this.app, leaf, this.settings.jsonTemplate, this.settings),
     );
 
+    this.registerView(
+      VIEW_TYPE_SEARCH,
+      (leaf) => new LivecodesSearchView(this.app, leaf, this.settings),
+    );
+
     this.addRibbonIcon("file-code-2", "Open Livecodes playground", async () => {
       new PlaygroundSelectModal(this).open();
     });
 
     this.addRibbonIcon("code", "New Livecodes playground", async () => {
       await this.newLivecodesPlayground(false, null);
+    });
+
+    this.addCommand({
+      id: "open-livecodes-search",
+      name: "Livecodes search",
+      callback: async () => {
+        await this.activateSearchView();
+      },
     });
 
     this.addCommand({
@@ -252,7 +268,7 @@ export default class LivecodesPlugin extends Plugin {
     this.addSettingTab(new LivecodesSettingsTab(this.app, this));
 
     this.state = "loaded";
-    console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
+    console.log("<"+this.manifest.name+">", "v"+this.manifest.version, this.state );
   }
 
   onunload() {
@@ -262,7 +278,7 @@ export default class LivecodesPlugin extends Plugin {
         leaf.detach();
       }
     });
-    console.log("["+this.manifest.name, "v"+this.manifest.version+"]", this.state );
+    console.log("<"+this.manifest.name+">", "v"+this.manifest.version, this.state );
   }
 
   async activateView() {
@@ -278,6 +294,27 @@ export default class LivecodesPlugin extends Plugin {
     if (leaf?.view instanceof PlaygroundView) {
       this.app.workspace.revealLeaf(leaf);
     }
+  }
+
+  async activateSearchView() {
+    // new Notice("Loading playground…", 5000);
+    const { workspace } = this.app;
+
+    let leaf: WorkspaceLeaf | null = null;
+    const leaves = workspace.getLeavesOfType(VIEW_TYPE_SEARCH);
+
+    if (leaves.length > 0) {
+      // A leaf with our view already exists, use that
+      leaf = leaves[0];
+    } else {
+      // Our view could not be found in the workspace, create a new leaf
+      // in the right sidebar for it
+      leaf = workspace.getRightLeaf(false);
+      await leaf.setViewState({ type: VIEW_TYPE_SEARCH, active: true });
+    }
+
+    // "Reveal" the leaf in case it is in a collapsed sidebar
+    workspace.revealLeaf(leaf);
   }
 
   async loadSettings() {
