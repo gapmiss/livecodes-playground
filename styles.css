@@ -357,3 +357,7 @@ div#boarding-popover-item .boarding-popover-description {
 iframe.livecodes #external-resources-btn {
   display: none;
 }
+
+body:has(div#boarding-popover-item) .tooltip {
+  z-index: 1000000001 !important;
+}

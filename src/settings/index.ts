@@ -148,6 +148,33 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     });
 
     new Setting(containerEl)
+    .setName('Github gist privacy')
+    .setDesc('Gists are secret by default. Enable this setting to create public gists.')
+    .setClass("livecodes-settings-input-githubgistpublic")
+    .addToggle((toggle) => {
+      toggle
+      .setValue(this.plugin.settings.githubGistPublic)
+      .onChange(async newValue => {
+        this.plugin.settings.githubGistPublic = newValue;
+        await this.plugin.saveSettings();
+      })
+    })
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.livecodes-settings-input-githubgistpublic', 
+            popover: helpPopovers.githubGistPublic
+          }
+        )
+      })
+    });
+
+    new Setting(containerEl)
     .setName('Playground folder')
     .setDesc('Vault folder for saving playground JSON files')
     .setClass("livecodes-settings-input-playgrounds")

@@ -9,7 +9,7 @@
   const { Octokit } = require("@octokit/rest");
   import * as prettier from "prettier/standalone";
   import * as htmlPlugin from "prettier/plugins/html";
-
+  
   import { onMount } from "svelte";
   import {
     saveJson,
@@ -217,32 +217,35 @@
       /**
        * CANNOT POST FORM from Obsidian.md; CORS issue?
        */
-      // setIcon(openInCodepen, 'codepen');
-      // openInCodepen.addEventListener(
-      // 	"click", 
-      // 	async (e) => {
-      // 		e.preventDefault();
-      // 		try {
-      // 			let json = {"title": "New Pen", "html": "<div>Hello, World</div>"};
-      // 			postToCodepen(
-      // 				container, 
-      // 				JSON.stringify(json)
-      // 					// Quotes will screw up the JSON
-      // 					.replace(/"/g, "&​quot;")
-      // 					.replace(/'/g, "&apos;")
-      // 			);
-      // 		} catch (error) {
-      // 			console.log(error.message || error);
-      // 		}
-      // 	}
-      // );
+
+      /*/
+      setIcon(openInCodepen, 'codepen');
+      openInCodepen.addEventListener(
+        "click", 
+        async (e) => {
+          e.preventDefault();
+          try {
+            let json = {"title": "New Pen", "html": "<div>Hello, World</div>"};
+            postToCodepen(
+              container, 
+              JSON.stringify(json)
+                // Quotes will screw up the JSON
+                .replace(/"/g, "&​quot;")
+                .replace(/'/g, "&apos;")
+            );
+          } catch (error) {
+            console.log(error.message || error);
+          }
+        }
+      );
+      /**/
 
       setIcon(createGist, 'github');
       createGist.addEventListener(
-      	"click", 
-      	async (e) => {
-      		e.preventDefault();
-      		try {
+        "click", 
+        async (e) => {
+          e.preventDefault();
+          try {
             const cfg = await playground.getConfig();
             try {
               let markDown:string = '';
@@ -265,10 +268,10 @@
                 0
               );
             }
-      		} catch (error) {
-      			console.log(error.message || error);
-      		}
-      	}
+          } catch (error) {
+            console.log(error.message || error);
+          }
+        }
       );
 
       setIcon(createNote, "file-plus-2");
@@ -495,7 +498,7 @@
       parser: "html",
       bracketSameLine: true,
       printWidth: 1000,
-      singleAttributePerLine: true,
+      // singleAttributePerLine: true,
       htmlWhitespaceSensitivity: "ignore",
       plugins: [
         htmlPlugin
@@ -517,23 +520,24 @@
     jsonName: string,
     json: string
   ) => {
-		const token = plugin.settings.githubApiToken;
+    const token = plugin.settings.githubApiToken;
     if (!token) {
       new Notice("❌ GitHub token not found, check livecodes settings. Click this message to dismiss.", 0);
-			return;
-		}
-		try {
+      return;
+    }
+    try {
+      new Notice("Creating gist…", 5000);
       let prettyHtml = await prettifyHtml(html, fileName);
       /**
        * https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
        */
       const octokit = new Octokit({
-				'auth': token
-			});
+        'auth': token
+      });
 
       const result = await octokit.request('POST /gists', {
         'description': fileName,
-        'public': true,
+        'public': plugin.settings.githubGistPublic,
         'files': {
           [fileName]: {
             'content': body,
@@ -552,12 +556,14 @@
       let gistId = result.data.id;
       let url = result.data.html_url;
       let files = Object.keys(result.data.files);
-      let playgroundUrl:string|undefined = undefined;
+      let livecodesUrl:string|undefined = undefined;
+      let openGistUrl:string|undefined = undefined;
       files.forEach(async (file) => {
         let fileExt = result.data.files[file].filename.split('.').pop();
         if (fileExt === 'json') {
-          playgroundUrl = "\n"+plugin.settings.appUrl+"?config="+result.data.files[file].raw_url;
-          url += playgroundUrl;
+          livecodesUrl = "\n"+plugin.settings.appUrl+"?config="+result.data.files[file].raw_url;
+          openGistUrl = "\nobsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&gistUrl="+encodeURIComponent(result.data.files[file].raw_url);;
+          url += livecodesUrl + openGistUrl;
         }
       })
       await navigator.clipboard.writeText(url);
@@ -565,11 +571,11 @@
         let i= index+1;
         console.log(i + ' - ' + url); 
       })
-      if (playgroundUrl !== undefined) {
+      if (livecodesUrl !== undefined) {
         try {
           // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#update-a-gist
           const patch = await octokit.request('PATCH /gists/'+gistId, {
-            'description': "👉️ Open this code in Livecodes playground: "+playgroundUrl,
+            'description': "👉️ Open this code in Livecodes: "+livecodesUrl,
             'headers': {
               'X-GitHub-Api-Version': '2022-11-28'
             }
@@ -578,11 +584,11 @@
           new Notice("❌ " + error + " Click this message to dismiss.", 0);
         }
       }
-			new Notice('Gist created - URLs copied to your clipboard and logged to the developer console');
-		} catch (err) {
+      new Notice('Gist created - URLs copied to your clipboard and logged to the developer console');
+    } catch (err) {
       new Notice("❌ There was an error creating your gist, check your token and connection. Click this message to dismiss.", 0);
-			throw err;
-		}
+      throw err;
+    }
 
   }
 </script>

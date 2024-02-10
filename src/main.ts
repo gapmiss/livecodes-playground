@@ -1,4 +1,4 @@
-import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, WorkspaceLeaf } from "obsidian";
+import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/playground-select-modal";
@@ -6,6 +6,8 @@ import { StarterSelectModal } from "./modals/starter-select-modal";
 import { openPromptModal } from "./modals/prompt-modal";
 import { blankPlayground } from "./utils";
 import { Parameters } from "./types";
+// @ts-ignore
+import { config } from 'livecodes';
 
 interface LivecodesSettings {
   playgroundFolder: string;
@@ -37,6 +39,7 @@ interface LivecodesSettings {
   jsonTemplate: TFile | undefined;
   dataHeight: any;
   githubApiToken: string;
+  githubGistPublic: boolean;
 }
 
 const DEFAULT_SETTINGS: LivecodesSettings = {
@@ -68,7 +71,8 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   delay: 1500,
   jsonTemplate: undefined,
   dataHeight: "600",
-  githubApiToken: ""
+  githubApiToken: "",
+  githubGistPublic: false
 };
 
 export default class LivecodesPlugin extends Plugin {
@@ -150,11 +154,26 @@ export default class LivecodesPlugin extends Plugin {
      */
     this.registerObsidianProtocolHandler("playground", async (e) => {
       const parameters = e as unknown as Parameters;
-      const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);
-      if (f instanceof TFile) {
-        this.settings.jsonTemplate = f;
-        await this.saveSettings();
-        await this.activateView();
+      if (parameters.tplPath) {
+        try {
+          const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);
+          if (f instanceof TFile) {
+            this.settings.jsonTemplate = f;
+            await this.saveSettings();
+            await this.activateView();
+          }
+        } catch (error) {
+          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        }
+      }
+      else if (parameters.gistUrl) {
+        new Notice("Requesting gist from Github…", 5000);
+        try {
+          let requestResults = await requestUrl(parameters.gistUrl);
+          await this.newLivecodesPlaygroundFromGist(JSON.stringify(requestResults.json));
+        } catch (error) {
+          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        }
       }
     });
 
@@ -233,7 +252,7 @@ export default class LivecodesPlugin extends Plugin {
 
         if (f instanceof TFile) {
           const ALLOWED_EXTS = ["html","css","js","ts"];
-          let showMenu = false;					
+          let showMenu = false;
           let fileExt = f.name.split('.').pop();
           if (ALLOWED_EXTS.includes(fileExt as string)) {
             showMenu = true;
@@ -296,11 +315,11 @@ export default class LivecodesPlugin extends Plugin {
   async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
     await openPromptModal(this.app, "Livecodes playground", "Save as:", "", "e.g. New Project", false)
       .then(async (fName:string) => {
-        
+
         if (fName?.length === 0) {
           return;
         }
-        
+
         let newPlayground = blankPlayground;
 
         if (fromMenu && file !== null && (file instanceof TFile || file instanceof TFolder)) {
@@ -318,7 +337,7 @@ export default class LivecodesPlugin extends Plugin {
             foundMarkup = await this.adapter.exists(file.path+"/index.html");
             foundStyle = await this.adapter.exists(file.path+"/style.css");
             foundScript = await this.adapter.exists(file.path+"/script.js");
-            foundTypeScript = await this.adapter.exists(file.path+"/script.ts");							
+            foundTypeScript = await this.adapter.exists(file.path+"/script.ts");
           }
 
           if (foundMarkup) {
@@ -387,13 +406,51 @@ export default class LivecodesPlugin extends Plugin {
                 await this.activateView();
               }
             );
-          new Notice("New project saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
+          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
           // const allProperties = Object.getOwnPropertyNames(newPlayground);
           // console.log('allProperties');
           // console.log(allProperties);
           // allProperties.forEach(property => {
           // 	delete newPlayground[property];
           // });
+        } catch (error) {
+          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        }
+      });
+  };
+
+  async newLivecodesPlaygroundFromGist(tpl: string) {
+    let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
+    // console.log(newTemplate);
+    // console.log(newTemplate.title);
+
+    // return Promise.resolve;
+    await openPromptModal(this.app, "Livecodes playground", "Save as:", newTemplate.title, "e.g. New Project", false)
+      .then(async (fName:string) => {
+
+        if (fName?.length === 0) {
+          return;
+        }
+
+        let newPlayground = newTemplate;
+
+
+
+        let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
+        try {
+          await this.app.vault
+            .create(
+              this.settings.playgroundFolder+'/'+fName + ".json",
+              await this.createText(
+                prettyCfg
+              )
+            ).then(async (f:TFile) => {
+                this.settings.jsonTemplate = f;
+                await this.saveSettings();
+                await this.activateView();
+              }
+            );
+          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
         } catch (error) {
           new Notice("❌ " + error + " Click this message to dismiss.", 0);
         }
