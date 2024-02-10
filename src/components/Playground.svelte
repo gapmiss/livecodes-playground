@@ -5,6 +5,11 @@
     EmbedOptions
   } from "livecodes";
   import { Boarding } from "boarding.js";
+  // import attachHighPrioClick from "boarding.js";
+  const { Octokit } = require("@octokit/rest");
+  import * as prettier from "prettier/standalone";
+  import * as htmlPlugin from "prettier/plugins/html";
+
   import { onMount } from "svelte";
   import {
     saveJson,
@@ -17,7 +22,6 @@
   import { openExternalResourcesModal } from "../modals/external-resources-modal";
   import { openPlaygroundSettingsModal } from "../modals/playground-settings-modal";
   import moment from "moment";
-	
 
   const app = this.app;
   const plugin = app.plugins.plugins["livecodes-playground"];
@@ -36,6 +40,7 @@
   let toggleTheme: HTMLButtonElement;
   let onWatch: HTMLButtonElement;
   let openInCodepen:HTMLButtonElement;
+  let createGist:HTMLButtonElement;
   let showHelp:HTMLButtonElement;
   let openExternalResources: HTMLButtonElement;
   let openPlaygroundSettings: HTMLButtonElement;
@@ -232,6 +237,40 @@
       // 	}
       // );
 
+      setIcon(createGist, 'github');
+      createGist.addEventListener(
+      	"click", 
+      	async (e) => {
+      		e.preventDefault();
+      		try {
+            const cfg = await playground.getConfig();
+            try {
+              let markDown:string = '';
+              let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath);
+              markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
+              if (cfg.markup.content !== "") {
+                markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
+              }
+              if (cfg.style.content !== "") {
+                markDown += "## "+cfg.style.language+"\n\n```"+cfg.style.language+"\n"+cfg.style.content+"\n```\n\n";
+              }
+              if (cfg.script.content !== "") {
+                markDown += "## "+cfg.script.language+"\n\n```"+cfg.script.language+"\n"+cfg.script.content+"\n```\n\n";
+              }
+              const code = await playground.getCode();
+              await saveAsGist(cfg.title + '.md', markDown, cfg.title + '.html', code.result, cfg.title + '.json', JSON.stringify(cfg) );
+            } catch (error) {
+              new Notice(
+                "❌ " + error + " Click this message to dismiss.",
+                0
+              );
+            }
+      		} catch (error) {
+      			console.log(error.message || error);
+      		}
+      	}
+      );
+
       setIcon(createNote, "file-plus-2");
       createNote.addEventListener("click", async (e) => {
         e.preventDefault();
@@ -247,11 +286,6 @@
         if (fName?.length === 0) {
           return;
         }
-        // let prettyCfg: string | undefined = JSON.stringify(
-        // 	cfg,
-        // 	null,
-        // 	2
-        // );
         try {
           let markDown:string = '';
           let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath);
@@ -275,7 +309,6 @@
               "/" +
               fName
           );
-          // await this.leaf.open(plugin.settings.notesFolder + "/" + fName + ".md")
           await this.app.workspace.openLinkText(fName, plugin.settings.notesFolder);
         } catch (error) {
           new Notice(
@@ -386,15 +419,48 @@
       showHelp.addEventListener("click", async (e) => {
         e.preventDefault();
         try {
-          const boarding = new Boarding({
+          const boarding = new Boarding(
+            {
+            strictClickHandling: "block-all",
             onPopoverRender: (popoverElements) => {
               // setTimeout, so we the count runs immediatly after all internal boarding logic has run. Otherwise we would get an outdated boarding.currentStep number
+              // setTimeout(() => {
+              //   popoverElements.popoverTitle.innerText = `${
+              //     popoverElements.popoverTitle.innerText
+              //   } (${boarding.currentStep + 1}/${
+              //     boarding.getSteps().length
+              //   })`;
+              // }, 0);
               setTimeout(() => {
-                popoverElements.popoverTitle.innerText = `${
-                  popoverElements.popoverTitle.innerText
-                } (${boarding.currentStep + 1}/${
-                  boarding.getSteps().length
-                })`;
+                // let stepsSpan = activeDocument.createElement("span");
+                let stepsDiv: HTMLDivElement = activeDocument.createElement("div");
+                stepsDiv.addClass("steps-bullets");
+                let stepsList: HTMLElement = activeDocument.createElement("ul");
+                stepsList.setAttribute("role", "tablist");
+                let i = 0;
+                boarding.getSteps().forEach((step)=>{
+                  let newStep: HTMLElement = activeDocument.createElement("li");
+                  newStep.setAttribute("role", "presentation")
+                  let stepLink: HTMLElement = activeDocument.createElement("a");
+                  stepLink.setAttribute("role", "button");
+                  if (i === boarding.currentStep) {
+                    stepLink.addClass("active");
+                  }
+                  stepLink.setAttribute("data-step-number", `${i}`);
+                  stepLink.addEventListener("mouseenter",  async function (e) {
+                    e.stopPropagation();
+                    setTimeout(async () => {
+                      boarding.start(i);
+                    }, 1000);
+                  });
+                  newStep.appendChild(stepLink);
+                  stepsList.appendChild(newStep);
+                  i++;
+                });
+                stepsDiv.appendChild(stepsList);
+                // stepsSpan.innerText = `(${boarding.currentStep + 1}/${boarding.getSteps().length})`;
+                // popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
+                popoverElements.popoverDescription.appendChild(stepsDiv);
               }, 0);
             },
             opacity: 0.75,
@@ -418,6 +484,107 @@
   ): Promise<string> => {
     return fileContent?.trim() as string;
   };
+
+  async function prettifyHtml(src: string, fileName: string): Promise<string> {
+    /**
+     * derived from https://github.com/alexgavrusev/obsidian-plugin-prettier-2/blob/master/src/main.ts
+     * https://prettier.io/docs/en/options
+     */
+    return await prettier.format(src, {
+      filepath: fileName,
+      parser: "html",
+      bracketSameLine: true,
+      printWidth: 1000,
+      singleAttributePerLine: true,
+      htmlWhitespaceSensitivity: "ignore",
+      plugins: [
+        htmlPlugin
+      ]
+    })
+    .then((pretty) => {
+      let regex:RegExp = /^\s*$(?:\r\n?|\n)/gm;
+      let result:string = pretty.replace(regex, "");
+      return Promise.resolve(result);
+    });
+    
+  }
+
+  const saveAsGist = async (
+    fileName: string, 
+    body: string, 
+    htmlName: string,
+    html: string,
+    jsonName: string,
+    json: string
+  ) => {
+		const token = plugin.settings.githubApiToken;
+    if (!token) {
+      new Notice("❌ GitHub token not found, check livecodes settings. Click this message to dismiss.", 0);
+			return;
+		}
+		try {
+      let prettyHtml = await prettifyHtml(html, fileName);
+      /**
+       * https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
+       */
+      const octokit = new Octokit({
+				'auth': token
+			});
+
+      const result = await octokit.request('POST /gists', {
+        'description': fileName,
+        'public': true,
+        'files': {
+          [fileName]: {
+            'content': body,
+          },
+          [htmlName]: {
+            'content': "<!DOCTYPE html>\n" + prettyHtml,
+          },
+          [jsonName]: {
+            'content': json,
+          },
+        },
+        'headers': {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      })
+      let gistId = result.data.id;
+      let url = result.data.html_url;
+      let files = Object.keys(result.data.files);
+      let playgroundUrl:string|undefined = undefined;
+      files.forEach(async (file) => {
+        let fileExt = result.data.files[file].filename.split('.').pop();
+        if (fileExt === 'json') {
+          playgroundUrl = "\n"+plugin.settings.appUrl+"?config="+result.data.files[file].raw_url;
+          url += playgroundUrl;
+        }
+      })
+      await navigator.clipboard.writeText(url);
+      url.split("\n").forEach((url: string, index: number) => { 
+        let i= index+1;
+        console.log(i + ' - ' + url); 
+      })
+      if (playgroundUrl !== undefined) {
+        try {
+          // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#update-a-gist
+          const patch = await octokit.request('PATCH /gists/'+gistId, {
+            'description': "👉️ Open this code in Livecodes playground: "+playgroundUrl,
+            'headers': {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+          })
+        } catch (error) {
+          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        }
+      }
+			new Notice('Gist created - URLs copied to your clipboard and logged to the developer console');
+		} catch (err) {
+      new Notice("❌ There was an error creating your gist, check your token and connection. Click this message to dismiss.", 0);
+			throw err;
+		}
+
+  }
 </script>
 
 <div class="livecodes-wrapper">
@@ -462,6 +629,12 @@
       bind:this={copyShareUrl}
       data-tooltip-position="bottom"
       class="share-url-button"
+    />
+    <button
+      aria-label="Create Github gist"
+      bind:this={createGist}
+      data-tooltip-position="bottom"
+      class="create-gist-button"
     />
     <!-- <button
       aria-label="Open in Codepen"

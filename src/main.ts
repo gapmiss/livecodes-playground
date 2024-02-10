@@ -36,6 +36,7 @@ interface LivecodesSettings {
   delay: number;
   jsonTemplate: TFile | undefined;
   dataHeight: any;
+  githubApiToken: string;
 }
 
 const DEFAULT_SETTINGS: LivecodesSettings = {
@@ -67,6 +68,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   delay: 1500,
   jsonTemplate: undefined,
   dataHeight: "600",
+  githubApiToken: ""
 };
 
 export default class LivecodesPlugin extends Plugin {

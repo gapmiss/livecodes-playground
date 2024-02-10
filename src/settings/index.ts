@@ -32,7 +32,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version)
-    .setDesc("Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options.")
+    .setDesc("⚠️ All settings changes are applied to future Livecodes playgrounds. Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options.")
     .setClass("setting-item-heading-onboarding")
     .addExtraButton((component) => {
       component
@@ -121,8 +121,35 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     });
 
     new Setting(containerEl)
+    .setName('Github API token')
+    .setDesc('For creating Github gists. Click the help icon for further details.')
+    .setClass("livecodes-settings-input-githubtoken")
+    .addText(text => text
+      .setPlaceholder('Github API token')
+      .setValue(this.plugin.settings.githubApiToken)
+      .onChange(async (newValue) => {
+        this.plugin.settings.githubApiToken = newValue;
+        await this.plugin.saveSettings();
+      })
+    )
+    .addExtraButton((component) => {
+      component
+      .setIcon("help-circle")
+      .setTooltip("Help")
+      .onClick(() => {
+        const boarding = new Boarding({opacity: 0.75});
+        boarding.highlight(
+          { 
+            element: '.livecodes-settings-input-githubtoken', 
+            popover: helpPopovers.githubToken
+          }
+        )
+      })
+    });
+
+    new Setting(containerEl)
     .setName('Playground folder')
-    .setDesc('Vault folder for saving playground JSON files.')
+    .setDesc('Vault folder for saving playground JSON files')
     .setClass("livecodes-settings-input-playgrounds")
     .addSearch((cb) => {
       new FolderSuggest(cb.inputEl);
@@ -181,7 +208,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Notes folder')
-    .setDesc('Vault folder for saving playground notes.')
+    .setDesc('Vault folder for saving playground notes')
     .setClass("livecodes-settings-input-notes")
     .addSearch((cb) => {
       new FolderSuggest(cb.inputEl);
@@ -458,7 +485,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Word wrap')
-    .setDesc('Enable word wrapping in editor pane.')
+    .setDesc('Enable word wrapping in editor pane')
     .addToggle(toggle =>
       toggle
       .setValue(this.plugin.settings.wordWrap)
@@ -470,7 +497,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Auto close brackets')
-    .setDesc('Use auto-complete to close brackets and quotes.')
+    .setDesc('Use auto-complete to close brackets and quotes')
     .addToggle(toggle =>
       toggle
       .setValue(this.plugin.settings.closeBrackets)
@@ -482,7 +509,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Semi-colons')
-    .setDesc('Enable code formatter to use semi-colons.')
+    .setDesc('Enable code formatter to use semi-colons')
     .addToggle(toggle =>
       toggle
       .setValue(this.plugin.settings.semicolons)
@@ -494,7 +521,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Single quotes')
-    .setDesc('Enable code formatter to use single quotes instead of double quotes.')
+    .setDesc('Enable code formatter to use single quotes instead of double quotes')
     .addToggle(toggle =>
       toggle
       .setValue(this.plugin.settings.singleQuote)
@@ -506,7 +533,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Trailing commas')
-    .setDesc('Enable code formatter to use trailing commas.')
+    .setDesc('Enable code formatter to use trailing commas')
     .addToggle(toggle =>
       toggle
       .setValue(this.plugin.settings.trailingComma)
@@ -547,7 +574,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Auto update')
-    .setDesc('Enable auto updates of results pane after editor code changes.')
+    .setDesc('Enable auto updates of results pane after editor code changes')
     .addToggle(toggle =>
       toggle
       .setValue(this.plugin.settings.autoUpdate)
@@ -569,22 +596,22 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           await this.plugin.saveSettings();
       }));
 
-      new Setting(containerEl)
-      .setName("Reload plugin")
-      .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ All settings changes are applied to future Livecodes playgrounds. Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
-      .addExtraButton((component) => {
-        component
-        .setIcon("refresh-cw")
-        .setTooltip("Reload plugin")
-        .onClick(async () => {
-          await this.plugin.reload();
-          new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
-        });
-        component.extraSettingsEl.classList.add("mod-warning");
-      })
-      .then(cb => {
-        cb.settingEl.classList.add("setting-head");
-      });
+      // new Setting(containerEl)
+      // .setName("Reload plugin")
+      // .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ All settings changes are applied to future Livecodes playgrounds. Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+      // .addExtraButton((component) => {
+      //   component
+      //   .setIcon("refresh-cw")
+      //   .setTooltip("Reload plugin")
+      //   .onClick(async () => {
+      //     await this.plugin.reload();
+      //     new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
+      //   });
+      //   component.extraSettingsEl.classList.add("mod-warning");
+      // })
+      // .then(cb => {
+      //   cb.settingEl.classList.add("setting-head");
+      // });
 
     const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {

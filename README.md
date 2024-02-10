@@ -43,11 +43,12 @@ or:
 ## 🚧 ROADMAP
 
 - [X] test Obsidian.md mobile app
-- [ ] onboarding
+- [X] onboarding
 - [ ] search playgrounds
-- [ ] save as gist
-- [ ] project/playground tags
-- [ ] add tour to playground buttons
+- [X] save as gist
+- [ ] tags
+- [X] add tour to playground buttons
+- [ ] URL handler for opening a gist in Obsidian.md app
 
 ## Tips
 
@@ -64,3 +65,29 @@ Please submit issues, bug reports, feature requests, etc. to [gapmiss/livecodes
 3. `cd livecodes-playground`
 4. `npm install`
 5. `npm run dev`
+
+## Livecodes
+
+Livecodes is licensed under the [MIT License](https://github.com/live-codes/livecodes/blob/develop/LICENSE).
+
+> MIT License
+> 
+> Copyright (c) 2021-PRESENT Hatem Hosny
+> 
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to deal
+> in the Software without restriction, including without limitation the rights
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, and to permit persons to whom the Software is
+> furnished to do so, subject to the following conditions:
+> 
+> The above copyright notice and this permission notice shall be included in all
+> copies or substantial portions of the Software.
+> 
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+> SOFTWARE.

@@ -299,6 +299,60 @@ div#boarding-popover-item .boarding-popover-description {
   content: "";
   display: table;
 }
+/* div#boarding-popover-item .steps-progress {
+  display: inline-block;
+  color: var(--color-base-50);
+  font-size: var(--font-smaller);
+  border: 1px solid dodgerblue;
+  margin-inline: .5em;
+  margin-block: .5em;
+} */
+
+.steps-bullets {
+  text-align: center;
+  padding-block: .25em;
+  /* border:1px solid dodgerblue; */
+}
+
+.steps-bullets ul {
+  box-sizing: content-box;
+  clear: both;
+  margin: 0 auto 0;
+  padding: 0;
+  display:inline-block
+}
+
+.steps-bullets ul li {
+  box-sizing: content-box;
+  list-style: none;
+  float: left;
+  margin:0 2px
+}
+
+.steps-bullets ul li a {
+  transition: width .1s ease-in;
+  box-sizing: content-box;
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: #ccc;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: default;
+}
+
+/* .steps-bullets ul li a:focus, .steps-bullets ul li a:hover {
+  width: 15px;
+  background: #999;
+  text-decoration: none;
+  outline:0
+} */
+
+.steps-bullets ul li a.active {
+  width: 15px;
+  background:#999
+}
+
 
 iframe.livecodes #external-resources-btn {
   display: none;
