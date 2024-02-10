@@ -50,13 +50,13 @@ export class PlaygroundView extends ItemView {
   
     let foundTemplate: boolean = (this.jsonTemplate !== undefined);
     
-    let tplPath = this.jsonTemplate?.path;
-    let tpl = await this.adapter.read(tplPath!);
+    let playgroundPath = this.jsonTemplate?.path;
+    let tpl = await this.adapter.read(playgroundPath!);
     let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
     
     if (foundTemplate) {
-      let tplPath = normalizePath((this.jsonTemplate!).path);
-      let tpl = await this.adapter.read(tplPath);
+      let playgroundPath = normalizePath((this.jsonTemplate!).path);
+      let tpl = await this.adapter.read(playgroundPath);
       newTemplate = JSON.parse(tpl) as Partial<config>;
     }
 
@@ -64,7 +64,7 @@ export class PlaygroundView extends ItemView {
       target: this.contentEl,
       props: {
         jsonTemplate: newTemplate,
-        tplPath: tplPath!
+        playgroundPath: playgroundPath!
       },
     });
 

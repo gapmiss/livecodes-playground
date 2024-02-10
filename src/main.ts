@@ -150,13 +150,13 @@ export default class LivecodesPlugin extends Plugin {
 
     /**
      * Test for malicious URI ?
-     * i.e. obsidian://playground?vault=Playground&tplPath=some-malicious-URI
+     * i.e. obsidian://playground?vault=Playground&playgroundPath=some-malicious-URI
      */
     this.registerObsidianProtocolHandler("playground", async (e) => {
       const parameters = e as unknown as Parameters;
-      if (parameters.tplPath) {
+      if (parameters.playgroundPath) {
         try {
-          const f = this.app.vault.getAbstractFileByPath(parameters.tplPath!);
+          const f = this.app.vault.getAbstractFileByPath(parameters.playgroundPath!);
           if (f instanceof TFile) {
             this.settings.jsonTemplate = f;
             await this.saveSettings();
@@ -197,8 +197,8 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Copy markdown link to playground")
                 .setIcon("link")
                 .onClick(async () => {
-                  let tplPath = normalizePath(f.path);
-                  await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath)+")");
+                  let playgroundPath = normalizePath(f.path);
+                  await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath)+")");
                 });
             });
             menu.addItem((item) => {
@@ -206,8 +206,8 @@ export default class LivecodesPlugin extends Plugin {
                 .setTitle("Copy Obsidian URL to playground")
                 .setIcon("link")
                 .onClick(async () => {
-                  let tplPath = normalizePath(f.path);
-                  await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath));
+                  let playgroundPath = normalizePath(f.path);
+                  await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath));
                 });
             });
           }

@@ -30,7 +30,7 @@
   let watcher: { remove: () => void } | null;
 
   export let jsonTemplate: any;
-  export let tplPath: string;
+  export let playgroundPath: string;
 
   let copyHTML: HTMLButtonElement;
   let downloadHTML: HTMLButtonElement;
@@ -92,9 +92,9 @@
         new Notice("Preparing HTML");
         try {
           const code = await playground.getCode();
-          let fileName = tplPath.substring(
-            tplPath.lastIndexOf("/") + 1,
-            tplPath.length
+          let fileName = playgroundPath.substring(
+            playgroundPath.lastIndexOf("/") + 1,
+            playgroundPath.length
           );
           downloadFile(
             code.result,
@@ -115,7 +115,7 @@
               "code",
               //@ts-ignore
               ({ config }) => {
-                handleWatchedTemplate(tplPath, config);
+                handleWatchedTemplate(playgroundPath, config);
                 new Notice("Changes saved");
               }
             );
@@ -249,7 +249,7 @@
             const cfg = await playground.getConfig();
             try {
               let markDown:string = '';
-              let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath);
+              let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
               markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
               if (cfg.markup.content !== "") {
                 markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
@@ -282,7 +282,7 @@
           this.app,
           "Livecodes",
           "Save note as:",
-          tplPath.substring(tplPath.lastIndexOf("/") + 1, tplPath.length).replace(/\.json/, ""),
+          playgroundPath.substring(playgroundPath.lastIndexOf("/") + 1, playgroundPath.length).replace(/\.json/, ""),
           "e.g. New Playground README",
           false
         );
@@ -291,7 +291,7 @@
         }
         try {
           let markDown:string = '';
-          let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&tplPath="+encodeURIComponent(tplPath);
+          let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
           markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
           if (cfg.markup.content !== "") {
             markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
@@ -409,7 +409,7 @@
             "code",
             //@ts-ignore
             ({ config }) => {
-              handleWatchedTemplate(tplPath, config);
+              handleWatchedTemplate(playgroundPath, config);
               new Notice("Changes saved");
             }
           );
@@ -478,8 +478,8 @@
     });
   });
 
-  const handleWatchedTemplate = (tplPath: string, output: any) => {
-    saveJson(app, tplPath, JSON.stringify(output, null, 2));
+  const handleWatchedTemplate = (playgroundPath: string, output: any) => {
+    saveJson(app, playgroundPath, JSON.stringify(output, null, 2));
   };
 
   const createText = async (

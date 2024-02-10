@@ -1,4 +1,4 @@
 export interface Parameters {
-  tplPath: string;
+  playgroundPath: string;
   gistUrl: string;
 }

@@ -43,16 +43,15 @@ or:
 ## 🚧 ROADMAP
 
 - [X] test Obsidian.md mobile app
-- [X] onboarding
-- [ ] search playgrounds
+- [X] onboarding, add tour to playground buttons
 - [X] save as gist
+- [X] URL handler for opening a gist in Obsidian.md app
 - [ ] tags
-- [X] add tour to playground buttons
-- [ ] URL handler for opening a gist in Obsidian.md app
 
 ## Tips
 
 - [ ] cursor position and Obsidian.md commands when inside the playground iframe
+- [ ] which button SDK updates effect undo/redo history
 
 ## Issues and bug reports
 
