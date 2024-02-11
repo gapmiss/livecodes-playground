@@ -539,6 +539,9 @@
         'description': fileName,
         'public': plugin.settings.githubGistPublic,
         'files': {
+          ["README.md"]: {
+            'content': "## Hello, world!",
+          },
           [fileName]: {
             'content': body,
           },
@@ -562,7 +565,7 @@
         let fileExt = result.data.files[file].filename.split('.').pop();
         if (fileExt === 'json') {
           livecodesUrl = "\n"+plugin.settings.appUrl+"?config="+result.data.files[file].raw_url;
-          openGistUrl = "\nobsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&gistUrl="+encodeURIComponent(result.data.files[file].raw_url);;
+          openGistUrl = "\nobsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&gistUrl="+encodeURIComponent(result.data.files[file].raw_url);
           url += livecodesUrl + openGistUrl;
         }
       })
@@ -576,6 +579,11 @@
           // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#update-a-gist
           const patch = await octokit.request('PATCH /gists/'+gistId, {
             'description': "👉️ Open this code in Livecodes: "+livecodesUrl,
+            'files': {
+              'README.md': {
+                content: openGistUrl
+              }
+            },
             'headers': {
               'X-GitHub-Api-Version': '2022-11-28'
             }

@@ -92,8 +92,9 @@ div.livecodes-editor-settings-modal .htmlattrs-setting {
 /**
  * onboarding
  */
-.onboarding-button {
-  color: var(--interactive-accent);
+.onboarding-button {color: var(--interactive-accent)}
+div[class*="livecodes-settings-input"] .clickable-icon,
+ .setting-item-heading-onboarding .clickable-icon {
   cursor: pointer;
 }
 .boarding-popover-description code {
@@ -299,14 +300,13 @@ div#boarding-popover-item .boarding-popover-description {
   content: "";
   display: table;
 }
-/* div#boarding-popover-item .steps-progress {
+div#boarding-popover-item .steps-progress {
   display: inline-block;
   color: var(--color-base-50);
   font-size: var(--font-smaller);
-  border: 1px solid dodgerblue;
   margin-inline: .5em;
   margin-block: .5em;
-} */
+}
 
 .steps-bullets {
   text-align: center;
@@ -360,4 +360,37 @@ iframe.livecodes #external-resources-btn {
 
 body:has(div#boarding-popover-item) .tooltip {
   z-index: 1000000001 !important;
+}
+
+.setting-item-heading-onboarding .setting-item-description {
+  font-size: var(--font-ui-small)
+}
+.setting-item-heading-onboarding .setting-item-name {
+  color: var(--text-accent)
+}
+.setting-item-heading-onboarding {
+  background-color: var(--background-secondary);
+  border-radius: var(--size-2-3);
+  padding: 1em .5em !important;
+  margin-bottom: 1em;
+}
+.livecodes-settings-tab .setting-item-heading .setting-item-name {
+  color: var(--text-faint);
+}
+
+.livecodes-sponsorship {
+  background-color: var(--background-secondary);
+  border-radius: var(--size-2-3);
+  padding: 1em .5em !important;
+  margin-top: 1em;
+  /* width: 70%; */
+  margin-top: 1em;
+  text-align: center;
+}
+
+.livecodes-sponsorship a:has(svg) {
+  display: inline-block;
+}
+.livecodes-sponsorship-button {
+  margin: 10px;
 }

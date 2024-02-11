@@ -39,14 +39,29 @@ or:
 4. Settings > Community plugins > reload **Installed plugins**
 5. enable plugin
 
+## Usage
+
+### commands
+
+- Open Livecodes playground
+- Open Livecodes starter
+- New Livecodes playground
+
+### obsidian:// URL protocols
+
+- `playgroundPath` - e.g. obsidian://playground?vault=VAULTNAME&playgroundPath=path/to/playground.json
+- `gistURL` - e.g. obsidian://playground?vault=VAULTNAME&gistUrl=https%3A%2F%2Fgist.githubusercontent.com … playground.json
 
 ## 🚧 ROADMAP
 
 - [X] test Obsidian.md mobile app
 - [X] onboarding, add tour to playground buttons
 - [X] save as gist
+- [ ] gist README
 - [X] URL handler for opening a gist in Obsidian.md app
 - [ ] tags
+- [ ] style settings support
+- [ ] gist MD codeblock script `language`
 
 ## Tips
 
