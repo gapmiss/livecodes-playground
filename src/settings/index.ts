@@ -32,22 +32,22 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     let desc = document.createDocumentFragment();
     desc.append(
-        "⚠️ All settings changes are applied to future Livecodes playground views.",
-        desc.createEl("br"),
-        desc.createEl("br"),
-        "Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options. See Livecodes  ",
-        desc.createEl("a", {
-            href: "https://livecodes.io/docs/getting-started/",
-            text: "documentation",
-            attr: {"aria-label":"https://livecodes.io/docs/getting-started/", "class":"external-link", "data-tooltip-position":"top"}
-        }),
-        " and the plugin ",
-        desc.createEl("a", {
-            href: "https://github.com/gapmiss/livecodes-playground/",
-            text: "README",
-            attr: {"aria-label":"https://github.com/gapmiss/livecodes-playground/", "class":"external-link", "data-tooltip-position":"top"}
-        }),
-        " for additional help."
+      "⚠️ All settings changes are applied to future Livecodes playground views.",
+      desc.createEl("br"),
+      desc.createEl("br"),
+      "Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options. See Livecodes  ",
+      desc.createEl("a", {
+        href: "https://livecodes.io/docs/getting-started/",
+        text: "documentation",
+        attr: {"aria-label":"https://livecodes.io/docs/getting-started/", "class":"external-link", "data-tooltip-position":"top"}
+      }),
+      " and the plugin ",
+      desc.createEl("a", {
+        href: "https://github.com/gapmiss/livecodes-playground/",
+        text: "README",
+        attr: {"aria-label":"https://github.com/gapmiss/livecodes-playground/", "class":"external-link", "data-tooltip-position":"top"}
+      }),
+      " for additional help."
     );
 
     new Setting(containerEl)
@@ -61,10 +61,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75,
         });
         boarding.highlight({
@@ -89,28 +86,17 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           onPopoverRender: (popoverElements) => {
             setTimeout(() => {
               let stepsSpan = activeDocument.createElement("span");
               stepsSpan.addClass("steps-progress");
               stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
               popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
-
-
-              // popoverElements.popoverTitle.innerText = `${
-              //   popoverElements.popoverTitle.innerText
-              // } (${boarding.currentStep + 1}/${
-              //   boarding.getSteps().length
-              // })`;
             }, 0);
           },
           opacity: 0.75,
         });
-        
         boarding.defineSteps(onboardingSteps);
         boarding.start();
       });
@@ -129,18 +115,18 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setDesc('URL for serving livecodes static codebase')
       .setClass("livecodes-settings-input-appurl")
       .addText(text =>
-      text
-      .setPlaceholder('https://v19.livecodes.io/')
-      .setValue(this.plugin.settings.appUrl)
-      .onChange(async newAppUrl => {
-        this.plugin.settings.appUrl = newAppUrl;
-        await this.plugin.saveSettings();
-        if ( newAppUrl.split("").pop() != '/' ) {
-          debounceNotice();
-          return;
-        }
-      })
-    )
+        text
+        .setPlaceholder('https://v19.livecodes.io/')
+        .setValue(this.plugin.settings.appUrl)
+        .onChange(async newAppUrl => {
+          this.plugin.settings.appUrl = newAppUrl;
+          await this.plugin.saveSettings();
+          if ( newAppUrl.split("").pop() != '/' ) {
+            debounceNotice();
+            return;
+          }
+        })
+      )
     .addExtraButton((component) => {
       component
       .setIcon("help-circle")
@@ -148,10 +134,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -162,7 +145,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         )
       })
     });
-
 
     new Setting(containerEl)
     .setName('Playground folder')
@@ -185,10 +167,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -199,7 +178,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         )
       })
     });
-
 
     new Setting(containerEl)
     .setName('Auto watch')
@@ -220,10 +198,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -234,8 +209,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         )
       })
     });
-
-
 
     new Setting(containerEl)
     .setName('Notes folder')
@@ -258,10 +231,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -278,15 +248,14 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     .setDesc('CSS height for livecodes playground. e.g. 600 or 100% (default: 600)')
     .setClass('livecodes-setting-input-height')
     .addText(text =>
-    text
-    .setPlaceholder('e.g. 600 or 100%')
-    .setValue(this.plugin.settings.dataHeight)
-    .onChange(async newValue => {
-      this.plugin.settings.dataHeight = newValue;
-      await this.plugin.saveSettings();
-    })
-  );
-
+      text
+      .setPlaceholder('e.g. 600 or 100%')
+      .setValue(this.plugin.settings.dataHeight)
+      .onChange(async newValue => {
+        this.plugin.settings.dataHeight = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
 
     new Setting(containerEl)
     .setHeading()
@@ -311,10 +280,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -345,10 +311,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -379,10 +342,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -393,8 +353,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         )
       })
     });
-
-
+    
     new Setting(containerEl)
       .setHeading()
       .setName("Editor settings")
@@ -423,10 +382,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .onClick(() => {
         component.disabled = true;
         const boarding = new Boarding({
-          // strictClickHandling: true,
-          onReset: () => {
-            component.disabled = false;
-          },
+          onReset: () => { component.disabled = false },
           opacity: 0.75
         });
         boarding.highlight(
@@ -553,11 +509,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
     );
 
-
-
     new Setting(containerEl)
     .setName('Editor Font')
-    // .setDesc('')
     .addDropdown((dropdown) => {
       dropdown
       .addOptions({
@@ -602,7 +555,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName('Editor Font Size')
-    // .setDesc('')
     .addDropdown((dropdown) => {
       dropdown
       .addOptions({
@@ -640,8 +592,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
     );
 
-
-
     new Setting(containerEl)
     .setName('Line numbers')
     .setDesc('Enable line numbers in editor pane')
@@ -653,9 +603,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         await this.plugin.saveSettings();
       })
     );
-
-
-
 
     new Setting(containerEl)
     .setName('Use tabs')
@@ -670,7 +617,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
     );
     
-
     new Setting(containerEl)
     .setName('Tab size')
     .addDropdown((dropdown) => {
@@ -722,7 +668,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           await this.plugin.saveSettings();
       }));
 
-
     new Setting(containerEl)
     .setName('Semi-colons')
     .setDesc('Enable code formatter to use semi-colons')
@@ -762,7 +707,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     const div = containerEl.createEl('div', {
       cls: 'livecodes-sponsorship',
     });
-
     // const sponsorship = document.createElement('p');
     // sponsorship.append(
     //   'If this plugin adds value for you and you would like to help',
@@ -770,16 +714,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     //   'support continued development, please consider sponsoring:'
     // );
     // div.appendChild(sponsorship);
-
     const parser = new DOMParser();
-
     div.appendChild(
       createDonateButton(
         'https://livecodes.io/docs/sponsor',
         parser.parseFromString(liveCodesLogo, 'text/xml').documentElement,
       ),
     );
-
     div.appendChild(
       createDonateButton(
         'https://www.buymeacoffee.com/gapmiss',
@@ -787,81 +728,22 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       ),
     );
 
-
-
-    // let credits = document.createDocumentFragment();
-    // credits.append(
-    //     "❤️ If this plugin adds value for you and you would like to help support continued development, please consider sponsoring:",
-    //     credits.createEl("br"),
-    //     credits.createEl("br"),
-    //     "Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options. See Livecodes  ",
-    //     credits.createEl("a", {
-    //         href: "https://livecodes.io/docs/getting-started/",
-    //         text: "documentation",
-    //         attr: {"aria-label":"https://livecodes.io/docs/getting-started/"}
-    //     }),
-    //     " and this plugin's  ",
-    //     credits.createEl("a", {
-    //         href: "https://github.com/gapmiss/livecodes-playground/",
-    //         text: "README",
-    //         attr: {"aria-label":"https://github.com/gapmiss/livecodes-playground/"}
-    //     }),
-    //     " for additional help."
-    // );
-
     // new Setting(containerEl)
-    // .setName("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version)
-    // .setDesc(credits)
-    // .setClass("setting-item-heading-onboarding")
+    // .setName("Reload plugin")
+    // .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ All settings changes are applied to future Livecodes playgrounds. Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
     // .addExtraButton((component) => {
     //   component
-    //   .setIcon("help-circle")
-    //   .setTooltip("Take a tour")
-    //   .onClick(() => {
-    //     const boarding = new Boarding({
-    //       onPopoverRender: (popoverElements) => {
-    //         setTimeout(() => {
-    //           let stepsSpan = activeDocument.createElement("span");
-    //           stepsSpan.addClass("steps-progress");
-    //           stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
-    //           popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
-
-
-    //           // popoverElements.popoverTitle.innerText = `${
-    //           //   popoverElements.popoverTitle.innerText
-    //           // } (${boarding.currentStep + 1}/${
-    //           //   boarding.getSteps().length
-    //           // })`;
-    //         }, 0);
-    //       },
-    //       opacity: 0.75,
-    //     });
-    //     boarding.defineSteps(onboardingSteps);
-    //     boarding.start();
+    //   .setIcon("refresh-cw")
+    //   .setTooltip("Reload plugin")
+    //   .onClick(async () => {
+    //     await this.plugin.reload();
+    //     new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
     //   });
-    //   component.extraSettingsEl.classList.add("onboarding-button");
+    //   component.extraSettingsEl.classList.add("mod-warning");
     // })
     // .then(cb => {
     //   cb.settingEl.classList.add("setting-head");
     // });
-
-
-      // new Setting(containerEl)
-      // .setName("Reload plugin")
-      // .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ All settings changes are applied to future Livecodes playgrounds. Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
-      // .addExtraButton((component) => {
-      //   component
-      //   .setIcon("refresh-cw")
-      //   .setTooltip("Reload plugin")
-      //   .onClick(async () => {
-      //     await this.plugin.reload();
-      //     new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
-      //   });
-      //   component.extraSettingsEl.classList.add("mod-warning");
-      // })
-      // .then(cb => {
-      //   cb.settingEl.classList.add("setting-head");
-      // });
 
     const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {

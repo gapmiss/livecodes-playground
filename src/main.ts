@@ -1,5 +1,6 @@
-import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl } from "obsidian";
+import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl, WorkspaceLeaf } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
+import { LivecodesSearchView, VIEW_TYPE_SEARCH } from "./views/search";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/playground-select-modal";
 import { StarterSelectModal } from "./modals/starter-select-modal";
@@ -116,6 +117,12 @@ export default class LivecodesPlugin extends Plugin {
       (leaf) => new PlaygroundView(this.app, leaf, this.settings.jsonTemplate, this.settings),
     );
 
+
+    this.registerView(
+      VIEW_TYPE_SEARCH,
+      (leaf) => new LivecodesSearchView(this.app, leaf, this.settings),
+    );
+
     this.addRibbonIcon("file-code-2", "Open Livecodes playground", async () => {
       new PlaygroundSelectModal(this).open();
     });
@@ -141,11 +148,19 @@ export default class LivecodesPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: "new-project-in-livecodes",
+      id: "new-playground-in-livecodes",
       name: "New Livecodes playground",
       callback: async () => {
         await this.newLivecodesPlayground(false, null);
       }
+    });
+
+    this.addCommand({
+      id: "open-livecodes-search",
+      name: "Livecodes search",
+      callback: async () => {
+        await this.activateSearchView();
+      },
     });
 
     /**
@@ -160,7 +175,7 @@ export default class LivecodesPlugin extends Plugin {
           if (f instanceof TFile) {
             this.settings.jsonTemplate = f;
             await this.saveSettings();
-            await this.activateView();
+            await this.activatePlaygroundView();
           }
         } catch (error) {
           new Notice("❌ " + error + " Click this message to dismiss.", 0);
@@ -189,7 +204,7 @@ export default class LivecodesPlugin extends Plugin {
                 .onClick(async () => {
                   this.settings.jsonTemplate = f;
                   await this.saveSettings();
-                  await this.activateView();
+                  await this.activatePlaygroundView();
                 });
             });
             menu.addItem((item) => {
@@ -285,10 +300,15 @@ export default class LivecodesPlugin extends Plugin {
         leaf.detach();
       }
     });
+    // this.app.workspace.getLeavesOfType(VIEW_TYPE_SEARCH).forEach((leaf) => {
+    //   if (leaf.view instanceof LivecodesSearchView) {
+    //     leaf.detach();
+    //   }
+    // });
     console.log("<"+this.manifest.name+">", "v"+this.manifest.version, this.state );
   }
 
-  async activateView() {
+  async activatePlaygroundView() {
     new Notice("Loading playground…", 5000);
 
     await this.app.workspace.getLeaf(true).setViewState({
@@ -301,6 +321,27 @@ export default class LivecodesPlugin extends Plugin {
     if (leaf?.view instanceof PlaygroundView) {
       this.app.workspace.revealLeaf(leaf);
     }
+  }
+
+  async activateSearchView() {
+    // new Notice("Loading playground…", 5000);
+    const { workspace } = this.app;
+
+    let leaf: WorkspaceLeaf | null = null;
+    const leaves = workspace.getLeavesOfType(VIEW_TYPE_SEARCH);
+
+    if (leaves.length > 0) {
+      // A leaf with our view already exists, use that
+      leaf = leaves[0];
+    } else {
+      // Our view could not be found in the workspace, create a new leaf
+      // in the right sidebar for it
+      leaf = workspace.getRightLeaf(false);
+      await leaf.setViewState({ type: VIEW_TYPE_SEARCH, active: true });
+    }
+
+    // "Reveal" the leaf in case it is in a collapsed sidebar
+    workspace.revealLeaf(leaf);
   }
 
   async loadSettings() {
@@ -403,7 +444,7 @@ export default class LivecodesPlugin extends Plugin {
             ).then(async (f:TFile) => {
                 this.settings.jsonTemplate = f;
                 await this.saveSettings();
-                await this.activateView();
+                await this.activatePlaygroundView();
               }
             );
           new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
@@ -447,7 +488,7 @@ export default class LivecodesPlugin extends Plugin {
             ).then(async (f:TFile) => {
                 this.settings.jsonTemplate = f;
                 await this.saveSettings();
-                await this.activateView();
+                await this.activatePlaygroundView();
               }
             );
           new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");

@@ -53,7 +53,7 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
     if (f.path) {
       this.plugin.settings.jsonTemplate = f;
       this.plugin.saveSettings;
-      await this.plugin.activateView();
+      await this.plugin.activatePlaygroundView();
       return Promise.resolve;
     } else {
       new Notice("Invalid file path.")

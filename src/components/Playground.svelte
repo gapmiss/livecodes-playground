@@ -362,7 +362,7 @@
         }
       });
 
-      setIcon(openPlaygroundSettings, "cog");
+      setIcon(openPlaygroundSettings, "info");
       openPlaygroundSettings.addEventListener("click", async (e) => {
         e.preventDefault();
         try {
@@ -450,12 +450,12 @@
                     stepLink.addClass("active");
                   }
                   stepLink.setAttribute("data-step-number", `${i}`);
-                  stepLink.addEventListener("mouseenter",  async function (e) {
-                    e.stopPropagation();
-                    setTimeout(async () => {
-                      boarding.start(i);
-                    }, 1000);
-                  });
+                  // stepLink.addEventListener("mouseenter",  async function (e) {
+                  //   e.stopPropagation();
+                  //   setTimeout(async () => {
+                  //     boarding.start(i);
+                  //   }, 1000);
+                  // });
                   newStep.appendChild(stepLink);
                   stepsList.appendChild(newStep);
                   i++;

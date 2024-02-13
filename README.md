@@ -66,7 +66,7 @@ or:
 ## Tips
 
 - [ ] cursor position and Obsidian.md commands when inside the playground iframe
-- [ ] which button SDK updates effect undo/redo history
+- [ ] which button SDK updates effect undo/redo history stack?
 
 ## Issues and bug reports
 

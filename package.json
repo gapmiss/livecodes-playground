@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@octokit/rest": "^20.0.2",
+		"@orama/orama": "^2.0.5",
 		"@popperjs/core": "^2.11.8",
 		"@tsconfig/svelte": "^5.0.2",
 		"@types/lunr": "^2.3.7",

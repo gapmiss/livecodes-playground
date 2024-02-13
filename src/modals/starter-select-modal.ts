@@ -125,7 +125,7 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
             ).then(async (f:TFile) => {
                 this.plugin.settings.jsonTemplate = f;
                 await this.plugin.saveSettings();
-                await this.plugin.activateView();
+                await this.plugin.activatePlaygroundView();
               }
             );
           new Notice("New playground saved as: " + this.plugin.settings.playgroundFolder+'/'+fName + ".json");
