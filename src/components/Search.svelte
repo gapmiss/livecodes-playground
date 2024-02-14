@@ -3,7 +3,8 @@
   import { onMount } from "svelte";
 	import type { TypedDocument, Orama, Results, SearchParams, Language } from '@orama/orama';
 	import { create, insert, remove, search, searchVector, count } from '@orama/orama';
-
+	import {INDICATOR_SVG} from "../assets/indicator";
+	
 	type PlaygroundDocument = TypedDocument<Orama<typeof playgroundSchema>>;
 	const playgroundSchema = {
 		path: 'string',
@@ -31,17 +32,15 @@
   const app = this.app;
   const plugin = app.plugins.plugins["livecodes-playground"];
 
+	let param:any;
 	let entries:any[] = [];
-	console.log(entries);
   let searchButton: HTMLButtonElement;
 	let searchInput: HTMLInputElement;
-	let openPlayground: HTMLDivElement;
+	// let openPlayground: HTMLDivElement;
 
 	let debouncAction = debounce(
 		async () => {
-			// console.log(searchInput.value);
 			entries = [];
-			console.log(entries);
 			let playgroundDB = await setIndex();
 		
 			setTimeout(async () => {
@@ -53,20 +52,33 @@
 				const result: Results<PlaygroundDocument> = await search(playgroundDB, searchParams);
 				result.hits.forEach((hit) => {
 					// https://learn.svelte.dev/tutorial/updating-arrays-and-objects
-					entries = [...entries, {title: hit.document.title, path: hit.document.path}];
+					entries = [...entries, {title: hit.document.title, path: hit.document.path, score: hit.score}];
 				});
-				console.log(entries);
 				return Promise.resolve(entries);
 			}, 500);
-
+			document.querySelector(".no-result")?.setAttribute("style", "display: none;");
 		},
 		1500
 	);
 
+	function handleCreateNote(e:MouseEvent) {
+		e.preventDefault();
+		console.log('handleCreateNote');
+		console.log(e.target);
+	}
+
+	function handleOpenJson(e:MouseEvent) {
+		e.preventDefault();
+		console.log('handleOpenJson');
+		console.log(e.target);
+	}
 
 	function handleKeypress(e:KeyboardEvent) {
 		if (e.key === 'Enter') {
+			document.querySelector(".search-results-wrapper")?.setAttr("style", "display:none;");
+			document.querySelector(".no-result")?.setAttribute("style", "display: flex;");
 			debouncAction();
+			
 		}
 	}
 
@@ -136,88 +148,45 @@
       return a.name.localeCompare(b.name);
     });
 	}
-
-	function handleClick(e:MouseEvent) {
-		e.preventDefault();
-		console.log('openPlayground');
-	}
-
-
-	let bar:any;
-	let barz:any;
-
 	
-	function foo(node: HTMLElement, bar: any) {
-		// the node has been mounted in the DOM
-		// console.log(node);
+	function createNoteHandler(node: HTMLElement, param: any) {
 		setIcon(node, "file-plus-2");
-		// node.setAttribute("style", "--icon-size: 22px");
-		return {
-			update(node: any) {
-				// the value of `bar` has changed
-				console.log(node);
-			},
-
-			destroy() {
-				// the node has been removed from the DOM
-			}
-		};
+		node.addEventListener("click", (e) => {
+			e.preventDefault();
+			console.log(e.target);
+			console.log(e);
+			console.log(param);
+		});
 	}
 	
-	function fooz(node: HTMLElement, barz: any) {
-		// the node has been mounted in the DOM
-		// console.log(node);
+	function openJsonHandler(node: HTMLElement, param: any) {
 		setIcon(node, "file-json-2");
-		// node.setAttribute("style", "--icon-size: 22px");
-		return {
-			update(node: any) {
-				// the value of `bar` has changed
-				console.log(node);
-			},
-
-			destroy() {
-				// the node has been removed from the DOM
-			}
-		};
+		node.addEventListener("click", (e) => {
+			e.preventDefault();
+			console.log(e.target);
+			console.log(e);
+			console.log(param);
+		});
+		// return {
+		// 	update(node: any) {
+		// 		// the value has changed
+		// 	},
+		// 	destroy() {
+		// 		// the node has been removed from the DOM
+		// 	}
+		// };
 	}
 
 	onMount(() => {
-
 		searchInput.focus();
-		
-		// setIcon(searchButton, "package-search");
 		searchButton.addEventListener("click", async (e):Promise<any> => {
 			e.preventDefault();
-
-			if (searchInput.value.length >= 2 ) {
-				debouncAction();
-			}
-
+			document.querySelector(".search-results-wrapper")?.setAttr("style", "display:none;");
+			document.querySelector(".no-result")?.setAttribute("style", "display: flex;");
+			debouncAction();
 		});
 
-		
-		// let handleIcon = function(node) {
-		// 	console.log(node);
-		// 	// setIcon(e.target, "file")
-		// }
-
-
-		// setIcon(openPlayground, "file");
-		// openPlayground.addEventListener("click", async (e):Promise<any> => {
-		// function handleClick(e:MouseEvent) {
-		// 	e.preventDefault();
-		// 	console.log('openPlayground');
-		// }
-		// });
-
-		
-		
-
-
 	});
-
-	
-	
 
 </script>
 
@@ -235,9 +204,7 @@
 	>
 		Search
 	</button>
-	
 </div>
-
 
 {#if entries.length}
 <div class="search-results-wrapper">
@@ -245,27 +212,52 @@
 		{entries.length} playgrounds found
 	</div>
 	{#each entries as item}
-		<div class="result-row">
+		<div 
+			class="result-row" 
+			aria-label="score: {`${Math.round(item.score * 10000) / 10000}`}"
+			data-tooltip-position="top"
+		>
 			<div>
-				<a href="obsidian://playground?vault={encodeURIComponent(app.vault.getName())}&playgroundPath={encodeURIComponent(item.path)}" aria-label="{item.path.replace(plugin.settings.playgroundFolder+'/', "")}" data-tooltip-position="top">{item.title}</a>
+				<a 
+					href="obsidian://playground?vault={encodeURIComponent(app.vault.getName())}&playgroundPath={encodeURIComponent(item.path)}" 
+					aria-label="Open playground: {item.path.replace(plugin.settings.playgroundFolder+'/', "")}" 
+					data-tooltip-position="left"
+				>
+					{item.title}
+				</a>
 			</div>
 			<div>
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<button on:click|once={handleClick} use:foo={bar} class="clickable-icon setting-editor-extra-setting-button" aria-label=""></button>
+				<button 
+					use:createNoteHandler={item.path} 
+					class="clickable-icon setting-editor-extra-setting-button" 
+					aria-label="Create note"
+				>
+				</button>
 			</div>
 			<div>
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<button on:click|once={handleClick} use:fooz={barz} class="clickable-icon setting-editor-extra-setting-button" aria-label=""></button>
+				<button 
+					use:openJsonHandler={item.path} 
+					class="clickable-icon setting-editor-extra-setting-button" 
+					aria-label="Open JSON"
+				>
+				</button>
 			</div>
 		</div>	
 		
 	{:else}
-		No items found
+		<div class="search-results-wrapper">
+			<div class="no-result">
+				No playgrounds found
+			</div>
+		</div>
 	{/each}
 </div>
+<!-- {:else}
+	<div class="search-results-wrapper"></div> -->
 {/if}
+<div class="no-result" style="display: none;">
+	{@html INDICATOR_SVG}
+</div>
 
 <style>
 .search-form-wrapper {
@@ -277,13 +269,22 @@
 }
 .search-form-wrapper button {
 	flex-grow: 1;
+	cursor: pointer;
 }
 .search-form-wrapper input {
-	/* margin-left: .5em; */
-	flex-grow: 10;
+	flex-grow: 3;
 }
 .search-results-wrapper {
 	padding: 0;
+}
+.no-result {
+	display: flex;
+	align-items: center;
+  flex-wrap: nowrap;
+  gap: .15em;
+	justify-content: center;
+	padding: 3em;
+	color: var(--color-base-60);
 }
 .result-row:hover {
 	background-color: var(--color-base-30);
@@ -297,14 +298,12 @@
 }
 .result-row div:has(a) {
 	display: inline-block;
-	
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-
   flex-grow: 1;
-  /* flex-basis: 160px; */
-
+  flex-basis: 160px;
+	width:100%;
 }
 .result-row a {
 	display: inline-block;
@@ -317,10 +316,8 @@
 	border-radius: var(--size-2-3);
 }
 .result-row div:has(button) {
-	/* border: 1px solid hotpink; */
 	display: inline-block;
 	padding: 0;
-	/* flex-grow: 1; */
 }
 .result-row {
 	padding: .25em;
