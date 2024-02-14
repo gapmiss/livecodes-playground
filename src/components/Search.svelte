@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { Notice, setIcon, TFile, TFolder, Vault, debounce, ButtonComponent } from "obsidian";
+  import { setIcon, TFile, TFolder, Vault, debounce } from "obsidian";
   import { onMount } from "svelte";
-	import type { TypedDocument, Orama, Results, SearchParams, Language } from '@orama/orama';
-	import { create, insert, remove, search, searchVector, count } from '@orama/orama';
+	import type { TypedDocument, Orama, Results, SearchParams } from '@orama/orama';
+	import { create, insert, remove, search, count } from '@orama/orama';
 	import {INDICATOR_SVG} from "../assets/indicator";
 	
 	type PlaygroundDocument = TypedDocument<Orama<typeof playgroundSchema>>;
+	
 	const playgroundSchema = {
 		path: 'string',
 		title: 'string',
@@ -31,32 +32,39 @@
 
   const app = this.app;
   const plugin = app.plugins.plugins["livecodes-playground"];
-
 	let param:any;
 	let entries:any[] = [];
   let searchButton: HTMLButtonElement;
 	let searchInput: HTMLInputElement;
-	// let openPlayground: HTMLDivElement;
 
-	let debouncAction = debounce(
+	let debounceAction = debounce(
 		async () => {
 			entries = [];
-			let playgroundDB = await setIndex();
-		
+			let playgroundDB = await createIndex();
 			setTimeout(async () => {
-				const searchParams: SearchParams<Orama<typeof playgroundSchema>> = {
-					term: searchInput.value,
-					limit: 1000
-				};
-				// @ts-ignore
-				const result: Results<PlaygroundDocument> = await search(playgroundDB, searchParams);
-				result.hits.forEach((hit) => {
-					// https://learn.svelte.dev/tutorial/updating-arrays-and-objects
-					entries = [...entries, {title: hit.document.title, path: hit.document.path, score: hit.score}];
-				});
-				return Promise.resolve(entries);
+				try {
+					const searchParams: SearchParams<Orama<typeof playgroundSchema>> = {
+						term: searchInput.value,
+						limit: 1000,
+						tolerance: 1,
+					};
+					// @ts-ignore
+					const result: Results<PlaygroundDocument> = await search(playgroundDB, searchParams);
+					result.hits.forEach((hit) => {
+						// https://learn.svelte.dev/tutorial/updating-arrays-and-objects
+						entries = [...entries, {title: hit.document.title, path: hit.document.path, score: hit.score}];
+					});
+					document.querySelector(".waiting-indicator")?.setAttribute("style", "display: none;");
+					if (entries.length) {
+						document.querySelector(".search-results-wrapper")?.setAttr("style", "display: block;");
+					} else {
+						document.querySelector(".no-result")?.setAttr("style", "display: flex;");
+					}
+					return Promise.resolve(entries);
+				} catch (error) {
+					return Promise.reject();
+				}
 			}, 500);
-			document.querySelector(".no-result")?.setAttribute("style", "display: none;");
 		},
 		1500
 	);
@@ -75,14 +83,17 @@
 
 	function handleKeypress(e:KeyboardEvent) {
 		if (e.key === 'Enter') {
-			document.querySelector(".search-results-wrapper")?.setAttr("style", "display:none;");
-			document.querySelector(".no-result")?.setAttribute("style", "display: flex;");
-			debouncAction();
-			
+			let query = searchInput.value;
+			if (query.length > 1) {
+				document.querySelector(".search-results-wrapper")?.setAttr("style", "display:none;");
+				document.querySelector(".waiting-indicator")?.setAttribute("style", "display: flex;");
+				document.querySelector(".no-result")?.setAttr("style", "display: none;");
+				debounceAction();	
+			}
 		}
 	}
 
-	async function setIndex():Promise<Orama<{ readonly path: "string"; readonly title: "string"; readonly description: "string"; readonly head: "string"; readonly htmlAttrs: "string"; readonly tags: "string[]"; readonly markup: { readonly language: "string"; readonly content: "string"; }; readonly style: {  }; readonly script: { }; readonly scripts: "string[]"; readonly stylesheets: "string[]"; }>|any> {
+	async function createIndex():Promise<Orama<{ readonly path: "string"; readonly title: "string"; readonly description: "string"; readonly head: "string"; readonly htmlAttrs: "string"; readonly tags: "string[]"; readonly markup: { readonly language: "string"; readonly content: "string"; }; readonly style: {  }; readonly script: { }; readonly scripts: "string[]"; readonly stylesheets: "string[]"; }>|any> {
 		const playgroundDB: Orama<typeof playgroundSchema> = await create({
 			schema: playgroundSchema,
 		});
@@ -91,62 +102,70 @@
 				const f = this.app.vault.getAbstractFileByPath(plugin.settings.playgroundFolder);
 				if (f instanceof TFolder && f.children.length > 0) {
 
-					let playgrounds = getPlaygroundsInFolder(f);
+					let playgrounds = await getPlaygroundsInFolder(f);
 					
-						playgrounds.forEach(async (doc) => {
-							let jsonFile:TFile = this.app.vault.getAbstractFileByPath(doc.path) as TFile;
-							let playgroundJson = await this.app.vault.read(jsonFile)
-							try {
-								let jsonContent = JSON.parse(playgroundJson);
-								await insert(playgroundDB, {
-									path: `${jsonFile.path}`,
-									title: jsonContent.title,
-									description: jsonContent.description,
-									head: jsonContent.head,
-									htmlAttrs: jsonContent.htmlAttrs,
-									tags: (jsonContent.tags) ? jsonContent.tags : "",
-									markup: {
-										language: (jsonContent.markup.language !== undefined) ? jsonContent.markup.language : "",
-										content: jsonContent.markup.content||""
-									},
-									style: {
-										language: (jsonContent.style.language !== undefined) ? jsonContent.style.language : "",
-										content: jsonContent.style.content||""
-									},
-									script: {
-										language: (jsonContent.script.language !== undefined) ? jsonContent.script.language : "",
-										content: jsonContent.script.content||""
-									},
-									scripts: jsonContent.scripts||"",
-									stylesheets: jsonContent.stylesheets||""
-								})
-								.then((idP)=>{
-									// console.log('idP');
-									// console.log(idP);
-								});
-							} catch (error) {
-								console.log(error.message || error);
-							}
-						});
+					playgrounds.forEach(async (doc) => {
+						await insertIndex(doc, playgroundDB);
+					});
+
+					return Promise.resolve(playgroundDB);
 				}
+
 			} catch (error) {
 				console.log(error.message || error);
+				return Promise.reject(error);
 			}
-			return playgroundDB;
 		}
 	}
 
-	function getPlaygroundsInFolder(folder: TFolder): TFile[] {
+	async function insertIndex(playground:TFile, pdb: Orama<typeof playgroundSchema>) {
+		let jsonFile:TFile = this.app.vault.getAbstractFileByPath(playground.path) as TFile;
+		let playgroundJson = await this.app.vault.read(jsonFile)
+		try {
+			let jsonContent = JSON.parse(playgroundJson);
+			await insert(pdb, {
+				path: `${jsonFile.path}`,
+				title: jsonContent.title,
+				description: jsonContent.description,
+				head: jsonContent.head,
+				htmlAttrs: jsonContent.htmlAttrs,
+				tags: (jsonContent.tags) ? jsonContent.tags : "",
+				markup: {
+					language: (jsonContent.markup.language !== undefined) ? jsonContent.markup.language : "",
+					content: jsonContent.markup.content||""
+				},
+				style: {
+					language: (jsonContent.style.language !== undefined) ? jsonContent.style.language : "",
+					content: jsonContent.style.content||""
+				},
+				script: {
+					language: (jsonContent.script.language !== undefined) ? jsonContent.script.language : "",
+					content: jsonContent.script.content||""
+				},
+				scripts: jsonContent.scripts||"",
+				stylesheets: jsonContent.stylesheets||""
+			})
+			// .then((idP)=>{
+			// 	// console.log('idP');
+			// 	// console.log(idP);
+			// });
+		} catch (error) {
+			console.log(error.message || error);
+		}
+		return Promise.resolve();
+	}
+
+	async function getPlaygroundsInFolder(folder: TFolder): Promise<TFile[]> {
     let files: TFile[] = [];
     Vault.recurseChildren(folder, (file) => {
       if (file instanceof TFile && file.extension === 'json') {
         files.push(file);
       }
     });
-		// return files;
-    return files.sort( (a: { name: string; },b: { name: string; }) => {
-      return a.name.localeCompare(b.name);
-    });
+		return Promise.resolve(files);
+    // return files.sort( (a: { name: string; },b: { name: string; }) => {
+      // return a.name.localeCompare(b.name);
+    // });
 	}
 	
 	function createNoteHandler(node: HTMLElement, param: any) {
@@ -182,8 +201,9 @@
 		searchButton.addEventListener("click", async (e):Promise<any> => {
 			e.preventDefault();
 			document.querySelector(".search-results-wrapper")?.setAttr("style", "display:none;");
-			document.querySelector(".no-result")?.setAttribute("style", "display: flex;");
-			debouncAction();
+			document.querySelector(".waiting-indicator")?.setAttribute("style", "display: flex;");
+			document.querySelector(".no-result")?.setAttr("style", "display: none;");
+			debounceAction();
 		});
 
 	});
@@ -245,18 +265,16 @@
 		</div>	
 		
 	{:else}
-		<div class="search-results-wrapper">
-			<div class="no-result">
-				No playgrounds found
-			</div>
-		</div>
+		<div class="search-results-wrapper"></div>
 	{/each}
 </div>
-<!-- {:else}
-	<div class="search-results-wrapper"></div> -->
+<!-- {:else} -->
 {/if}
-<div class="no-result" style="display: none;">
+<div class="waiting-indicator" style="display: none;">
 	{@html INDICATOR_SVG}
+</div>
+<div class="no-result" style="display: none;">
+	No playgrounds found
 </div>
 
 <style>
@@ -277,8 +295,15 @@
 .search-results-wrapper {
 	padding: 0;
 }
+.waiting-indicator {
+	align-items: center;
+  flex-wrap: nowrap;
+  gap: .15em;
+	justify-content: center;
+	padding: 3em;
+	color: var(--color-base-60);
+}
 .no-result {
-	display: flex;
 	align-items: center;
   flex-wrap: nowrap;
   gap: .15em;
