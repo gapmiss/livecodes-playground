@@ -354,7 +354,7 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
-    await openPromptModal(this.app, "Livecodes playground", "Save as:", "", "e.g. New Project", false)
+    await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Project", false)
       .then(async (fName:string) => {
 
         if (fName?.length === 0) {
@@ -466,7 +466,7 @@ export default class LivecodesPlugin extends Plugin {
     // console.log(newTemplate.title);
 
     // return Promise.resolve;
-    await openPromptModal(this.app, "Livecodes playground", "Save as:", newTemplate.title, "e.g. New Project", false)
+    await openPromptModal(this.app, "New livecodes playground", "Save as:", newTemplate.title, "e.g. New Project", false)
       .then(async (fName:string) => {
 
         if (fName?.length === 0) {

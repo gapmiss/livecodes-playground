@@ -62,6 +62,9 @@ or:
 - [ ] tags
 - [ ] style settings support
 - [ ] gist MD codeblock script `language`
+- [ ] test vault
+- [ ] open playground w/ choices of `markup`, `style`, & `script`
+- [ ] loading animation for search
 
 ## Tips
 

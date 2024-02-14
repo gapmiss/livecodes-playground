@@ -52,10 +52,10 @@ export class LivecodesSearchView extends ItemView {
 
     this.component = new Component({
       target: this.contentEl,
-      props: {
+      // props: {
         // jsonTemplate: newTemplate,
         // tplPath: tplPath!
-      },
+      // },
     });
 
   }

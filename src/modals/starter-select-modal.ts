@@ -56,7 +56,7 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
   }
 
   async onChooseItem(starter: any) {
-    await openPromptModal(this.app, "Livecodes playground", "Save as:", "", "e.g. New Project", false)
+    await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Project", false)
       .then(async (fName:string) => {				
         if (fName?.length === 0) {
           return;

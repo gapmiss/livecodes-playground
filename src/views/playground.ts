@@ -71,6 +71,7 @@ export class PlaygroundView extends ItemView {
   }
 
   async onClose() {
+    // let agree = confirm("are you sure?");
     this.component.$destroy();
   }
 }

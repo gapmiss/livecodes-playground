@@ -612,43 +612,43 @@
       aria-label="Watch for changes & SAVE"
       bind:this={onWatch}
       data-tooltip-position="bottom"
-      class="watch-button"
+      class="watch-button clickable-icon"
     />
     <button
       aria-label="Create note"
       bind:this={createNote}
       data-tooltip-position="bottom"
-      class="create-note-button"
+      class="create-note-button clickable-icon"
     />
     <button
       aria-label="Save as JSON"
       bind:this={saveAsJSON}
       data-tooltip-position="bottom"
-      class="save-json-button"
+      class="save-json-button clickable-icon"
     />
     <button
       aria-label="Save as HTML"
       bind:this={downloadHTML}
       data-tooltip-position="bottom"
-      class="save-html-button"
+      class="save-html-button clickable-icon"
     />
     <button
       aria-label="Copy HTML to clipboard"
       bind:this={copyHTML}
       data-tooltip-position="bottom"
-      class="copy-html-button"
+      class="copy-html-button clickable-icon"
     />
     <button
       aria-label="Copy share URL to clipboard"
       bind:this={copyShareUrl}
       data-tooltip-position="bottom"
-      class="share-url-button"
+      class="share-url-button clickable-icon"
     />
     <button
       aria-label="Create Github gist"
       bind:this={createGist}
       data-tooltip-position="bottom"
-      class="create-gist-button"
+      class="create-gist-button clickable-icon"
     />
     <!-- <button
       aria-label="Open in Codepen"
@@ -659,24 +659,25 @@
       aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
       bind:this={toggleTheme}
       data-tooltip-position="bottom"
-      class="theme-mode-button"
+      class="theme-mode-button clickable-icon"
     />
     <button
       aria-label="External resources"
       bind:this={openExternalResources}
       data-tooltip-position="bottom"
-      class="external-resources-button"
+      class="external-resources-button clickable-icon"
     />
     <button
       aria-label="Playground settings"
       bind:this={openPlaygroundSettings}
       data-tooltip-position="bottom"
-      class="playground-settings-button"
+      class="playground-settings-button clickable-icon"
     />
     <button
       aria-label="Help"
       bind:this={showHelp}
       data-tooltip-position="bottom"
+      class="clickable-icon"
     />
   </div>
 </div>
