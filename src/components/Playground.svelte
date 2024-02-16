@@ -65,8 +65,10 @@
       console: "open", // or full
       lineNumbers: plugin.settings.lineNumbers,
       wordWrap: plugin.settings.wordWrap,
+      // @ts-ignore
+      // enableAI: plugin.settings.enableAI,
       editor: plugin.settings.editor,
-      version: "19",
+      version: "22",
     },
     loading: "eager",
   };
@@ -173,6 +175,15 @@
           console.log(error.message || error);
         }
       });
+
+      const loadWatcher = playground.watch('load', () => {
+        console.log('load');
+      });
+      
+      const readyWatcher = playground.watch('ready', () => {
+        console.log('ready');
+      });
+
 
       setIcon(saveAsJSON, "file-json-2");
       saveAsJSON.addEventListener("click", async (e) => {
@@ -369,6 +380,7 @@
           let conf = {
             title: await playground.getConfig().then((t: any) => {return t.title}),
             description: await playground.getConfig().then((t: any) => {return t.description}),
+            tags: await playground.getConfig().then((t: any) => {return t.tags}),
             head: await playground.getConfig().then((t: any) => {return t.head}),
             htmlAttrs: await playground.getConfig().then((t: any) => {return t.htmlAttrs})
           };
@@ -604,7 +616,7 @@
 <div class="livecodes-wrapper">
   <div
     bind:this={container}
-    data-height={plugin.settings.dataHeight || "300"}
+    data-height={plugin.settings.dataHeight || "600"}
   />
 
   <div class="buttons-wrapper">

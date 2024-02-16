@@ -59,26 +59,37 @@ span.button-divider {
   width: 100%;
   min-width: 10em;
 } */
+
+
+.livecodes-editor-settings-modal .title-setting input {
+  width: 100%;
+}
+.livecodes-external-resources-modal .setting-item-control:has(textarea),
+.livecodes-editor-settings-modal .setting-item-control  {
+  justify-content: flex-start;
+}
+
 .scripts-setting textarea,
 .stylesheets-setting textarea,
 .head-setting textarea,
+.description-setting textarea,
 textarea.playground-editor-settings-textarea {
   width: 100%;
-  font-family: monospace;
+  /* font-family: monospace; */
   font-size: var(--font-smaller);
-  height: 12ch;
+  height: 10ch;
   margin-top: .25em;
-  white-space: pre;
+  /* white-space: pre;
   overflow-wrap: normal;
-  overflow-x: scroll;
+  overflow-x: scroll; */
 }
-.description-setting textarea,
+.tags-setting textarea,
 .htmlattrs-setting textarea,
 textarea.playground-editor-settings-textarea {
   width: 100%;
-  font-family: monospace;
+  /* font-family: monospace; */
   font-size: var(--font-smaller);
-  height: 5ch;
+  height: 6ch;
   margin-top: .25em;
   white-space: pre;
 }
@@ -86,6 +97,7 @@ div.livecodes-external-resources-modal .stylesheets-setting,
 div.livecodes-external-resources-modal .scripts-setting,
 div.livecodes-editor-settings-modal .head-setting,
 div.livecodes-editor-settings-modal .description-setting,
+div.livecodes-editor-settings-modal .tags-setting,
 div.livecodes-editor-settings-modal .htmlattrs-setting {
   display: block;
 }
@@ -362,6 +374,10 @@ body:has(div#boarding-popover-item) .tooltip {
   z-index: 1000000001 !important;
 }
 
+/* .setting-item {
+  flex-flow: row wrap;
+} */
+
 .setting-item-heading-onboarding .setting-item-description {
   font-size: var(--font-ui-small)
 }
@@ -394,3 +410,52 @@ body:has(div#boarding-popover-item) .tooltip {
 .livecodes-sponsorship-button {
   margin: 10px;
 }
+
+
+.livecodes-status-error.notice {
+  background: #c10000;
+  color: white
+}
+
+.livecodes-status-info.notice {
+  background: hsl(204, 86%, 53%);
+  color: white
+}
+
+.livecodes-status-success.notice {
+  background: #629762;
+  color: white
+}
+
+
+
+/* @settings
+name: Livecodes
+id: livecodes-style-settings
+settings:
+- 
+  id: livecodes-style-colors
+  title: Colors
+  type: heading
+  level: 2
+  collapsed: true
+- 
+  id: accent
+  title: Accent Color
+  type: variable-color
+  format: hsl-split
+  default: '#007AFF'
+- 
+  id: text
+  title: UI font
+  description: Font used for the user interface
+  type: variable-text
+  default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif
+- 
+  id: my-info-text
+  title: Information
+  description: "This is *informational* text"
+  type: info-text
+  markdown: true
+
+*/

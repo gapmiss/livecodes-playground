@@ -1,5 +1,5 @@
-export const INDICATOR_SVG: string = `<svg width="16" height="16" viewBox="0 0 135 140"
-xmlns="http://www.w3.org/2000/svg" fill="#494949">
+export const INDICATOR_SVG: string = `<svg width="24" height="24" viewBox="0 0 135 140"
+xmlns="http://www.w3.org/2000/svg">
 <rect y="10" width="15" height="120" rx="6">
   <animate attributeName="height" begin="0.5s" dur="1s" values="120;110;100;90;80;70;60;50;40;140;120" calcMode="linear" repeatCount="indefinite" />
   <animate attributeName="y" begin="0.5s" dur="1s" values="10;15;20;25;30;35;40;45;50;0;10" calcMode="linear" repeatCount="indefinite" />
@@ -20,4 +20,4 @@ xmlns="http://www.w3.org/2000/svg" fill="#494949">
   <animate attributeName="height" begin="0.5s" dur="1s" values="120;110;100;90;80;70;60;50;40;140;120" calcMode="linear" repeatCount="indefinite" />
   <animate attributeName="y" begin="0.5s" dur="1s" values="10;15;20;25;30;35;40;45;50;0;10" calcMode="linear" repeatCount="indefinite" />
 </rect>
-</svg>`
+</svg>`;

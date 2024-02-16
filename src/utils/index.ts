@@ -88,7 +88,7 @@ export async function postToCodepen(ele: HTMLElement, params: string, path: stri
 }
 
 export const blankPlayground = {
-  appUrl: "https://v21.livecodes.io/",
+  appUrl: "https://v22.livecodes.io/",
   title: "New Project",
   description: "",
   head: "<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",
@@ -143,11 +143,12 @@ export const blankPlayground = {
   tabSize: 2,
   lineNumbers: true,
   wordWrap: false,
+  // enableAI: false,
   closeBrackets: true,
   semicolons: true,
   singleQuote: false,
   trailingComma: true,
   emmet: true,
   editorTheme: [],
-  version: "21"
+  version: "22"
 };

@@ -354,6 +354,20 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
     });
     
+    /*
+    new Setting(containerEl)
+    .setName('AI code assistant')
+    .setDesc('Enable codeium AI')
+    .addToggle(toggle =>
+      toggle
+      .setValue(this.plugin.settings.enableAI)
+      .onChange(async newValue => {
+        this.plugin.settings.enableAI = newValue;
+        await this.plugin.saveSettings();
+      })
+    );
+    /**/
+
     new Setting(containerEl)
       .setHeading()
       .setName("Editor settings")
@@ -728,22 +742,22 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       ),
     );
 
-    // new Setting(containerEl)
-    // .setName("Reload plugin")
-    // .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ All settings changes are applied to future Livecodes playgrounds. Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
-    // .addExtraButton((component) => {
-    //   component
-    //   .setIcon("refresh-cw")
-    //   .setTooltip("Reload plugin")
-    //   .onClick(async () => {
-    //     await this.plugin.reload();
-    //     new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
-    //   });
-    //   component.extraSettingsEl.classList.add("mod-warning");
-    // })
-    // .then(cb => {
-    //   cb.settingEl.classList.add("setting-head");
-    // });
+    new Setting(containerEl)
+    .setName("Reload plugin")
+    .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+    .addExtraButton((component) => {
+      component
+      .setIcon("refresh-cw")
+      .setTooltip("Reload plugin")
+      .onClick(async () => {
+        await this.plugin.reload();
+        new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
+      });
+      component.extraSettingsEl.classList.add("mod-warning");
+    })
+    .then(cb => {
+      cb.settingEl.classList.add("setting-head");
+    });
 
     const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {

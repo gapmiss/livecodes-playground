@@ -6,7 +6,7 @@ import { PlaygroundSelectModal } from "./modals/playground-select-modal";
 import { StarterSelectModal } from "./modals/starter-select-modal";
 import { openPromptModal } from "./modals/prompt-modal";
 import { blankPlayground } from "./utils";
-import { Parameters } from "./types";
+import { Parameters } from "../@types/global";
 // @ts-ignore
 import { config } from 'livecodes';
 
@@ -28,6 +28,7 @@ interface LivecodesSettings {
   singleQuote: boolean;
   trailingComma: boolean;
   wordWrap: boolean;
+  // enableAI: boolean;
   autoUpdate: boolean;
   editorTheme: any;
   monacoDarkTheme: any;
@@ -47,7 +48,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   playgroundFolder: "playgrounds",
   notesFolder: "playgrounds/notes",
   autoWatch: true,
-  appUrl: "https://v21.livecodes.io/",
+  appUrl: "https://v22.livecodes.io/",
   shortUrl: false,
   fontFamily: "Default",
   fontSize: "12",
@@ -61,6 +62,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   singleQuote: false,
   trailingComma: true,
   wordWrap: false,
+  // enableAI: false,
   autoUpdate: true,
   editorTheme: ["vs@light", "vs-dark@dark"],
   monacoDarkTheme: "",
@@ -95,6 +97,7 @@ export default class LivecodesPlugin extends Plugin {
   singleQuote: boolean;
   trailingComma: boolean;
   wordWrap: boolean;
+  // enableAI: boolean;
   autoUpdate: boolean;
   editorTheme: any;
   monacoDarkTheme: any;
@@ -123,17 +126,17 @@ export default class LivecodesPlugin extends Plugin {
       (leaf) => new LivecodesSearchView(this.app, leaf, this.settings),
     );
 
-    this.addRibbonIcon("file-code-2", "Open Livecodes playground", async () => {
+    this.addRibbonIcon("file-code-2", "Open livecodes playground", async () => {
       new PlaygroundSelectModal(this).open();
     });
 
-    this.addRibbonIcon("code", "New Livecodes playground", async () => {
+    this.addRibbonIcon("code", "New livecodes playground", async () => {
       await this.newLivecodesPlayground(false, null);
     });
 
     this.addCommand({
       id: "open-playground-select-modal",
-      name: "Open Livecodes playground",
+      name: "Open livecodes playground",
       callback: async () => {
         new PlaygroundSelectModal(this).open();
       },
@@ -141,7 +144,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.addCommand({
       id: "open-starter-select-modal",
-      name: "Open Livecodes starter",
+      name: "Open livecodes starter",
       callback: async () => {
         new StarterSelectModal(this).open();
       },
@@ -149,7 +152,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.addCommand({
       id: "new-playground-in-livecodes",
-      name: "New Livecodes playground",
+      name: "New livecodes playground",
       callback: async () => {
         await this.newLivecodesPlayground(false, null);
       }
@@ -249,7 +252,7 @@ export default class LivecodesPlugin extends Plugin {
           if (showMenu) {
             menu.addItem( (item) => {
               item
-                .setTitle("Open in Livecodes playground")
+                .setTitle("Open in livecodes")
                 .setIcon("file-code-2")
                 .onClick(async () => {
                   await this.newLivecodesPlayground(true, f);
@@ -276,7 +279,7 @@ export default class LivecodesPlugin extends Plugin {
           if (showMenu) {
             menu.addItem( (item) => {
               item
-                .setTitle("Open in Livecodes playground")
+                .setTitle("Open in livecodes playground")
                 .setIcon("file-code-2")
                 .onClick(async () => {
                   await this.newLivecodesPlayground(true, f);
@@ -430,6 +433,7 @@ export default class LivecodesPlugin extends Plugin {
         newPlayground.singleQuote = this.settings.singleQuote;
         newPlayground.trailingComma = this.settings.trailingComma;
         newPlayground.wordWrap = this.settings.wordWrap;
+        // newPlayground.enableAI = this.settings.enableAI;
         newPlayground.autoupdate = this.settings.autoUpdate;
         newPlayground.delay = this.settings.delay;
 

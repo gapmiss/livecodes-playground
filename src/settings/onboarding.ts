@@ -2,7 +2,7 @@ export const helpPopovers = {
   appUrl:
   { 
     title: 'App URL', 
-    description: '<p>Load the playground from a custom URL (e.g. <a href="https://livecodes.io/docs/features/self-hosting" aria-label="https://livecodes.io/docs/features/self-hosting" target="_blank" rel="noopener noreferrer" class="external-link">self-hosted app</a>, <a href="https://livecodes.io/docs/features/permanent-url" aria-label="https://livecodes.io/docs/features/permanent-url" target="_blank" rel="noopener noreferrer" class="external-link">permanent URL</a>). Trailing slash <strong>/</strong> is required.</p><p>Default: <strong>https://v21.livecodes.io/</strong></p>' 
+    description: '<p>Load the playground from a custom URL (e.g. <a href="https://livecodes.io/docs/features/self-hosting" aria-label="https://livecodes.io/docs/features/self-hosting" target="_blank" rel="noopener noreferrer" class="external-link">self-hosted app</a>, <a href="https://livecodes.io/docs/features/permanent-url" aria-label="https://livecodes.io/docs/features/permanent-url" target="_blank" rel="noopener noreferrer" class="external-link">permanent URL</a>). Trailing slash <strong>/</strong> is required.</p><p>Default: <strong>https://v22.livecodes.io/</strong></p>' 
   },
   shortUrl:
   { 

@@ -1,126 +1,136 @@
-import { App, Modal, Setting, ButtonComponent, TextComponent, TextAreaComponent } from "obsidian";
+import { App, Modal, Setting, ButtonComponent } from "obsidian";
 import LivecodesPlugin from '../main';
 
 type PlaygroundSettingsCallback = (text: string | null) => void;
 
 export class PlaygroundSettingsModal extends Modal {
-    plugin: LivecodesPlugin;
-    title: string | null;
-    changes: {title: string, description: string, head: string, htmlAttrs: string};
-    callback: PlaygroundSettingsCallback;
+  plugin: LivecodesPlugin;
+  title: string | null;
+  changes: {title: string, description: string, tags: string, head: string, htmlAttrs: string};
+  callback: PlaygroundSettingsCallback;
 
-    constructor(
-        app: App,
-        plugin: LivecodesPlugin,
-        title: string | null,
-        changes: {title: string, description: string, head: string, htmlAttrs: string},
-        callback: PlaygroundSettingsCallback,
-    ) {
-        super(app);
-        this.plugin = plugin;
-        this.title = title;
-        this.changes = changes;
-        this.callback = callback;
-    }
-
-    onOpen() {
-
-      const { contentEl } = this;
-      this.contentEl.addClass("livecodes-editor-settings-modal");
-      contentEl.empty();
-      if (this.title) this.titleEl.setText(this.title);
-
-      new Setting(this.contentEl)
-        .setName('Title')
-        .setClass("title-setting")
-        .addText(text =>
-          text
-          .setValue(this.changes.title)
-          .onChange(async newTitleSetting => {
-            this.changes.title = newTitleSetting;
-          })
-        );
-
-      new Setting(this.contentEl)
-        .setName('Description')
-        .setClass("description-setting")
-        .addTextArea(text =>
-          text
-          .setValue(this.changes.description)
-          .onChange(async newDescriptionSetting => {
-            this.changes.description = newDescriptionSetting;
-          })
-        );
-
-      new Setting(this.contentEl)
-        .setName('<head>')
-        .setDesc('Content for <head> element')
-        .setClass("head-setting")
-        .addTextArea(text =>
-          text
-          .setValue(this.changes.head)
-          .onChange(async newHeadSetting => {
-            this.changes.head = newHeadSetting;
-          })
-        );
-
-      new Setting(this.contentEl)
-        .setName('<html> Attrs')
-        .setDesc('Attributes for <html> element.')
-        .setClass("htmlattrs-setting")
-        .addTextArea(text =>
-          text
-          .setValue(this.changes.htmlAttrs)
-          .onChange(async newHtmlAttrsSetting => {
-            this.changes.htmlAttrs = newHtmlAttrsSetting;
-          })
-        );
-
-      const buttonDiv = contentEl.createDiv({
-          cls: "modal-button-container",
-      });
-
-      new ButtonComponent(buttonDiv)
-          .setButtonText("Update")
-          .setCta()
-          .onClick(() => {
-              this.onOK();
-          })
-          .setCta();
-
-      new ButtonComponent(buttonDiv).setButtonText("Cancel").onClick(() => {
-          this.close();
-      });
-    }
-
-    onClose() {
-        let { contentEl } = this;
-        contentEl.empty();
-    }
-
-    onOK() {
-        this.callback(JSON.stringify(this.changes));
-        this.close();
-    }
-}
-
-export async function openPlaygroundSettingsModal(
+  constructor(
     app: App,
     plugin: LivecodesPlugin,
     title: string | null,
-    changes: {title: string, description: string, head: string, htmlAttrs: string},
-    callback?: PlaygroundSettingsCallback
-): Promise<any[] | null> {
-    return await new Promise((resolve, reject) => {
-        new PlaygroundSettingsModal(
-            app,
-            plugin,
-            title,
-            changes,
-            callback ??
-                ((text: any | null) => {
-                    resolve(text);
-                })
-        ).open();
+    changes: {title: string, description: string, tags: string, head: string, htmlAttrs: string},
+    callback: PlaygroundSettingsCallback,
+  ) {
+    super(app);
+    this.plugin = plugin;
+    this.title = title;
+    this.changes = changes;
+    this.callback = callback;
+  }
+
+  onOpen() {
+    const { contentEl } = this;
+    this.contentEl.addClass("livecodes-editor-settings-modal");
+    contentEl.empty();
+    if (this.title) this.titleEl.setText(this.title);
+
+    new Setting(this.contentEl)
+      .setName('Title')
+      .setClass("title-setting")
+      .addText(text =>
+        text
+        .setValue(this.changes.title)
+        .onChange(async newTitleSetting => {
+          this.changes.title = newTitleSetting;
+        })
+      );
+
+    new Setting(this.contentEl)
+      .setName('Description')
+      .setClass("description-setting")
+      .addTextArea(text =>
+        text
+        .setValue(this.changes.description)
+        .onChange(async newDescriptionSetting => {
+          this.changes.description = newDescriptionSetting;
+        })
+      );
+
+    new Setting(this.contentEl)
+      .setName('Tags')
+      .setClass("tags-setting")
+      .addTextArea(text =>
+        text
+        .setValue(this.changes.tags)
+        .onChange(async newTagSetting => {
+          this.changes.tags = newTagSetting;
+        })
+      );
+
+    new Setting(this.contentEl)
+      .setName('<head>')
+      .setDesc('Content for <head> element')
+      .setClass("head-setting")
+      .addTextArea(text =>
+        text
+        .setValue(this.changes.head)
+        .onChange(async newHeadSetting => {
+          this.changes.head = newHeadSetting;
+        })
+      );
+
+    new Setting(this.contentEl)
+      .setName('<html> Attrs')
+      .setDesc('Attributes for <html> element.')
+      .setClass("htmlattrs-setting")
+      .addTextArea(text =>
+        text
+        .setValue(this.changes.htmlAttrs)
+        .onChange(async newHtmlAttrsSetting => {
+          this.changes.htmlAttrs = newHtmlAttrsSetting;
+        })
+      );
+
+    const buttonDiv = contentEl.createDiv({
+        cls: "modal-button-container",
     });
+
+    new ButtonComponent(buttonDiv)
+      .setButtonText("Update")
+      .setCta()
+      .onClick(() => {
+        this.onOK();
+      })
+      .setCta();
+
+    new ButtonComponent(buttonDiv).setButtonText("Cancel").onClick(() => {
+      this.close();
+    });
+  }
+
+  onClose() {
+    let { contentEl } = this;
+    contentEl.empty();
+  }
+
+  onOK() {
+    this.callback(JSON.stringify(this.changes));
+    this.close();
+  }
+}
+
+export async function openPlaygroundSettingsModal(
+  app: App,
+  plugin: LivecodesPlugin,
+  title: string | null,
+  changes: {title: string, description: string, tags: string, head: string, htmlAttrs: string},
+  callback?: PlaygroundSettingsCallback
+): Promise<any[] | null> {
+  return await new Promise((resolve, reject) => {
+    new PlaygroundSettingsModal(
+      app,
+      plugin,
+      title,
+      changes,
+      callback ??
+        ((text: any | null) => {
+          resolve(text);
+        })
+    ).open();
+  });
 }

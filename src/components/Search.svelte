@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
 	import type { TypedDocument, Orama, Results, SearchParams } from '@orama/orama';
 	import { create, insert, remove, search, count } from '@orama/orama';
+	import StatusMessage, { StatusType } from '../utils/StatusMessage'	
 	import {INDICATOR_SVG} from "../assets/indicator";
 	
 	type PlaygroundDocument = TypedDocument<Orama<typeof playgroundSchema>>;
@@ -36,12 +37,17 @@
 	let entries:any[] = [];
   let searchButton: HTMLButtonElement;
 	let searchInput: HTMLInputElement;
+	let status: StatusMessage;
 
-	let debounceAction = debounce(
+	let startSearch = debounce(
 		async () => {
+			
 			entries = [];
+			status.setStatus('Creating index…');
 			let playgroundDB = await createIndex();
+			status.setStatus('Start query process…');
 			setTimeout(async () => {
+				
 				try {
 					const searchParams: SearchParams<Orama<typeof playgroundSchema>> = {
 						term: searchInput.value,
@@ -60,11 +66,13 @@
 					} else {
 						document.querySelector(".no-result")?.setAttr("style", "display: flex;");
 					}
+					status.hide();
+					status = new StatusMessage('FINISHED', StatusType.Default, 3 * 1000)
 					return Promise.resolve(entries);
 				} catch (error) {
 					return Promise.reject();
 				}
-			}, 500);
+			}, 5000);
 		},
 		1500
 	);
@@ -82,23 +90,27 @@
 	}
 
 	function handleKeypress(e:KeyboardEvent) {
-		if (e.key === 'Enter') {
+		e.preventDefault;
+		if (e.key === 'Enter' && (e.target as HTMLElement).classList.contains("search-input")) {
 			let query = searchInput.value;
 			if (query.length > 1) {
 				document.querySelector(".search-results-wrapper")?.setAttr("style", "display:none;");
 				document.querySelector(".waiting-indicator")?.setAttribute("style", "display: flex;");
 				document.querySelector(".no-result")?.setAttr("style", "display: none;");
-				debounceAction();	
+				status = new StatusMessage('Starting search.', StatusType.Default, 60 * 1000)
+				startSearch();
 			}
 		}
 	}
 
 	async function createIndex():Promise<Orama<{ readonly path: "string"; readonly title: "string"; readonly description: "string"; readonly head: "string"; readonly htmlAttrs: "string"; readonly tags: "string[]"; readonly markup: { readonly language: "string"; readonly content: "string"; }; readonly style: {  }; readonly script: { }; readonly scripts: "string[]"; readonly stylesheets: "string[]"; }>|any> {
+		
 		const playgroundDB: Orama<typeof playgroundSchema> = await create({
 			schema: playgroundSchema,
 		});
 		if (playgroundDB) {
 			try {
+				status.setStatus('Processing playgrounds…');
 				const f = this.app.vault.getAbstractFileByPath(plugin.settings.playgroundFolder);
 				if (f instanceof TFolder && f.children.length > 0) {
 
@@ -107,7 +119,7 @@
 					playgrounds.forEach(async (doc) => {
 						await insertIndex(doc, playgroundDB);
 					});
-
+					status.setStatus('Finished processing playgrounds…');
 					return Promise.resolve(playgroundDB);
 				}
 
@@ -145,10 +157,6 @@
 				scripts: jsonContent.scripts||"",
 				stylesheets: jsonContent.stylesheets||""
 			})
-			// .then((idP)=>{
-			// 	// console.log('idP');
-			// 	// console.log(idP);
-			// });
 		} catch (error) {
 			console.log(error.message || error);
 		}
@@ -203,7 +211,7 @@
 			document.querySelector(".search-results-wrapper")?.setAttr("style", "display:none;");
 			document.querySelector(".waiting-indicator")?.setAttribute("style", "display: flex;");
 			document.querySelector(".no-result")?.setAttr("style", "display: none;");
-			debounceAction();
+			startSearch();
 		});
 
 	});
@@ -216,11 +224,13 @@
 		placeholder="Search…"
 		bind:this={searchInput}
 		on:keypress={handleKeypress}
+		class="search-input"
 	/>
 	<button
 		aria-label="Search"
 		bind:this={searchButton}
 		data-tooltip-position="bottom"
+		class="mod-cta"
 	>
 		Search
 	</button>
@@ -232,16 +242,13 @@
 		{entries.length} playgrounds found
 	</div>
 	{#each entries as item}
-		<div 
-			class="result-row" 
-			aria-label="score: {`${Math.round(item.score * 10000) / 10000}`}"
-			data-tooltip-position="top"
-		>
+		<div class="result-row">
+			<div class="result-score" aria-label="Result score">score: {`${Math.round(item.score * 100) / 100}`}</div>
 			<div>
 				<a 
 					href="obsidian://playground?vault={encodeURIComponent(app.vault.getName())}&playgroundPath={encodeURIComponent(item.path)}" 
 					aria-label="Open playground: {item.path.replace(plugin.settings.playgroundFolder+'/', "")}" 
-					data-tooltip-position="left"
+					
 				>
 					{item.title}
 				</a>
@@ -278,6 +285,9 @@
 </div>
 
 <style>
+div:has(.search-form-wrapper) {
+	font-family: var(--font-interface);
+}
 .search-form-wrapper {
 	display: flex;
 	align-items: center;
@@ -287,7 +297,7 @@
 }
 .search-form-wrapper button {
 	flex-grow: 1;
-	cursor: pointer;
+	/* cursor: pointer; */
 }
 .search-form-wrapper input {
 	flex-grow: 3;
@@ -301,7 +311,7 @@
   gap: .15em;
 	justify-content: center;
 	padding: 3em;
-	color: var(--color-base-60);
+	fill: var(--interactive-accent);
 }
 .no-result {
 	align-items: center;
@@ -323,17 +333,20 @@
 }
 .result-row div:has(a) {
 	display: inline-block;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
   flex-grow: 1;
   flex-basis: 160px;
 	width:100%;
+	min-width: 0;
+	font-size: var(--font-ui-small);
 }
 .result-row a {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	display: inline-block;
-	border:3px solid transparent;
+	border: 3px solid transparent;
 	padding: var(--size-2-3);
+	width: 100%;
 }
 .result-row a:focus {
 	
@@ -345,10 +358,11 @@
 	padding: 0;
 }
 .result-row {
-	padding: .25em;
+	padding: .2em;
 	border: 1px solid var(--color-base-35);
-	border-radius: 4px;
+	border-radius: var(--size-2-3);
 	margin-block-end: .5em;
+	position: relative;
 }
 div.results-note {
 	padding: .5em;
@@ -357,4 +371,20 @@ div.results-note {
 	font-size: var(--font-smaller);
 	color: var(--color-base-60);
 }
+div.result-score {
+	display:none;
+}
+/* div:has(div.result-score):hover > div.result-score {
+	display: inline-block;
+	position: absolute;
+	top: calc(var(--size-4-3) * -1);
+	left: calc(var(--size-2-3) * 2);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+	background-color: var(--background-secondary);
+	border-radius: var(--size-2-3);
+	padding-inline: .5em;
+	padding-block: .25em;
+	text-align: center;
+} */
 </style>

@@ -111,6 +111,7 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
         newPlayground.singleQuote = this.plugin.settings.singleQuote;
         newPlayground.trailingComma = this.plugin.settings.trailingComma;
         newPlayground.wordWrap = this.plugin.settings.wordWrap;
+        // newPlayground.enableAI = this.plugin.settings.enableAI;
         newPlayground.autoupdate = this.plugin.settings.autoUpdate;
         newPlayground.delay = this.plugin.settings.delay;
 
@@ -132,7 +133,8 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
         } catch (error) {
           new Notice("❌ " + error + " Click this message to dismiss.", 0);
         }
-      });
+      }
+    );
   }
 
 }
