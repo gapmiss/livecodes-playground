@@ -427,7 +427,9 @@ body:has(div#boarding-popover-item) .tooltip {
   color: white
 }
 
-
+div.livecodes-editor-settings-modal div.setting-item-description {
+  margin-block-end: .5em !important;
+}
 
 /* @settings
 name: Livecodes

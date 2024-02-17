@@ -35,8 +35,13 @@ export class PlaygroundView extends ItemView {
       ).replace(
         ".json",
         ""
+      )
+      .replace(
+        this.settings.playgroundFolder + "/",
+        ""
       );
-    return "Livecodes / "+fileName;
+    // return "<Livecodes> "+fileName;
+    return `${fileName}`;
   }
 
   getIcon(): string {

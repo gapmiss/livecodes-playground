@@ -1,19 +1,20 @@
 import { App, Modal, Setting, ButtonComponent } from "obsidian";
 import LivecodesPlugin from '../main';
+import Tags from "../components/Tags.svelte";
 
 type PlaygroundSettingsCallback = (text: string | null) => void;
 
 export class PlaygroundSettingsModal extends Modal {
   plugin: LivecodesPlugin;
   title: string | null;
-  changes: {title: string, description: string, tags: string, head: string, htmlAttrs: string};
+  changes: {title: string, description: string, tags: string[], head: string, htmlAttrs: string};
   callback: PlaygroundSettingsCallback;
 
   constructor(
     app: App,
     plugin: LivecodesPlugin,
     title: string | null,
-    changes: {title: string, description: string, tags: string, head: string, htmlAttrs: string},
+    changes: {title: string, description: string, tags: string[], head: string, htmlAttrs: string},
     callback: PlaygroundSettingsCallback,
   ) {
     super(app);
@@ -51,16 +52,10 @@ export class PlaygroundSettingsModal extends Modal {
         })
       );
 
-    new Setting(this.contentEl)
-      .setName('Tags')
-      .setClass("tags-setting")
-      .addTextArea(text =>
-        text
-        .setValue(this.changes.tags)
-        .onChange(async newTagSetting => {
-          this.changes.tags = newTagSetting;
-        })
-      );
+    new Tags({
+      target: contentEl,
+      props: {changes: this.changes},
+    }); 
 
     new Setting(this.contentEl)
       .setName('<head>')
@@ -84,7 +79,7 @@ export class PlaygroundSettingsModal extends Modal {
         .onChange(async newHtmlAttrsSetting => {
           this.changes.htmlAttrs = newHtmlAttrsSetting;
         })
-      );
+      ); 
 
     const buttonDiv = contentEl.createDiv({
         cls: "modal-button-container",
@@ -118,7 +113,7 @@ export async function openPlaygroundSettingsModal(
   app: App,
   plugin: LivecodesPlugin,
   title: string | null,
-  changes: {title: string, description: string, tags: string, head: string, htmlAttrs: string},
+  changes: {title: string, description: string, tags: string[], head: string, htmlAttrs: string},
   callback?: PlaygroundSettingsCallback
 ): Promise<any[] | null> {
   return await new Promise((resolve, reject) => {

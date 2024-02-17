@@ -176,12 +176,12 @@
         }
       });
 
-      const loadWatcher = playground.watch('load', () => {
-        console.log('load');
+      playground.watch('load', () => {
+        console.log('Livecodes playground loaded');
       });
       
-      const readyWatcher = playground.watch('ready', () => {
-        console.log('ready');
+      playground.watch('ready', () => {
+        console.log('Livecodes playground ready');
       });
 
 
@@ -294,7 +294,7 @@
           "Livecodes",
           "Save note as:",
           playgroundPath.substring(playgroundPath.lastIndexOf("/") + 1, playgroundPath.length).replace(/\.json/, ""),
-          "e.g. New Playground README",
+          "e.g. README",
           false
         );
         if (fName?.length === 0) {
@@ -303,7 +303,7 @@
         try {
           let markDown:string = '';
           let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
-          markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
+          markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\ntitle: \""+cfg.title+"\"\ndescription: \""+cfg.description+"\"\nplayground: \""+link+"\"\ntags: [\""+(cfg.tags).join("\", \"")+"\"\]\n---\n\n";
           if (cfg.markup.content !== "") {
             markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
           }
@@ -393,11 +393,14 @@
             .then(
               async (setting) => {
                 let newConfig = JSON.parse(setting as unknown as string);
+                console.log('newConfig');
+                console.log(newConfig);
                 await playground.setConfig({ 
                   title: newConfig.title,
                   description: newConfig.description,
                   head: newConfig.head,
-                  htmlAttrs: newConfig.htmlAttrs
+                  htmlAttrs: newConfig.htmlAttrs,
+                  tags: newConfig.tags
                 });
               }
             );

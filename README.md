@@ -59,12 +59,12 @@ or:
 - [X] save as gist
 - [ ] gist README
 - [X] URL handler for opening a gist in Obsidian.md app
-- [ ] tags
+- [X] tags
 - [ ] style settings support
 - [ ] gist MD codeblock script `language`
 - [ ] test vault
 - [ ] open playground w/ choices of `markup`, `style`, & `script`
-- [ ] loading animation for search
+- [X] loading animation for search
 
 ## Tips
 
