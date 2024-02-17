@@ -1,6 +1,6 @@
 {
 	"id": "livecodes-playground",
-	"name": "Livecodes",
+	"name": "Livecodes Playground",
 	"version": "0.8.1",
 	"minAppVersion": "0.15.0",
 	"description": "Livecodes code playground",

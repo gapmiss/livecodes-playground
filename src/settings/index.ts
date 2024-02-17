@@ -51,7 +51,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     );
 
     new Setting(containerEl)
-    .setName("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version)
+    .setName(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + ")")
     .setDesc(desc)
     .setClass("setting-item-heading-onboarding")
     .addExtraButton((component) => {
@@ -72,7 +72,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
             description: "If this plugin adds value for you and you would like to help support continued development, please consider sponsoring the developers.",
           }
         });
-        boarding.start();
       });
       component.extraSettingsEl.classList.add("mod-warning");
     })
@@ -744,7 +743,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
     .setName("Reload plugin")
-    .setDesc("<" + this.plugin.manifest.name + "> v" + this.plugin.manifest.version + ": ⚠️ Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+    .setDesc(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + "): ⚠️ Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
     .addExtraButton((component) => {
       component
       .setIcon("refresh-cw")
