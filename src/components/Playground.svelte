@@ -176,13 +176,13 @@
         }
       });
 
-      playground.watch('load', () => {
-        console.log('Livecodes playground loaded');
-      });
+      // playground.watch('load', () => {
+      //   console.log('Livecodes playground loaded');
+      // });
       
-      playground.watch('ready', () => {
-        console.log('Livecodes playground ready');
-      });
+      // playground.watch('ready', () => {
+      //   console.log('Livecodes playground ready');
+      // });
 
 
       setIcon(saveAsJSON, "file-json-2");
@@ -393,8 +393,6 @@
             .then(
               async (setting) => {
                 let newConfig = JSON.parse(setting as unknown as string);
-                console.log('newConfig');
-                console.log(newConfig);
                 await playground.setConfig({ 
                   title: newConfig.title,
                   description: newConfig.description,
