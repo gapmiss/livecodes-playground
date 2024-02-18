@@ -63,8 +63,10 @@ or:
 - [ ] style settings support
 - [ ] gist MD codeblock script `language`
 - [ ] test vault
-- [ ] open playground w/ choices of `markup`, `style`, & `script`
+- [X] open playground w/ choices of `markup`, `style`, & `script`
 - [X] loading animation for search
+- [ ] playground custom settings
+
 
 ## Tips
 

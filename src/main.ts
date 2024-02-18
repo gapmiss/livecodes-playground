@@ -3,8 +3,9 @@ import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/playground-select-modal";
 import { StarterSelectModal } from "./modals/starter-select-modal";
+import { LanguageSelectModal } from "./modals/language-select-modal";
 import { openPromptModal } from "./modals/prompt-modal";
-import { blankPlayground } from "./utils";
+import { codeLanguages, blankPlayground } from "./utils/livecodes";
 import { Parameters } from "../@types/global";
 // @ts-ignore
 import { config } from 'livecodes';
@@ -27,7 +28,7 @@ interface LivecodesSettings {
   singleQuote: boolean;
   trailingComma: boolean;
   wordWrap: boolean;
-  // enableAI: boolean;
+  enableAI: boolean;
   autoUpdate: boolean;
   editorTheme: any;
   monacoDarkTheme: any;
@@ -47,7 +48,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   playgroundFolder: "playgrounds",
   notesFolder: "playgrounds/notes",
   autoWatch: true,
-  appUrl: "https://v22.livecodes.io/",
+  appUrl: "https://v24.livecodes.io/",
   shortUrl: false,
   fontFamily: "Default",
   fontSize: "12",
@@ -61,7 +62,7 @@ const DEFAULT_SETTINGS: LivecodesSettings = {
   singleQuote: false,
   trailingComma: true,
   wordWrap: false,
-  // enableAI: false,
+  enableAI: false,
   autoUpdate: true,
   editorTheme: ["vs@light", "vs-dark@dark"],
   monacoDarkTheme: "",
@@ -96,7 +97,7 @@ export default class LivecodesPlugin extends Plugin {
   singleQuote: boolean;
   trailingComma: boolean;
   wordWrap: boolean;
-  // enableAI: boolean;
+  enableAI: boolean;
   autoUpdate: boolean;
   editorTheme: any;
   monacoDarkTheme: any;
@@ -129,7 +130,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.addCommand({
       id: "open-playground-select-modal",
-      name: "Open livecodes playground",
+      name: "Open playground",
       callback: async () => {
         new PlaygroundSelectModal(this).open();
       },
@@ -137,15 +138,38 @@ export default class LivecodesPlugin extends Plugin {
 
     this.addCommand({
       id: "open-starter-select-modal",
-      name: "Open livecodes starter",
+      name: "New starter",
       callback: async () => {
         new StarterSelectModal(this).open();
       },
     });
 
     this.addCommand({
+      id: "open-language-select-modal",
+      name: "New playground",
+      callback: async () => {
+        let conf = {
+          title: "",
+          markup: "html",
+          style:  "css",
+          twcss: false,
+          lightningcss: false,
+          windicss: false,
+          unocss: false,
+          script: "javascript",
+        };
+        let cb = async (res: any) => {
+          console.log('res');
+          console.log(res);
+          await this.newLanguageSelectPlayground(res);
+        };
+        new LanguageSelectModal(this.app, this.plugin, "New custom playground", conf, cb).open();
+      },
+    });
+
+    this.addCommand({
       id: "new-playground-in-livecodes",
-      name: "New livecodes playground",
+      name: "Quick playground",
       callback: async () => {
         await this.newLivecodesPlayground(false, null);
       }
@@ -310,8 +334,83 @@ export default class LivecodesPlugin extends Plugin {
     await this.saveData(this.settings);
   }
 
+  async newLanguageSelectPlayground(res:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string}) {
+    // await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
+      // .then(async (fName:string) => {
+
+        if (res.title?.length === 0) {
+          return;
+        }
+
+        let newPlayground = blankPlayground;
+
+        // console.log(res.title);
+        // console.log(res);
+        let processors = [];
+        if (res.twcss) {
+          newPlayground.customSettings = JSON.stringify({"imports":{},"tailwindcss":{"plugins":["@tailwindcss/forms","@tailwindcss/typography","@tailwindcss/aspect-ratio","@tailwindcss/line-clamp"],"theme":{"extend":{"colors":{"sky":{"50":"#f0f9ff","100":"#e0f2fe","200":"#bae6fd","300":"#7dd3fc","400":"#38bdf8","500":"#0ea5e9","600":"#0284c7","700":"#0369a1","800":"#075985","900":"#0c4a6e"},"cyan":{"50":"#ecfeff","100":"#cffafe","200":"#a5f3fc","300":"#67e8f9","400":"#22d3ee","500":"#06b6d4","600":"#0891b2","700":"#0e7490","800":"#155e75","900":"#164e63"}}}}}});
+          newPlayground.style.content = "@tailwind base;\n@tailwind components;\n@tailwind utilities;";
+          processors.push("tailwindcss");
+        }
+
+        if (res.lightningcss) {
+          processors.push("lightningcss");
+        }
+
+        if (res.unocss) {
+          processors.push("unocss");
+        }
+
+        if (res.windicss) {
+          processors.push("windicss");
+        }
+        newPlayground.processors = processors as unknown as string;
+        newPlayground.markup.language = res.markup;
+        newPlayground.style.language = res.style;
+        newPlayground.script.language = res.script;
+
+        newPlayground.title = res.title;
+        newPlayground.appUrl = this.settings.appUrl;
+        newPlayground.fontFamily = this.settings.fontFamily;
+        newPlayground.fontSize = this.settings.fontSize;
+        newPlayground.editor = this.settings.editor;
+        newPlayground.editorTheme = this.settings.editorTheme;
+        newPlayground.lineNumbers = this.settings.lineNumbers;
+        newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+        newPlayground.useTabs = this.settings.useTabs;
+        newPlayground.tabSize = this.settings.tabSize;
+        newPlayground.closeBrackets = this.settings.closeBrackets;
+        newPlayground.semicolons = this.settings.semicolons;
+        newPlayground.singleQuote = this.settings.singleQuote;
+        newPlayground.trailingComma = this.settings.trailingComma;
+        newPlayground.wordWrap = this.settings.wordWrap;
+        newPlayground.enableAI = this.settings.enableAI;
+        newPlayground.autoupdate = this.settings.autoUpdate;
+        newPlayground.delay = this.settings.delay;
+
+        let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
+        try {
+          await this.app.vault
+            .create(
+              this.settings.playgroundFolder+'/'+res.title + ".json",
+              await this.createText(
+                prettyCfg
+              )
+            ).then(async (f:TFile) => {
+                this.settings.jsonTemplate = f;
+                await this.saveSettings();
+                await this.activatePlaygroundView();
+              }
+            );
+          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+res.title + ".json");
+        } catch (error) {
+          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        }
+      // })
+  }
+
   async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
-    await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Project", false)
+    await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
       .then(async (fName:string) => {
 
         if (fName?.length === 0) {
@@ -364,12 +463,13 @@ export default class LivecodesPlugin extends Plugin {
           newPlayground.markup.content = '';
           newPlayground.style.content = '';
           newPlayground.script.content = '';
-          newPlayground.script.content = '';
+          newPlayground.markup.language = '';
+          newPlayground.style.language = '';
           newPlayground.script.language = '';
           newPlayground.activeEditor = '';
-          newPlayground.stylesheets = [];
+          newPlayground.stylesheets = "[]";
           newPlayground.cssPreset = '';
-          newPlayground.scripts = [];
+          newPlayground.scripts = "[]";
         }
 
         newPlayground.title = fName;
@@ -387,7 +487,7 @@ export default class LivecodesPlugin extends Plugin {
         newPlayground.singleQuote = this.settings.singleQuote;
         newPlayground.trailingComma = this.settings.trailingComma;
         newPlayground.wordWrap = this.settings.wordWrap;
-        // newPlayground.enableAI = this.settings.enableAI;
+        newPlayground.enableAI = this.settings.enableAI;
         newPlayground.autoupdate = this.settings.autoUpdate;
         newPlayground.delay = this.settings.delay;
 
@@ -414,7 +514,7 @@ export default class LivecodesPlugin extends Plugin {
 
   async newLivecodesPlaygroundFromGist(tpl: string) {
     let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
-    await openPromptModal(this.app, "New livecodes playground", "Save as:", newTemplate.title, "e.g. New Project", false)
+    await openPromptModal(this.app, "New livecodes playground", "Save as:", newTemplate.title, "e.g. New Playground", false)
       .then(async (fName:string) => {
         if (fName?.length === 0) {
           return;

@@ -353,7 +353,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
     });
     
-    /*
+    /**/
     new Setting(containerEl)
     .setName('AI code assistant')
     .setDesc('Enable codeium AI')

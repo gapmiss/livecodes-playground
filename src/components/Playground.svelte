@@ -66,9 +66,9 @@
       lineNumbers: plugin.settings.lineNumbers,
       wordWrap: plugin.settings.wordWrap,
       // @ts-ignore
-      // enableAI: plugin.settings.enableAI,
+      enableAI: plugin.settings.enableAI,
       editor: plugin.settings.editor,
-      version: "22",
+      version: "24",
     },
     loading: "eager",
   };
@@ -194,7 +194,7 @@
           "Livecodes",
           "Save playground as:",
           "",
-          "e.g. New Project",
+          "e.g. New Playground",
           false
         );
         if (fName?.length === 0) {
