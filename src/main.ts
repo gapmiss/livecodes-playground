@@ -1,11 +1,11 @@
 import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl, WorkspaceLeaf } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
-import { PlaygroundSelectModal } from "./modals/playground-select-modal";
-import { StarterSelectModal } from "./modals/starter-select-modal";
-import { LanguageSelectModal } from "./modals/language-select-modal";
-import { openPromptModal } from "./modals/prompt-modal";
-import { codeLanguages, blankPlayground } from "./utils/livecodes";
+import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
+import { StarterSelectModal } from "./modals/StarterSelect";
+import { LanguageSelectModal } from "./modals/LanguageSelect";
+import { saveAsModal } from "./modals/SaveAs";
+import { blankPlayground } from "./livecodes";
 import { Parameters } from "../@types/global";
 // @ts-ignore
 import { config } from 'livecodes';
@@ -138,7 +138,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.addCommand({
       id: "open-starter-select-modal",
-      name: "New starter",
+      name: "Open starter playground",
       callback: async () => {
         new StarterSelectModal(this).open();
       },
@@ -159,11 +159,9 @@ export default class LivecodesPlugin extends Plugin {
           script: "javascript",
         };
         let cb = async (res: any) => {
-          console.log('res');
-          console.log(res);
           await this.newLanguageSelectPlayground(res);
         };
-        new LanguageSelectModal(this.app, this.plugin, "New custom playground", conf, cb).open();
+        new LanguageSelectModal(this.app, this.plugin, "New playground", conf, cb).open();
       },
     });
 
@@ -410,7 +408,7 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
-    await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
+    await saveAsModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
       .then(async (fName:string) => {
 
         if (fName?.length === 0) {
@@ -514,7 +512,7 @@ export default class LivecodesPlugin extends Plugin {
 
   async newLivecodesPlaygroundFromGist(tpl: string) {
     let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
-    await openPromptModal(this.app, "New livecodes playground", "Save as:", newTemplate.title, "e.g. New Playground", false)
+    await saveAsModal(this.app, "New livecodes playground", "Save as:", newTemplate.title, "e.g. New Playground", false)
       .then(async (fName:string) => {
         if (fName?.length === 0) {
           return;

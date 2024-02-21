@@ -1,21 +1,21 @@
-import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent, setIcon } from 'obsidian';
 import { onboardingSteps, helpPopovers } from "./onboarding";
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
-import { monacoDarkThemes } from "../themes/monacoDarkThemes";
-import { monacoLightThemes } from "../themes/monacoLightThemes";
-import { codemirrorDarkThemes } from "../themes/codemirrorDarkThemes";
-import { codemirrorLightThemes } from "../themes/codemirrorLightThemes";
-import { codejarDarkThemes } from "../themes/codejarDarkThemes";
-import { codejarLightThemes } from "../themes/codejarLightThemes";
+import { monacoDarkThemes } from "../livecodes/themes/monacoDarkThemes";
+import { monacoLightThemes } from "../livecodes/themes/monacoLightThemes";
+import { codemirrorDarkThemes } from "../livecodes/themes/codemirrorDarkThemes";
+import { codemirrorLightThemes } from "../livecodes/themes/codemirrorLightThemes";
+import { codejarDarkThemes } from "../livecodes/themes/codejarDarkThemes";
+import { codejarLightThemes } from "../livecodes/themes/codejarLightThemes";
 import { Boarding } from "boarding.js";
 
 export class LivecodesSettingsTab extends PluginSettingTab {
   plugin: LivecodesPlugin;
 
   constructor(app: App, plugin: LivecodesPlugin) {
-      super(app, plugin);
-      this.plugin = plugin;
+    super(app, plugin);
+    this.plugin = plugin;
   }
 
   display(): void {
@@ -39,75 +39,73 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       desc.createEl("a", {
         href: "https://livecodes.io/docs/getting-started/",
         text: "documentation",
-        attr: {"aria-label":"https://livecodes.io/docs/getting-started/", "class":"external-link", "data-tooltip-position":"top"}
+        attr: { "aria-label": "https://livecodes.io/docs/getting-started/", "class": "external-link", "data-tooltip-position": "top" }
       }),
       " and the plugin ",
       desc.createEl("a", {
         href: "https://github.com/gapmiss/livecodes-playground/",
         text: "README",
-        attr: {"aria-label":"https://github.com/gapmiss/livecodes-playground/", "class":"external-link", "data-tooltip-position":"top"}
+        attr: { "aria-label": "https://github.com/gapmiss/livecodes-playground/", "class": "external-link", "data-tooltip-position": "top" }
       }),
       " for additional help."
     );
 
     new Setting(containerEl)
-    .setName(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + ")")
-    .setDesc(desc)
-    .setClass("setting-item-heading-onboarding")
-    .addExtraButton((component) => {
-      component
-      .setIcon("heart")
-      .setTooltip("Support the developers", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75,
-        });
-        boarding.highlight({
-          element: '.livecodes-sponsorship', 
-          popover:
-          {
-            title: "Support the developers",
-            description: "If this plugin adds value for you and you would like to help support continued development, please consider sponsoring the developers.",
-          }
-        });
+      .setName(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + ")")
+      .setDesc(desc)
+      .setClass("setting-item-heading-onboarding")
+      .addExtraButton((component) => {
+        component
+          .setIcon("heart")
+          .setTooltip("Support the developers", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75,
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-sponsorship',
+                popover: helpPopovers.sponsorship
+              }
+            );
+          });
+        component.extraSettingsEl.classList.add("mod-warning");
+      })
+      .then(cb => {
+        cb.settingEl.classList.add("setting-head");
+      })
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Take a tour", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              onPopoverRender: (popoverElements) => {
+                setTimeout(() => {
+                  let stepsSpan = activeDocument.createElement("span");
+                  stepsSpan.addClass("steps-progress");
+                  stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
+                  popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
+                }, 0);
+              },
+              opacity: 0.75
+            });
+            boarding.defineSteps(onboardingSteps);
+            boarding.start();
+          });
+        component.extraSettingsEl.classList.add("onboarding-button");
+      })
+      .then(cb => {
+        cb.settingEl.classList.add("setting-head");
       });
-      component.extraSettingsEl.classList.add("mod-warning");
-    })
-    .then(cb => {
-      cb.settingEl.classList.add("setting-head");
-    })
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Take a tour", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          onPopoverRender: (popoverElements) => {
-            setTimeout(() => {
-              let stepsSpan = activeDocument.createElement("span");
-              stepsSpan.addClass("steps-progress");
-              stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
-              popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
-            }, 0);
-          },
-          opacity: 0.75,
-        });
-        boarding.defineSteps(onboardingSteps);
-        boarding.start();
-      });
-      component.extraSettingsEl.classList.add("onboarding-button");
-    })
-    .then(cb => {
-      cb.settingEl.classList.add("setting-head");
-    });
 
     new Setting(containerEl)
-    .setHeading()
-    .setName("Plugin settings")
+      .setHeading()
+      .setName("Plugin settings")
 
     new Setting(containerEl)
       .setName('App URL')
@@ -115,256 +113,261 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setClass("livecodes-settings-input-appurl")
       .addText(text =>
         text
-        .setPlaceholder('https://v19.livecodes.io/')
-        .setValue(this.plugin.settings.appUrl)
-        .onChange(async newAppUrl => {
-          this.plugin.settings.appUrl = newAppUrl;
+          .setPlaceholder('https://v19.livecodes.io/')
+          .setValue(this.plugin.settings.appUrl)
+          .onChange(async newAppUrl => {
+            this.plugin.settings.appUrl = newAppUrl;
+            await this.plugin.saveSettings();
+            if (newAppUrl.split("").pop() != '/') {
+              debounceNotice();
+              return;
+            }
+          })
+      )
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-appurl',
+                popover: helpPopovers.appUrl
+              }
+            )
+          })
+      });
+
+    new Setting(containerEl)
+      .setName('Playground folder')
+      .setDesc('Vault folder for saving playground JSON files')
+      .setClass("livecodes-settings-input-playgrounds")
+      .addSearch((cb) => {
+        new FolderSuggest(cb.inputEl);
+        cb
+          .setPlaceholder("e.g. playgrounds")
+          .setValue(this.plugin.settings.playgroundFolder)
+          .onChange(async (newPath) => {
+            this.plugin.settings.playgroundFolder = newPath;
+            await this.plugin.saveSettings();
+          });
+      })
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-playgrounds',
+                popover: helpPopovers.playgroundFolder
+              }
+            )
+          })
+      });
+
+    new Setting(containerEl)
+      .setName('Auto watch')
+      .setDesc('Enable to watch for playground changes and save JSON file')
+      .setClass("livecodes-settings-input-autowatch")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.autoWatch)
+          .onChange(async newValue => {
+            this.plugin.settings.autoWatch = newValue;
+            await this.plugin.saveSettings();
+          })
+      })
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-autowatch',
+                popover: helpPopovers.autoWatch
+              }
+            )
+          })
+      });
+
+    new Setting(containerEl)
+      .setName('Notes folder')
+      .setDesc('Vault folder for saving playground notes')
+      .setClass("livecodes-settings-input-notes")
+      .addSearch((cb) => {
+        new FolderSuggest(cb.inputEl);
+        cb
+          .setPlaceholder("e.g. playgrounds/notes")
+          .setValue(this.plugin.settings.notesFolder)
+          .onChange(async (newPath) => {
+            this.plugin.settings.notesFolder = newPath;
+            await this.plugin.saveSettings();
+          });
+      })
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-notes',
+                popover: helpPopovers.notesFolder
+              }
+            )
+          })
+      });
+
+    new Setting(containerEl)
+      .setHeading()
+      .setName("Sharing settings")
+
+    new Setting(containerEl)
+      .setName('Short share URL')
+      .setDesc('Enable short URL service for sharing a playground URL. Click the help icon for privacy implications.')
+      .setClass("livecodes-settings-input-shorturl")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.shortUrl)
+          .onChange(async newValue => {
+            this.plugin.settings.shortUrl = newValue;
+            await this.plugin.saveSettings();
+          })
+      })
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-shorturl',
+                popover: helpPopovers.shortUrl
+              }
+            )
+          })
+      });
+
+    new Setting(containerEl)
+      .setName('Github API token')
+      .setDesc('For creating Github gists. Click the help icon for further details.')
+      .setClass("livecodes-settings-input-githubtoken")
+      .addText(text => text
+        .setPlaceholder('Github API token')
+        .setValue(this.plugin.settings.githubApiToken)
+        .onChange(async (newValue) => {
+          this.plugin.settings.githubApiToken = newValue;
           await this.plugin.saveSettings();
-          if ( newAppUrl.split("").pop() != '/' ) {
-            debounceNotice();
-            return;
-          }
         })
       )
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.livecodes-settings-input-appurl', 
-            popover: helpPopovers.appUrl
-          }
-        )
-      })
-    });
-
-    new Setting(containerEl)
-    .setName('Playground folder')
-    .setDesc('Vault folder for saving playground JSON files')
-    .setClass("livecodes-settings-input-playgrounds")
-    .addSearch((cb) => {
-      new FolderSuggest(cb.inputEl);
-      cb
-      .setPlaceholder("e.g. playgrounds")
-      .setValue(this.plugin.settings.playgroundFolder)
-      .onChange(async (newPath) => {
-        this.plugin.settings.playgroundFolder = newPath;
-        await this.plugin.saveSettings();
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-githubtoken',
+                popover: helpPopovers.githubToken
+              }
+            )
+          })
       });
-    })
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.livecodes-settings-input-playgrounds', 
-            popover: helpPopovers.playgroundFolder
-          }
-        )
-      })
-    });
 
     new Setting(containerEl)
-    .setName('Auto watch')
-    .setDesc('Enable to watch for playground changes and save JSON file')
-    .setClass("livecodes-settings-input-autowatch")
-    .addToggle((toggle) => {
-      toggle
-      .setValue(this.plugin.settings.autoWatch)
-      .onChange(async newValue => {
-        this.plugin.settings.autoWatch = newValue;
-        await this.plugin.saveSettings();
+      .setName('Github gist privacy')
+      .setDesc('Gists are secret by default. Enable this setting to create public gists.')
+      .setClass("livecodes-settings-input-githubgistpublic")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.githubGistPublic)
+          .onChange(async newValue => {
+            this.plugin.settings.githubGistPublic = newValue;
+            await this.plugin.saveSettings();
+          })
       })
-    })
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.livecodes-settings-input-autowatch', 
-            popover: helpPopovers.autoWatch
-          }
-        )
-      })
-    });
-
-    new Setting(containerEl)
-    .setName('Notes folder')
-    .setDesc('Vault folder for saving playground notes')
-    .setClass("livecodes-settings-input-notes")
-    .addSearch((cb) => {
-      new FolderSuggest(cb.inputEl);
-      cb
-      .setPlaceholder("e.g. playgrounds/notes")
-      .setValue(this.plugin.settings.notesFolder)
-      .onChange(async (newPath) => {
-        this.plugin.settings.notesFolder = newPath;
-        await this.plugin.saveSettings();
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-githubgistpublic',
+                popover: helpPopovers.githubGistPublic
+              }
+            )
+          })
       });
-    })
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.livecodes-settings-input-notes', 
-            popover: helpPopovers.notesFolder
-          }
-        )
-      })
-    });
 
-    new Setting(containerEl)
-    .setName('Playground height')
-    .setDesc('CSS height for livecodes playground. e.g. 600 or 100% (default: 600)')
-    .setClass('livecodes-setting-input-height')
-    .addText(text =>
-      text
-      .setPlaceholder('e.g. 600 or 100%')
-      .setValue(this.plugin.settings.dataHeight)
-      .onChange(async newValue => {
-        this.plugin.settings.dataHeight = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-
-    new Setting(containerEl)
-    .setHeading()
-    .setName("Sharing settings")
-
-    new Setting(containerEl)
-    .setName('Short share URL')
-    .setDesc('Enable short URL service for sharing a playground URL. Click the help icon for privacy implications.')
-    .setClass("livecodes-settings-input-shorturl")
-    .addToggle((toggle) => {
-      toggle
-      .setValue(this.plugin.settings.shortUrl)
-      .onChange(async newValue => {
-        this.plugin.settings.shortUrl = newValue;
-        await this.plugin.saveSettings();
-      })
-    })
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.livecodes-settings-input-shorturl', 
-            popover: helpPopovers.shortUrl
-          }
-        )
-      })
-    });
-
-    new Setting(containerEl)
-    .setName('Github API token')
-    .setDesc('For creating Github gists. Click the help icon for further details.')
-    .setClass("livecodes-settings-input-githubtoken")
-    .addText(text => text
-      .setPlaceholder('Github API token')
-      .setValue(this.plugin.settings.githubApiToken)
-      .onChange(async (newValue) => {
-        this.plugin.settings.githubApiToken = newValue;
-        await this.plugin.saveSettings();
-      })
-    )
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.livecodes-settings-input-githubtoken', 
-            popover: helpPopovers.githubToken
-          }
-        )
-      })
-    });
-
-    new Setting(containerEl)
-    .setName('Github gist privacy')
-    .setDesc('Gists are secret by default. Enable this setting to create public gists.')
-    .setClass("livecodes-settings-input-githubgistpublic")
-    .addToggle((toggle) => {
-      toggle
-      .setValue(this.plugin.settings.githubGistPublic)
-      .onChange(async newValue => {
-        this.plugin.settings.githubGistPublic = newValue;
-        await this.plugin.saveSettings();
-      })
-    })
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.livecodes-settings-input-githubgistpublic', 
-            popover: helpPopovers.githubGistPublic
-          }
-        )
-      })
-    });
-    
     /**/
     new Setting(containerEl)
-    .setName('AI code assistant')
-    .setDesc('Enable codeium AI')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.enableAI)
-      .onChange(async newValue => {
-        this.plugin.settings.enableAI = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
+      .setName('AI code assistant')
+      .setDesc('Enable Codeium AI')
+      .setClass("livecodes-settings-input-enableai")
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.enableAI)
+          .onChange(async newValue => {
+            this.plugin.settings.enableAI = newValue;
+            await this.plugin.saveSettings();
+          })
+      )
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-settings-input-enableai',
+                popover: helpPopovers.enableAI
+              }
+            )
+          })
+      });
     /**/
 
     new Setting(containerEl)
@@ -372,350 +375,408 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setName("Editor settings")
 
     new Setting(containerEl)
-    .setName('Code editor')
-    .setClass("dropdownEditor")
-    .addDropdown((dropdown) => {
-      dropdown
-      .addOptions({
-        "monaco":"monaco",
-        "codemirror":"codemirror",
-        "codejar":"codejar",
+      .setName('Code editor')
+      .setClass("dropdownEditor")
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({
+            "monaco": "monaco",
+            "codemirror": "codemirror",
+            "codejar": "codejar",
+          })
+          .setValue(this.plugin.settings.editor)
+          .onChange(async (newValue) => {
+            this.plugin.settings.editor = newValue;
+            await toggleChoices(this.plugin.settings.editor);
+            await this.plugin.saveSettings();
+          });
       })
-      .setValue(this.plugin.settings.editor)
-      .onChange(async (newValue) => {
-        this.plugin.settings.editor = newValue;
-        await toggleChoices(this.plugin.settings.editor);
-        await this.plugin.saveSettings();
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              strictClickHandling: 'block-all',
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.dropdownEditor',
+                popover: helpPopovers.editor
+              }
+            )
+          })
       });
-    })
-    .addExtraButton((component) => {
-      component
-      .setIcon("help-circle")
-      .setTooltip("Help", {"placement":"left"})
-      .onClick(() => {
-        component.disabled = true;
-        const boarding = new Boarding({
-          onReset: () => { component.disabled = false },
-          opacity: 0.75
-        });
-        boarding.highlight(
-          { 
-            element: '.dropdownEditor', 
-            popover: helpPopovers.editor
-          }
-        )
-      })
-    });
 
     const dropdownMonacoDark = new Setting(containerEl)
-    .setName('Monaco theme (dark mode)')
-    .setClass("dropdownMonacoDark")
-    .addDropdown((dropdown: DropdownComponent) => {
-      monacoDarkThemes.forEach(({ name, desc }) => {
+      .setName('Monaco theme (dark mode)')
+      .setClass("dropdownMonacoDark")
+      .addDropdown((dropdown: DropdownComponent) => {
+        monacoDarkThemes.forEach(({ name, desc }) => {
+          dropdown
+            .addOption(name, desc)
+        })
         dropdown
-        .addOption(name, desc)
-      })
-      dropdown
-      .setValue(this.plugin.settings.monacoDarkTheme)
-      .onChange(async (newValue) => {
-        this.plugin.settings.monacoDarkTheme = newValue;
-        await toggleChoices(this.plugin.settings.editor);
-        await this.plugin.saveSettings();
+          .setValue(this.plugin.settings.monacoDarkTheme)
+          .onChange(async (newValue) => {
+            this.plugin.settings.monacoDarkTheme = newValue;
+            await toggleChoices(this.plugin.settings.editor);
+            await this.plugin.saveSettings();
+          });
       });
-    });
 
     const dropdownMonacoLight = new Setting(containerEl)
-    .setName('Monaco theme (light mode)')
-    .setClass("dropdownMonacoLight")
-    .addDropdown((dropdown: DropdownComponent) => {
-      monacoLightThemes.forEach(({ name, desc }) => {
+      .setName('Monaco theme (light mode)')
+      .setClass("dropdownMonacoLight")
+      .addDropdown((dropdown: DropdownComponent) => {
+        monacoLightThemes.forEach(({ name, desc }) => {
+          dropdown
+            .addOption(name, desc)
+        })
         dropdown
-        .addOption(name, desc)
-      })
-      dropdown
-      .setValue(this.plugin.settings.monacoLightTheme)
-      .onChange(async (newValue) => {
-        this.plugin.settings.monacoLightTheme = newValue;
-        await toggleChoices(this.plugin.settings.editor);
-        await this.plugin.saveSettings();
+          .setValue(this.plugin.settings.monacoLightTheme)
+          .onChange(async (newValue) => {
+            this.plugin.settings.monacoLightTheme = newValue;
+            await toggleChoices(this.plugin.settings.editor);
+            await this.plugin.saveSettings();
+          });
       });
-    });
 
     const dropdownCodemirrorDark = new Setting(containerEl)
-    .setName('Codemirror theme (dark mode)')
-    .setClass("dropdownCodemirrorDark")
-    .addDropdown((dropdown: DropdownComponent) => {
-      codemirrorDarkThemes.forEach(({ name, desc }) => {
+      .setName('Codemirror theme (dark mode)')
+      .setClass("dropdownCodemirrorDark")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codemirrorDarkThemes.forEach(({ name, desc }) => {
+          dropdown
+            .addOption(name, desc)
+        })
         dropdown
-        .addOption(name, desc)
-      })
-      dropdown
-      .setValue(this.plugin.settings.codemirrorDarkTheme)
-      .onChange(async (newValue) => {
-        this.plugin.settings.codemirrorDarkTheme = newValue;
-        await toggleChoices(this.plugin.settings.editor);
-        await this.plugin.saveSettings();
+          .setValue(this.plugin.settings.codemirrorDarkTheme)
+          .onChange(async (newValue) => {
+            this.plugin.settings.codemirrorDarkTheme = newValue;
+            await toggleChoices(this.plugin.settings.editor);
+            await this.plugin.saveSettings();
+          });
       });
-    });
 
     const dropdownCodemirrorLight = new Setting(containerEl)
-    .setName('Codemirror theme (light mode)')
-    .setClass("dropdownCodemirrorLight")
-    .addDropdown((dropdown: DropdownComponent) => {
-      codemirrorLightThemes.forEach(({ name, desc }) => {
+      .setName('Codemirror theme (light mode)')
+      .setClass("dropdownCodemirrorLight")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codemirrorLightThemes.forEach(({ name, desc }) => {
+          dropdown
+            .addOption(name, desc)
+        })
         dropdown
-        .addOption(name, desc)
-      })
-      dropdown
-      .setValue(this.plugin.settings.codemirrorLightTheme)
-      .onChange(async (newValue) => {
-        this.plugin.settings.codemirrorLightTheme = newValue;
-        await toggleChoices(this.plugin.settings.editor);
-        await this.plugin.saveSettings();
-        
+          .setValue(this.plugin.settings.codemirrorLightTheme)
+          .onChange(async (newValue) => {
+            this.plugin.settings.codemirrorLightTheme = newValue;
+            await toggleChoices(this.plugin.settings.editor);
+            await this.plugin.saveSettings();
+
+          });
       });
-    });
 
     const dropdownCodejarDark = new Setting(containerEl)
-    .setName('Codejar theme (dark mode)')
-    .setClass("dropdownCodejarDark")
-    .addDropdown((dropdown: DropdownComponent) => {
-      codejarDarkThemes.forEach(({ name, desc }) => {
+      .setName('Codejar theme (dark mode)')
+      .setClass("dropdownCodejarDark")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codejarDarkThemes.forEach(({ name, desc }) => {
+          dropdown
+            .addOption(name, desc)
+        })
         dropdown
-        .addOption(name, desc)
-      })
-      dropdown
-      .setValue(this.plugin.settings.codejarDarkTheme)
-      .onChange(async (newValue) => {
-        this.plugin.settings.codejarDarkTheme = newValue;
-        await toggleChoices(this.plugin.settings.editor);
-        await this.plugin.saveSettings();
+          .setValue(this.plugin.settings.codejarDarkTheme)
+          .onChange(async (newValue) => {
+            this.plugin.settings.codejarDarkTheme = newValue;
+            await toggleChoices(this.plugin.settings.editor);
+            await this.plugin.saveSettings();
+          });
       });
-    });
 
     const dropdownCodejarLight = new Setting(containerEl)
-    .setName('Codejar theme (light mode)')
-    .setClass("dropdownCodejarLight")
-    .addDropdown((dropdown: DropdownComponent) => {
-      codejarLightThemes.forEach(({ name, desc }) => {
+      .setName('Codejar theme (light mode)')
+      .setClass("dropdownCodejarLight")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codejarLightThemes.forEach(({ name, desc }) => {
+          dropdown
+            .addOption(name, desc)
+        })
         dropdown
-        .addOption(name, desc)
-      })
-      dropdown
-      .setValue(this.plugin.settings.codejarLightTheme)
-      .onChange(async (newValue) => {
-        this.plugin.settings.codejarLightTheme = newValue;
-        await toggleChoices(this.plugin.settings.editor);
-        await this.plugin.saveSettings();
+          .setValue(this.plugin.settings.codejarLightTheme)
+          .onChange(async (newValue) => {
+            this.plugin.settings.codejarLightTheme = newValue;
+            await toggleChoices(this.plugin.settings.editor);
+            await this.plugin.saveSettings();
+          });
       });
-    });
-    
-    new Setting(containerEl)
-    .setName('Dark Theme')
-    .setDesc('Enable dark theme as default')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.darkTheme)
-      .onChange(async newValue => {
-        this.plugin.settings.darkTheme = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
 
     new Setting(containerEl)
-    .setName('Editor Font')
-    .addDropdown((dropdown) => {
-      dropdown
-      .addOptions({
-        "Default":"Default",
-        "Anonymous Pro":"Anonymous Pro",
-        "Cascadia Code":"Cascadia Code",
-        "Code New Roman":"Code New Roman",
-        "Comic Mono":"Comic Mono",
-        "Courier Prime":"Courier Prime",
-        "DEC Terminal Modern":"DEC Terminal Modern",
-        "DejaVu Mono":"DejaVu Mono",
-        "TypoPRO Fantasque Sans Mono":"TypoPRO Fantasque Sans Mono",
-        "Fira Code":"Fira Code",
-        "Fixedsys 62":"Fixedsys 62",
-        "Hack":"Hack",
-        "Hermit":"Hermit",
-        "IBM Plex Mono":"IBM Plex Mono",
-        "Inconsolata":"Inconsolata",
-        "Iosevka":"Iosevka",
-        "JetBrains Mono":"JetBrains Mono",
-        "Menlo":"Menlo",
-        "Monofur":"Monofur",
-        "TypoPRO Monoid":"TypoPRO Monoid",
-        "Noto Sans Mono":"Noto Sans Mono",
-        "Nova Mono":"Nova Mono",
-        "OpenDyslexic":"OpenDyslexic",
-        "ProFontWindows":"ProFontWindows",
-        "Roboto Mono":"Roboto Mono",
-        "SF Mono":"SF Mono",
-        "Source Code Pro":"Source Code Pro",
-        "Space Mono":"Space Mono",
-        "Sudo Var":"Sudo Var",
-        "Ubuntu Mono":"Ubuntu Mono",
-        "Victor Mono":"Victor Mono",
-      })
-      .setValue(this.plugin.settings.fontFamily)
-      .onChange(async (newValue) => {
-        this.plugin.settings.fontFamily = newValue;
-        await this.plugin.saveSettings();
+      .setName('Playground height')
+      .setDesc('CSS height for livecodes playground. e.g. 600 or 100% (default: 600)')
+      .setClass('livecodes-setting-input-height')
+      .addText(text =>
+        text
+          .setPlaceholder('e.g. 600 or 100%')
+          .setValue(this.plugin.settings.dataHeight)
+          .onChange(async newValue => {
+            this.plugin.settings.dataHeight = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName('Dark Theme')
+      .setDesc('Enable dark theme as default')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.darkTheme)
+          .onChange(async newValue => {
+            this.plugin.settings.darkTheme = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName('Editor Font')
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({
+            "Default": "Default",
+            "Anonymous Pro": "Anonymous Pro",
+            "Astigmata": "Astigmata",
+            "Cascadia Code": "Cascadia Code",
+            "Code New Roman": "Code New Roman",
+            "Comic Mono": "Comic Mono",
+            "Courier Prime": "Courier Prime",
+            "DEC Terminal Modern": "DEC Terminal Modern",
+            "DejaVu Mono": "DejaVu Mono",
+            "TypoPRO Fantasque Sans Mono": "Fantasque Sans Mono",
+            "Fira Code": "Fira Code",
+            "Fixedsys 62": "Fixedsys",
+            "Hack": "Hack",
+            "Hermit": "Hermit",
+            "IBM Plex Mono": "IBM Plex Mono",
+            "Inconsolata": "Inconsolata",
+            "Iosevka": "Iosevka",
+            "JetBrains Mono": "JetBrains Mono",
+            "Menlo": "Menlo",
+            "Monofur": "Monofur",
+            "TypoPRO Monoid": "Monoid",
+            "Noto Sans Mono": "Noto Sans Mono",
+            "Nova Mono": "Nova Mono",
+            "OpenDyslexic": "OpenDyslexic",
+            "ProFontWindows": "ProFont",
+            "Roboto Mono": "Roboto Mono",
+            "SF Mono": "SF Mono",
+            "Source Code Pro": "Source Code Pro",
+            "Space Mono": "Space Mono",
+            "Sudo Var": "Sudo Var",
+            "Ubuntu Mono": "Ubuntu Mono",
+            "Victor Mono": "Victor Mono",
+          })
+          .setValue(this.plugin.settings.fontFamily)
+          .onChange(async (newValue) => {
+            this.plugin.settings.fontFamily = newValue;
+            await this.plugin.saveSettings();
+          });
       });
-    });
 
     new Setting(containerEl)
-    .setName('Editor Font Size')
-    .addDropdown((dropdown) => {
-      dropdown
-      .addOptions({
-        "10":"10",
-        "11":"11",
-        "12":"12",
-        "13":"13",
-        "14":"14",
-        "15":"15",
-        "16":"16",
-        "17":"17",
-        "18":"18",
-        "19":"19",
-        "20":"20",
-        "22":"22",
-        "24":"24",
-        "26":"26",				
-      })
-      .setValue(this.plugin.settings.fontSize)
-      .onChange(async (newValue) => {
-        this.plugin.settings.fontSize = newValue;
-        await this.plugin.saveSettings();
+      .setName('Editor Font Size')
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({
+            "10": "10",
+            "11": "11",
+            "12": "12",
+            "13": "13",
+            "14": "14",
+            "15": "15",
+            "16": "16",
+            "17": "17",
+            "18": "18",
+            "19": "19",
+            "20": "20",
+            "22": "22",
+            "24": "24",
+            "26": "26",
+          })
+          .setValue(this.plugin.settings.fontSize)
+          .onChange(async (newValue) => {
+            this.plugin.settings.fontSize = newValue;
+            await this.plugin.saveSettings();
+          });
       });
-    });
 
     new Setting(containerEl)
-    .setName('Word wrap')
-    .setDesc('Enable word wrapping in editor pane')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.wordWrap)
-      .onChange(async newValue => {
-        this.plugin.settings.wordWrap = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
+      .setName('Word wrap')
+      .setDesc('Enable word wrapping in editor pane')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.wordWrap)
+          .onChange(async newValue => {
+            this.plugin.settings.wordWrap = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
 
     new Setting(containerEl)
-    .setName('Line numbers')
-    .setDesc('Enable line numbers in editor pane')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.lineNumbers)
-      .onChange(async newValue => {
-        this.plugin.settings.lineNumbers = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
+      .setName('Line numbers')
+      .setDesc('Enable line numbers in editor pane')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.lineNumbers)
+          .onChange(async newValue => {
+            this.plugin.settings.lineNumbers = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
 
     new Setting(containerEl)
-    .setName('Use tabs')
-    .setDesc('Enable tabs instead of spaces')
-    .setClass("livecodes-settings-input-usetabs")
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.useTabs)
-      .onChange(async newValue => {
-        this.plugin.settings.useTabs = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
-    
+      .setName('Use tabs')
+      .setDesc('Enable tabs instead of spaces')
+      .setClass("livecodes-settings-input-usetabs")
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.useTabs)
+          .onChange(async newValue => {
+            this.plugin.settings.useTabs = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
+
     new Setting(containerEl)
-    .setName('Tab size')
-    .addDropdown((dropdown) => {
-      dropdown
-      .addOptions({
-        "2":"2",
-        "4":"4",				
-      })
-      .setValue(this.plugin.settings.tabSize)
-      .onChange(async (newValue) => {
-        this.plugin.settings.tabSize = newValue;
-        await this.plugin.saveSettings();
+      .setName('Tab size')
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({
+            "2": "2",
+            "4": "4",
+          })
+          .setValue(this.plugin.settings.tabSize)
+          .onChange(async (newValue) => {
+            this.plugin.settings.tabSize = newValue;
+            await this.plugin.saveSettings();
+          });
       });
-    });
 
     new Setting(containerEl)
-    .setName('Auto close brackets')
-    .setDesc('Use auto-complete to close brackets and quotes')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.closeBrackets)
-      .onChange(async newValue => {
-        this.plugin.settings.closeBrackets = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
+      .setName('Auto close brackets')
+      .setDesc('Use auto-complete to close brackets and quotes')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.closeBrackets)
+          .onChange(async newValue => {
+            this.plugin.settings.closeBrackets = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
 
     new Setting(containerEl)
-    .setName('Auto update')
-    .setDesc('Enable auto updates of results pane after editor code changes')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.autoUpdate)
-      .onChange(async newValue => {
-        this.plugin.settings.autoUpdate = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
+      .setName('Auto update')
+      .setDesc('Enable auto updates of results pane after editor code changes')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.autoUpdate)
+          .onChange(async newValue => {
+            this.plugin.settings.autoUpdate = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
 
     new Setting(containerEl)
-    .setName('Delay')
-    .setDesc('Time delay (in milliseconds) follwing code change, after which the result is updated.')
-    .addSlider(slider => slider
-      .setLimits(500, 3000, 500)
-      .setValue(this.plugin.settings.delay)
-      .setDynamicTooltip()
-      .onChange(async (newValue) => {
+      .setName('Delay')
+      .setDesc('Time delay (in milliseconds) follwing code change, after which the result is updated.')
+      .addSlider(slider => slider
+        .setLimits(500, 3000, 500)
+        .setValue(this.plugin.settings.delay)
+        .setDynamicTooltip()
+        .onChange(async (newValue) => {
           this.plugin.settings.delay = newValue;
           await this.plugin.saveSettings();
-      }));
+        }));
 
     new Setting(containerEl)
-    .setName('Semi-colons')
-    .setDesc('Enable code formatter to use semi-colons')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.semicolons)
-      .onChange(async newValue => {
-        this.plugin.settings.semicolons = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
+      .setName('Semi-colons')
+      .setDesc('Enable code formatter to use semi-colons')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.semicolons)
+          .onChange(async newValue => {
+            this.plugin.settings.semicolons = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
 
     new Setting(containerEl)
-    .setName('Single quotes')
-    .setDesc('Enable code formatter to use single quotes instead of double quotes')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.singleQuote)
-      .onChange(async newValue => {
-        this.plugin.settings.singleQuote = newValue;
-        await this.plugin.saveSettings();
-      })
-    );
+      .setName('Single quotes')
+      .setDesc('Enable code formatter to use single quotes instead of double quotes')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.singleQuote)
+          .onChange(async newValue => {
+            this.plugin.settings.singleQuote = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
 
     new Setting(containerEl)
-    .setName('Trailing commas')
-    .setDesc('Enable code formatter to use trailing commas')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.plugin.settings.trailingComma)
-      .onChange(async newValue => {
-        this.plugin.settings.trailingComma = newValue;
-        await this.plugin.saveSettings();
+      .setName('Trailing commas')
+      .setDesc('Enable code formatter to use trailing commas')
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.trailingComma)
+          .onChange(async newValue => {
+            this.plugin.settings.trailingComma = newValue;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setHeading()
+      .setName("Reload plugin")
+
+    new Setting(containerEl)
+      .setDesc(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + "): ⚠️ Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+      .addExtraButton((component) => {
+        component
+          .setIcon("refresh-cw")
+          .setTooltip("Reload plugin")
+          .onClick(async () => {
+            await this.plugin.reload();
+            new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
+          });
+        component.extraSettingsEl.classList.add("mod-warning");
       })
-    );
+      .then(cb => {
+        cb.settingEl.classList.add("setting-head");
+      });
+
+
+    new Setting(containerEl)
+      .setHeading()
+      .setName("Support the developers")
+      .setClass("livecodes-sponsorship-heading")
+      .addExtraButton((component) => {
+        component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            component.disabled = true;
+            const boarding = new Boarding({
+              opacity: 0.75
+            });
+            boarding.highlight(
+              {
+                element: '.livecodes-sponsorship',
+                popover: helpPopovers.sponsorship
+              }
+            )
+          })
+      });
 
     const div = containerEl.createEl('div', {
       cls: 'livecodes-sponsorship',
@@ -740,23 +801,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         parser.parseFromString(buyMeACoffee, 'text/xml').documentElement,
       ),
     );
-
-    new Setting(containerEl)
-    .setName("Reload plugin")
-    .setDesc(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + "): ⚠️ Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
-    .addExtraButton((component) => {
-      component
-      .setIcon("refresh-cw")
-      .setTooltip("Reload plugin")
-      .onClick(async () => {
-        await this.plugin.reload();
-        new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
-      });
-      component.extraSettingsEl.classList.add("mod-warning");
-    })
-    .then(cb => {
-      cb.settingEl.classList.add("setting-head");
-    });
 
     const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {
@@ -789,8 +833,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         this.plugin.settings.codejarDarkTheme,
         this.plugin.settings.codejarLightTheme,
       ]
-      this.plugin.settings.editorTheme = allThemes.filter(n => n);
-      
+      this.plugin.settings.editorTheme = allThemes.filter(n => n).join(",");
+
       await this.plugin.saveSettings();
     }
 
@@ -837,70 +881,4 @@ const buyMeACoffee = `
 <path fill-rule="evenodd" clip-rule="evenodd" d="M212.194 50.3701C212.064 50.8866 211.862 51.3238 211.587 51.6806C211.313 52.0377 210.97 52.2239 210.558 52.2393C210.299 52.2543 210.101 52.1175 209.963 51.8289C209.826 51.5401 209.731 51.1679 209.678 50.7122C209.624 50.2562 209.601 49.747 209.609 49.1849C209.616 48.6227 209.639 48.0681 209.678 47.521C209.715 46.9742 209.761 46.4647 209.815 45.9939C209.868 45.5226 209.91 45.1586 209.94 44.9C210.459 44.9608 210.89 45.1846 211.233 45.5723C211.576 45.9598 211.839 46.4193 212.022 46.9514C212.205 47.4831 212.312 48.0568 212.343 48.6722C212.373 49.2875 212.323 49.8534 212.194 50.3701ZM203.913 50.3701C203.783 50.8866 203.581 51.3238 203.307 51.6806C203.032 52.0377 202.689 52.2239 202.277 52.2393C202.018 52.2543 201.82 52.1175 201.683 51.8289C201.545 51.5401 201.45 51.1679 201.397 50.7122C201.343 50.2562 201.32 49.747 201.328 49.1849C201.336 48.6227 201.358 48.0681 201.397 47.521C201.434 46.9742 201.48 46.4647 201.534 45.9939C201.587 45.5226 201.629 45.1586 201.66 44.9C202.178 44.9608 202.609 45.1846 202.952 45.5723C203.295 45.9598 203.558 46.4193 203.741 46.9514C203.924 47.4831 204.031 48.0568 204.062 48.6722C204.092 49.2875 204.042 49.8534 203.913 50.3701ZM195.415 37.4241C195.399 37.7884 195.365 38.1114 195.312 38.3925C195.258 38.6741 195.186 38.8522 195.095 38.9283C194.927 38.8369 194.721 38.6018 194.477 38.2216C194.233 37.8419 194.042 37.4122 193.905 36.9336C193.768 36.4551 193.725 35.9843 193.779 35.5205C193.832 35.0573 194.073 34.6967 194.5 34.4379C194.667 34.3468 194.812 34.3809 194.934 34.5405C195.056 34.7001 195.155 34.9318 195.232 35.2357C195.308 35.5399 195.361 35.8892 195.392 36.2842C195.422 36.6795 195.43 37.0591 195.415 37.4241ZM193.39 41.9711C193.154 42.2215 192.89 42.4381 192.601 42.6206C192.311 42.803 192.014 42.9398 191.709 43.0309C191.404 43.1223 191.129 43.1448 190.885 43.0991C190.199 42.9627 189.673 42.666 189.307 42.2103C188.941 41.7545 188.708 41.219 188.609 40.6037C188.51 39.9881 188.521 39.3308 188.644 38.6319C188.765 37.933 188.971 37.2835 189.261 36.6832C189.551 36.0829 189.902 35.5662 190.313 35.1333C190.725 34.7001 191.175 34.4306 191.663 34.3239C191.48 35.0989 191.419 35.9007 191.48 36.7286C191.541 37.5568 191.739 38.3355 192.075 39.0648C192.288 39.506 192.544 39.9082 192.841 40.2729C193.139 40.6378 193.501 40.9492 193.928 41.2075C193.806 41.466 193.626 41.7204 193.39 41.9711ZM218.702 37.6519C218.747 37.3026 218.816 36.9336 218.908 36.5462C218.999 36.159 219.114 35.7828 219.251 35.4181C219.388 35.0532 219.548 34.738 219.731 34.4723C219.914 34.2065 220.108 34.0163 220.314 33.9024C220.52 33.7884 220.73 33.7997 220.943 33.9365C221.172 34.0735 221.313 34.3621 221.367 34.8025C221.42 35.2435 221.367 35.7142 221.207 36.2159C221.046 36.7173 220.761 37.1884 220.349 37.6288C219.937 38.07 219.38 38.3583 218.679 38.4951C218.648 38.2826 218.656 38.0015 218.702 37.6519ZM227.921 37.6519C227.966 37.3026 228.035 36.9336 228.126 36.5462C228.218 36.159 228.332 35.7828 228.47 35.4181C228.607 35.0532 228.767 34.738 228.95 34.4723C229.133 34.2065 229.328 34.0163 229.533 33.9024C229.739 33.7884 229.949 33.7997 230.162 33.9365C230.391 34.0735 230.532 34.3621 230.586 34.8025C230.639 35.2435 230.586 35.7142 230.425 36.2159C230.265 36.7173 229.979 37.1884 229.568 37.6288C229.156 38.07 228.599 38.3583 227.898 38.4951C227.867 38.2826 227.875 38.0015 227.921 37.6519ZM236.488 38.9852C236.312 38.7955 236.099 38.6625 235.847 38.5862C235.595 38.5104 235.355 38.5029 235.126 38.5636C234.897 38.6244 234.752 38.784 234.692 39.0422C234.57 39.5286 234.375 40.0262 234.108 40.5349C233.841 41.0444 233.514 41.5267 233.125 41.9824C232.736 42.4381 232.297 42.8412 231.81 43.1905C231.321 43.5401 230.81 43.7908 230.277 43.9423C229.743 44.1101 229.301 44.1289 228.95 43.9996C228.599 43.8706 228.321 43.6503 228.115 43.3389C227.909 43.0271 227.761 42.6512 227.669 42.2103C227.578 41.7699 227.524 41.3142 227.509 40.8428C228.378 40.9038 229.152 40.7483 229.831 40.3755C230.509 40.0034 231.085 39.5092 231.558 38.8939C232.031 38.2788 232.389 37.5874 232.633 36.82C232.877 36.0526 233.014 35.2892 233.045 34.5293C233.06 33.815 232.953 33.211 232.724 32.7171C232.496 32.2235 232.187 31.8395 231.798 31.5662C231.409 31.2924 230.963 31.133 230.46 31.0874C229.957 31.0417 229.445 31.1105 228.927 31.2924C228.302 31.5055 227.772 31.851 227.338 32.3296C226.903 32.8085 226.54 33.3634 226.251 33.9934C225.961 34.6244 225.732 35.3039 225.564 36.0335C225.396 36.7627 225.274 37.481 225.199 38.1874C225.124 38.873 225.084 39.5292 225.075 40.1572C225.017 40.2824 224.956 40.4082 224.889 40.5349C224.622 41.0444 224.295 41.5267 223.906 41.9824C223.517 42.4381 223.078 42.8412 222.591 43.1905C222.102 43.5401 221.592 43.7908 221.058 43.9423C220.524 44.1101 220.082 44.1289 219.731 43.9996C219.38 43.8706 219.102 43.6503 218.896 43.3389C218.691 43.0271 218.542 42.6512 218.45 42.2103C218.359 41.7699 218.305 41.3142 218.29 40.8428C219.159 40.9038 219.933 40.7483 220.612 40.3755C221.29 40.0034 221.866 39.5092 222.339 38.8939C222.811 38.2788 223.17 37.5874 223.414 36.82C223.658 36.0526 223.795 35.2892 223.826 34.5293C223.841 33.815 223.734 33.211 223.506 32.7171C223.277 32.2235 222.968 31.8395 222.579 31.5662C222.19 31.2924 221.744 31.133 221.241 31.0874C220.738 31.0417 220.227 31.1105 219.708 31.2924C219.083 31.5055 218.553 31.851 218.119 32.3296C217.684 32.8085 217.321 33.3634 217.032 33.9934C216.742 34.6244 216.513 35.3039 216.346 36.0335C216.178 36.7627 216.056 37.481 215.98 38.1874C215.936 38.5859 215.907 38.9722 215.886 39.3516C215.739 39.4765 215.595 39.6023 215.442 39.7258C214.916 40.1514 214.363 40.5349 213.784 40.8769C213.204 41.219 212.601 41.5001 211.977 41.7204C211.351 41.9408 210.71 42.0738 210.055 42.1192L211.473 26.9847C211.565 26.6655 211.519 26.3847 211.336 26.1415C211.153 25.8983 210.916 25.7312 210.627 25.6401C210.337 25.5488 210.028 25.5566 209.7 25.6627C209.372 25.7694 209.102 26.0126 208.888 26.3919C208.781 26.9697 208.671 27.7597 208.557 28.7625C208.442 29.7653 208.328 30.8595 208.213 32.0448C208.099 33.23 207.985 34.4532 207.87 35.7142C207.756 36.9759 207.657 38.1533 207.573 39.2472C207.569 39.2958 207.566 39.3398 207.562 39.3878C207.429 39.5005 207.299 39.6142 207.161 39.7258C206.635 40.1514 206.082 40.5349 205.503 40.8769C204.923 41.219 204.321 41.5001 203.696 41.7204C203.07 41.9408 202.429 42.0738 201.774 42.1192L203.192 26.9847C203.284 26.6655 203.238 26.3847 203.055 26.1415C202.872 25.8983 202.635 25.7312 202.346 25.6401C202.056 25.5488 201.747 25.5566 201.419 25.6627C201.091 25.7694 200.821 26.0126 200.607 26.3919C200.501 26.9697 200.39 27.7597 200.276 28.7625C200.161 29.7653 200.047 30.8595 199.933 32.0448C199.818 33.23 199.704 34.4532 199.589 35.7142C199.475 36.9759 199.376 38.1533 199.292 39.2472C199.29 39.2692 199.289 39.2891 199.287 39.3111C199.048 39.4219 198.786 39.519 198.503 39.6006C198.213 39.6844 197.885 39.7339 197.519 39.7489C197.58 39.4751 197.63 39.1712 197.668 38.8369C197.706 38.5029 197.737 38.1533 197.76 37.7884C197.782 37.4241 197.79 37.0591 197.782 36.6945C197.774 36.3296 197.755 35.9956 197.725 35.6914C197.649 35.0385 197.508 34.4191 197.302 33.8338C197.096 33.2491 196.818 32.7593 196.467 32.3637C196.116 31.9687 195.678 31.7027 195.151 31.5662C194.626 31.4294 194.012 31.4748 193.31 31.7027C192.273 31.5662 191.339 31.6613 190.508 31.9878C189.677 32.3149 188.956 32.7894 188.346 33.4122C187.736 34.0357 187.237 34.7684 186.848 35.6119C186.459 36.4551 186.2 37.3214 186.07 38.21C186.015 38.5868 185.988 38.9618 185.98 39.336C185.744 39.8177 185.486 40.2388 185.201 40.5921C184.797 41.0935 184.377 41.5038 183.943 41.8228C183.508 42.142 183.077 42.3852 182.65 42.5523C182.223 42.7198 181.842 42.8337 181.507 42.8941C181.11 42.9702 180.729 42.978 180.363 42.917C179.997 42.8565 179.661 42.6816 179.357 42.3927C179.112 42.1802 178.925 41.8381 178.796 41.3671C178.666 40.896 178.59 40.3608 178.567 39.7602C178.544 39.1599 178.567 38.533 178.636 37.8798C178.705 37.2266 178.822 36.6072 178.99 36.0222C179.158 35.4372 179.371 34.913 179.631 34.4492C179.89 33.9862 180.195 33.6554 180.546 33.4579C180.744 33.4886 180.866 33.606 180.912 33.811C180.958 34.0163 180.969 34.2595 180.946 34.5405C180.923 34.8219 180.889 35.1105 180.843 35.4066C180.797 35.703 180.775 35.9502 180.775 36.1474C180.851 36.5577 180.999 36.877 181.221 37.1048C181.441 37.3327 181.69 37.466 181.964 37.5036C182.239 37.5417 182.509 37.4773 182.776 37.3098C183.043 37.143 183.26 36.877 183.428 36.512C183.443 36.5274 183.466 36.5349 183.497 36.5349L183.817 33.6404C183.909 33.2451 183.847 32.8958 183.634 32.5919C183.42 32.288 183.138 32.113 182.788 32.0676C182.345 31.4294 181.747 31.0914 180.992 31.0532C180.237 31.0154 179.463 31.2623 178.67 31.7941C178.182 32.144 177.751 32.626 177.378 33.2413C177.004 33.857 176.699 34.5405 176.463 35.2926C176.226 36.0448 176.058 36.8391 175.959 37.6748C175.86 38.5104 175.841 39.3236 175.902 40.1133C175.963 40.9038 176.104 41.6484 176.325 42.347C176.546 43.0462 176.855 43.6312 177.252 44.102C177.587 44.5123 177.968 44.8127 178.395 45.0027C178.822 45.1927 179.268 45.3101 179.734 45.3558C180.199 45.4012 180.66 45.3821 181.118 45.2988C181.575 45.2155 182.01 45.0978 182.421 44.9454C182.955 44.7482 183.505 44.4972 184.069 44.1933C184.633 43.8897 185.174 43.5248 185.693 43.0991C185.966 42.8753 186.228 42.6313 186.482 42.3696C186.598 42.6553 186.727 42.9317 186.882 43.1905C187.294 43.8741 187.85 44.429 188.552 44.8544C189.253 45.2797 190.115 45.4844 191.137 45.4697C192.235 45.4544 193.249 45.1774 194.18 44.6378C195.11 44.0988 195.872 43.3042 196.467 42.256C197.358 42.256 198.234 42.1096 199.096 41.819C199.089 41.911 199.081 42.0079 199.075 42.0966C199.014 42.9019 198.983 43.4487 198.983 43.7376C198.968 44.239 198.934 44.8581 198.88 45.5949C198.827 46.332 198.793 47.1069 198.778 47.9198C198.763 48.7326 198.793 49.5532 198.869 50.3817C198.945 51.2096 199.105 51.962 199.349 52.6383C199.593 53.3141 199.94 53.8878 200.39 54.3591C200.84 54.8299 201.431 55.1112 202.163 55.2023C202.941 55.3084 203.612 55.1717 204.176 54.792C204.74 54.412 205.198 53.8918 205.549 53.2308C205.899 52.5695 206.147 51.8061 206.292 50.9401C206.437 50.074 206.479 49.2039 206.418 48.3301C206.357 47.4562 206.196 46.6321 205.937 45.8575C205.678 45.0822 205.319 44.444 204.862 43.9423C205.137 43.8669 205.465 43.7226 205.846 43.5095C206.227 43.2969 206.62 43.0575 207.024 42.7915C207.123 42.7261 207.221 42.6573 207.32 42.5902C207.283 43.1286 207.264 43.5126 207.264 43.7376C207.249 44.239 207.215 44.8581 207.161 45.5949C207.108 46.332 207.073 47.1069 207.058 47.9198C207.043 48.7326 207.073 49.5532 207.15 50.3817C207.226 51.2096 207.386 51.962 207.63 52.6383C207.874 53.3141 208.221 53.8878 208.671 54.3591C209.121 54.8299 209.712 55.1112 210.444 55.2023C211.221 55.3084 211.892 55.1717 212.457 54.792C213.021 54.412 213.478 53.8918 213.83 53.2308C214.18 52.5695 214.428 51.8061 214.573 50.9401C214.718 50.074 214.759 49.2039 214.699 48.3301C214.637 47.4562 214.477 46.6321 214.218 45.8575C213.959 45.0822 213.601 44.444 213.143 43.9423C213.418 43.8669 213.745 43.7226 214.127 43.5095C214.508 43.2969 214.9 43.0575 215.305 42.7915C215.515 42.6533 215.724 42.5107 215.932 42.3641C216.01 43.1072 216.179 43.759 216.448 44.3073C216.776 44.9761 217.222 45.4925 217.787 45.8575C218.351 46.2218 219.014 46.4234 219.777 46.4612C220.539 46.4988 221.37 46.3586 222.271 46.0393C222.941 45.7965 223.525 45.4925 224.02 45.1279C224.516 44.763 224.962 44.3185 225.358 43.7946C225.381 43.7642 225.403 43.7313 225.425 43.7006C225.496 43.9134 225.574 44.1179 225.667 44.3073C225.995 44.9761 226.441 45.4925 227.006 45.8575C227.569 46.2218 228.233 46.4234 228.996 46.4612C229.758 46.4988 230.589 46.3586 231.489 46.0393C232.16 45.7965 232.744 45.4925 233.239 45.1279C233.735 44.763 234.181 44.3185 234.577 43.7946C234.974 43.27 235.336 42.666 235.664 41.9824C235.992 41.2985 236.323 40.5164 236.659 39.6347C236.72 39.3918 236.663 39.1752 236.488 38.9852Z" fill="#0D0C23"/>
 </svg>`;
 
-const liveCodesLogo = `
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="body_1" width="66" height="44">
-<defs>
-<linearGradient transform="matrix(1 0 0 1 0 0)"  id="1" x1="0" y1="0" x2="76.9073" y2="0">
-<stop stop-color="#D7D7D7" offset="0%"/>
-<stop stop-color="#626262" offset="100%"/>
-</linearGradient>
-<linearGradient transform="matrix(1 0 0 1 0 0)"  id="218" x1="0" y1="0" x2="76.9073" y2="0">
-<stop stop-color="#D7D7D7" offset="0%"/>
-<stop stop-color="#626262" offset="100%"/>
-</linearGradient>
-<linearGradient transform="matrix(1 0 0 1 0 0)"  id="437" x1="0" y1="0" x2="153.3638" y2="0">
-<stop stop-color="#D7D7D7" offset="0%"/>
-<stop stop-color="#626262" offset="100%"/>
-</linearGradient>
-</defs>
-<g transform="matrix(0.089552246 0 0 0.09016393 0 0)">
-<g transform="matrix(1 0 0 1 9.5 4.5)">
-<path d="M16.7525 286.7298C 6.7066 275.7455 0 253.8097 0 234.5909C 0 215.3848 5.0266 197.5589 17.5891 187.9573L17.5891 187.9573L16.7534 187.9573L214.4292 0L214.4292 127.5964C 192.6508 148.17259 163.3353 171.5021 89.626396 235.9855L89.626396 235.9855L90.4621 237.3407C 129.82939 266.1627 175.0609 310.057 214.4283 348.4704L214.4283 348.4704L214.4283 477.4364L16.7525 286.7298z" stroke="none" fill="#C1C1C1" fill-rule="nonzero" />
-<g transform="matrix(1 0 0 1 500.5716 0.0017)">
-<path d="M197.6761 190.6956C 207.7146 201.6806 214.4284 223.6273 214.4284 242.8352C 214.4284 262.0431 209.40161 279.866 196.8322 289.4688L196.8322 289.4688L197.6765 289.4688L0 477.4266L0 349.8297C 21.7793 329.26492 51.094 305.936 124.8034 241.45201L124.8034 241.45201L123.9677 240.09671C 84.607 211.2747 39.3692 167.3799 0.0009 128.9676L0.0009 128.9676L0.0009 0L197.6761 190.6956z" stroke="none" fill="#C1C1C1" fill-rule="nonzero" />
-</g>
-</g>
-<g transform="matrix(1 0 0 1 219.5 59.5)">
-<g transform="matrix(1 0 0 1 147.229 92.5951)">
-<path d="M0 261.9238L143.1698 174.4704L143.1698 0L0 87.2109L0 261.9238z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 4.3302 92.7405)">
-<path d="M0 174.2764L142.9894 261.5845L142.9894 87.1142L0 0L0 174.2764z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 5.2325 6.0147)">
-<path d="M284.1743 86.5805L142.0872 0L0 86.5805L142.0872 173.3062L284.17432 86.5805L284.1743 86.5805z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 147.3196 92.5951)">
-<path d="M0 81.5845L133.8327 0.0967L133.6974 0L0 81.5845z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 13.487 92.5951)">
-<path d="M0.1353 0L0 0.0967L133.8327 81.5845L0.1353 0z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 147.3196 174.1792)">
-<path d="" stroke="none" fill="#FFFFFF" fill-rule="nonzero" />
-</g>
-<path d="M290.1287 87.017L147.3196 0L4.5106 87.017L0 89.8789L0 269.9271L147.5 360L152.0106 357.2352L295 269.9271L295 89.8303L290.1287 87.017zM285.6177 264.30072L151.8302 346.0793L151.8302 182.6194L285.7981 100.9863zM142.8087 346.0793L8.8407 264.2521L8.8407 100.9863L142.8087 182.6194zM13.6223 92.6919L147.3196 11.155899L281.017 92.6919L147.3196 174.1792L13.487 92.6919z" stroke="none" fill="#444444" fill-rule="nonzero" />
-<g transform="matrix(1 0 0 1 147.9058 133.4844)">
-<path d="M0 140.566L76.9073 93.662094L76.9073 0L0 46.8553L0 140.56601L0 140.566z" stroke="none" fill="url(#1)" />
-</g>
-<g transform="matrix(1 0 0 1 69.8257 133.4844)">
-<path d="M0 93.6621L76.9073 140.56601L76.9073 46.8553L0 0L0 93.6621z" stroke="none" fill="url(#218)" />
-</g>
-<g transform="matrix(1 0 0 1 70.6373 85.513)">
-<path d="M153.3638 46.71L76.6819 0L0 46.71L76.6819 93.5654L153.3638 46.71z" stroke="none" fill="url(#437)" />
-</g>
-<g transform="matrix(1 0 0 1 147.3196 132.223)">
-<path d="M0 42.102L68.9685 0.0968L68.8787 0L0 42.0534L0 42.101997L0 42.102z" stroke="none" fill="#96BF3D" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 78.3507 132.223)">
-<path d="M0.0902 0L0 0.0968L68.9685 42.102L68.9685 42.053402L0.0902 0z" stroke="none" fill="#96BF3D" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 147.3196 174.2764)">
-<path d="" stroke="none" fill="#96BF3D" fill-rule="nonzero" />
-</g>
-<g transform="matrix(1 0 0 1 64.7736 79.159)">
-<path d="M160.5811 47.4858L82.5456 0L4.5106 47.4858L0 50.2992L0 151.2369L82.5456 201.68149L87.0566 198.91669L165.1819 151.2369L165.1819 50.2992L160.5811 47.4858zM156.0702 145.56201L87.0566 187.76071L87.0566 103.55721L156.1608 61.45521zM78.0351 187.76071L8.9309 145.562L8.9309 61.4552L78.0351 103.557205zM13.6674 53.064L82.54559 11.155998L151.42429 53.1126L82.545586 95.1174L13.577187 53.1608z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" />
-</g>
-</g>
-</g>
-</svg>`;
+const liveCodesLogo = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="body_1" width="66" height="44"><defs><linearGradient transform="matrix(1 0 0 1 0 0)"  id="1" x1="0" y1="0" x2="76.9073" y2="0"><stop stop-color="#D7D7D7" offset="0%"/><stop stop-color="#626262" offset="100%"/></linearGradient><linearGradient transform="matrix(1 0 0 1 0 0)"  id="218" x1="0" y1="0" x2="76.9073" y2="0"><stop stop-color="#D7D7D7" offset="0%"/><stop stop-color="#626262" offset="100%"/></linearGradient><linearGradient transform="matrix(1 0 0 1 0 0)"  id="437" x1="0" y1="0" x2="153.3638" y2="0"><stop stop-color="#D7D7D7" offset="0%"/><stop stop-color="#626262" offset="100%"/></linearGradient></defs><g transform="matrix(0.089552246 0 0 0.09016393 0 0)"><g transform="matrix(1 0 0 1 9.5 4.5)"><path d="M16.7525 286.7298C 6.7066 275.7455 0 253.8097 0 234.5909C 0 215.3848 5.0266 197.5589 17.5891 187.9573L17.5891 187.9573L16.7534 187.9573L214.4292 0L214.4292 127.5964C 192.6508 148.17259 163.3353 171.5021 89.626396 235.9855L89.626396 235.9855L90.4621 237.3407C 129.82939 266.1627 175.0609 310.057 214.4283 348.4704L214.4283 348.4704L214.4283 477.4364L16.7525 286.7298z" stroke="none" fill="#C1C1C1" fill-rule="nonzero" /><g transform="matrix(1 0 0 1 500.5716 0.0017)"><path d="M197.6761 190.6956C 207.7146 201.6806 214.4284 223.6273 214.4284 242.8352C 214.4284 262.0431 209.40161 279.866 196.8322 289.4688L196.8322 289.4688L197.6765 289.4688L0 477.4266L0 349.8297C 21.7793 329.26492 51.094 305.936 124.8034 241.45201L124.8034 241.45201L123.9677 240.09671C 84.607 211.2747 39.3692 167.3799 0.0009 128.9676L0.0009 128.9676L0.0009 0L197.6761 190.6956z" stroke="none" fill="#C1C1C1" fill-rule="nonzero" /></g></g><g transform="matrix(1 0 0 1 219.5 59.5)"><g transform="matrix(1 0 0 1 147.229 92.5951)"><path d="M0 261.9238L143.1698 174.4704L143.1698 0L0 87.2109L0 261.9238z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 4.3302 92.7405)"><path d="M0 174.2764L142.9894 261.5845L142.9894 87.1142L0 0L0 174.2764z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 5.2325 6.0147)"><path d="M284.1743 86.5805L142.0872 0L0 86.5805L142.0872 173.3062L284.17432 86.5805L284.1743 86.5805z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 147.3196 92.5951)"><path d="M0 81.5845L133.8327 0.0967L133.6974 0L0 81.5845z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 13.487 92.5951)"><path d="M0.1353 0L0 0.0967L133.8327 81.5845L0.1353 0z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 147.3196 174.1792)"><path d="" stroke="none" fill="#FFFFFF" fill-rule="nonzero" /></g><path d="M290.1287 87.017L147.3196 0L4.5106 87.017L0 89.8789L0 269.9271L147.5 360L152.0106 357.2352L295 269.9271L295 89.8303L290.1287 87.017zM285.6177 264.30072L151.8302 346.0793L151.8302 182.6194L285.7981 100.9863zM142.8087 346.0793L8.8407 264.2521L8.8407 100.9863L142.8087 182.6194zM13.6223 92.6919L147.3196 11.155899L281.017 92.6919L147.3196 174.1792L13.487 92.6919z" stroke="none" fill="#444444" fill-rule="nonzero" /><g transform="matrix(1 0 0 1 147.9058 133.4844)"><path d="M0 140.566L76.9073 93.662094L76.9073 0L0 46.8553L0 140.56601L0 140.566z" stroke="none" fill="url(#1)" /></g><g transform="matrix(1 0 0 1 69.8257 133.4844)"><path d="M0 93.6621L76.9073 140.56601L76.9073 46.8553L0 0L0 93.6621z" stroke="none" fill="url(#218)" /></g><g transform="matrix(1 0 0 1 70.6373 85.513)"><path d="M153.3638 46.71L76.6819 0L0 46.71L76.6819 93.5654L153.3638 46.71z" stroke="none" fill="url(#437)" /></g><g transform="matrix(1 0 0 1 147.3196 132.223)"><path d="M0 42.102L68.9685 0.0968L68.8787 0L0 42.0534L0 42.101997L0 42.102z" stroke="none" fill="#96BF3D" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 78.3507 132.223)"><path d="M0.0902 0L0 0.0968L68.9685 42.102L68.9685 42.053402L0.0902 0z" stroke="none" fill="#96BF3D" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 147.3196 174.2764)"><path d="" stroke="none" fill="#96BF3D" fill-rule="nonzero" /></g><g transform="matrix(1 0 0 1 64.7736 79.159)"><path d="M160.5811 47.4858L82.5456 0L4.5106 47.4858L0 50.2992L0 151.2369L82.5456 201.68149L87.0566 198.91669L165.1819 151.2369L165.1819 50.2992L160.5811 47.4858zM156.0702 145.56201L87.0566 187.76071L87.0566 103.55721L156.1608 61.45521zM78.0351 187.76071L8.9309 145.562L8.9309 61.4552L78.0351 103.557205zM13.6674 53.064L82.54559 11.155998L151.42429 53.1126L82.545586 95.1174L13.577187 53.1608z" stroke="none" fill="#FFFFFF" fill-rule="nonzero" /></g></g></g></svg>`;

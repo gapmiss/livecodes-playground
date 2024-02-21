@@ -1,4 +1,4 @@
-import { App, Modal, Setting, ButtonComponent } from "obsidian";
+import { App, Modal, Setting, ButtonComponent, setIcon } from "obsidian";
 import LivecodesPlugin from '../main';
 import Tags from "../components/Tags.svelte";
 
@@ -71,7 +71,7 @@ export class PlaygroundSettingsModal extends Modal {
 
     new Setting(this.contentEl)
       .setName('<html> Attrs')
-      .setDesc('Attributes for <html> element.')
+      .setDesc('Attributes for <html> element')
       .setClass("htmlattrs-setting")
       .addTextArea(text =>
         text
@@ -80,10 +80,16 @@ export class PlaygroundSettingsModal extends Modal {
           this.changes.htmlAttrs = newHtmlAttrsSetting;
         })
       ); 
-
-    const buttonDiv = contentEl.createDiv({
-        cls: "modal-button-container",
-    });
+    
+    let buttonDiv = contentEl.createDiv({cls: "modal-button-container"});
+    let noticeDiv = buttonDiv.createDiv({cls: "modal-button-notice"});
+    let noticeIcon = noticeDiv.createSpan({cls: "modal-button-notice-icon"});
+    noticeIcon.setAttribute("aria-label", "Notice");
+    let noticeText = noticeDiv.createSpan({cls: "modal-button-notice-text"});
+    noticeText.textContent = "Please note: Updating these settings will reset the playground editor and clipboard history.";
+    setIcon((noticeIcon), "alert-triangle");
+    
+    buttonDiv.appendChild(noticeDiv);
 
     new ButtonComponent(buttonDiv)
       .setButtonText("Update")
@@ -96,6 +102,8 @@ export class PlaygroundSettingsModal extends Modal {
     new ButtonComponent(buttonDiv).setButtonText("Cancel").onClick(() => {
       this.close();
     });
+
+
   }
 
   onClose() {

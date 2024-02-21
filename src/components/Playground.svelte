@@ -1,26 +1,17 @@
 <script lang="ts">
   import { Notice, WorkspaceLeaf, setIcon } from "obsidian";
-  import {
-    createPlayground,
-    EmbedOptions
-  } from "livecodes";
+  import { createPlayground, EmbedOptions } from "livecodes";
   import { Boarding } from "boarding.js";
-  // import attachHighPrioClick from "boarding.js";
   const { Octokit } = require("@octokit/rest");
   import * as prettier from "prettier/standalone";
   import * as htmlPlugin from "prettier/plugins/html";
-  
   import { onMount } from "svelte";
-  import {
-    saveJson,
-    downloadFile,
-    copyStringToClipboard,
-    // postToCodepen,
-  } from "../utils";
+  import { saveJson, downloadFile, copyStringToClipboard } from "../utils";
   import { buttonTour } from "../settings/onboarding";
-  import { openPromptModal } from "../modals/prompt-modal";
-  import { openExternalResourcesModal } from "../modals/external-resources-modal";
-  import { openPlaygroundSettingsModal } from "../modals/playground-settings-modal";
+  import { saveAsModal } from "../modals/SaveAs";
+  import { openShareGistModal } from "../modals/ShareGist";
+  import { openExternalResourcesModal } from "../modals/ExternalResources";
+  import { openPlaygroundSettingsModal } from "../modals/PlaygroundSettings";
   import moment from "moment";
 
   const app = this.app;
@@ -39,12 +30,14 @@
   let copyShareUrl: HTMLButtonElement;
   let toggleTheme: HTMLButtonElement;
   let onWatch: HTMLButtonElement;
-  let openInCodepen:HTMLButtonElement;
-  let createGist:HTMLButtonElement;
+  // let openInCodepen:HTMLButtonElement;
+  let openShareGist:HTMLButtonElement;
   let showHelp:HTMLButtonElement;
+  // let toggleWrap:HTMLButtonElement;
   let openExternalResources: HTMLButtonElement;
   let openPlaygroundSettings: HTMLButtonElement;
-  let leaf: WorkspaceLeaf; 
+  let buttonsWrapper: HTMLDivElement;
+  let leaf: WorkspaceLeaf;
 
   const options: EmbedOptions = {
     config: jsonTemplate!,
@@ -64,7 +57,7 @@
       tabSize: Number(plugin.settings.tabSize),
       console: "open", // or full
       lineNumbers: plugin.settings.lineNumbers,
-      wordWrap: plugin.settings.wordWrap,
+      // wordWrap: plugin.settings.wordWrap,
       // @ts-ignore
       enableAI: plugin.settings.enableAI,
       editor: plugin.settings.editor,
@@ -160,6 +153,7 @@
           if (currentTheme !== "dark") {
             await playground.setConfig({ theme: "dark" });
             plugin.settings.darkTheme = true;
+            await plugin.saveSettings();
             setIcon(toggleTheme, "sun");
             toggleTheme.setAttribute(
               "aria-label",
@@ -168,6 +162,7 @@
           } else {
             await playground.setConfig({ theme: "light" });
             plugin.settings.darkTheme = false;
+            await plugin.saveSettings();
             setIcon(toggleTheme, "moon");
             toggleTheme.setAttribute("aria-label", "Set dark mode");
           }
@@ -179,17 +174,17 @@
       // playground.watch('load', () => {
       //   console.log('Livecodes playground loaded');
       // });
-      
-      // playground.watch('ready', () => {
-      //   console.log('Livecodes playground ready');
-      // });
 
+      playground.watch('ready', () => {
+        // console.log('Livecodes playground ready');
+        buttonsWrapper.setAttribute('style', '');
+      });
 
       setIcon(saveAsJSON, "file-json-2");
       saveAsJSON.addEventListener("click", async (e) => {
         e.preventDefault();
         const cfg = await playground.getConfig();
-        let fName = await openPromptModal(
+        let fName = await saveAsModal(
           this.app,
           "Livecodes",
           "Save playground as:",
@@ -232,17 +227,19 @@
       /*/
       setIcon(openInCodepen, 'codepen');
       openInCodepen.addEventListener(
-        "click", 
+        "click",
         async (e) => {
           e.preventDefault();
           try {
             let json = {"title": "New Pen", "html": "<div>Hello, World</div>"};
             postToCodepen(
-              container, 
+              container,
               JSON.stringify(json)
                 // Quotes will screw up the JSON
-                .replace(/"/g, "&​quot;")
+                .replace(/"/g, "&quot;")
                 .replace(/'/g, "&apos;")
+                .replace(/\</g, "&lt;")
+                .replace(/>/g, "&gt;")
             );
           } catch (error) {
             console.log(error.message || error);
@@ -251,45 +248,67 @@
       );
       /**/
 
-      setIcon(createGist, 'github');
-      createGist.addEventListener(
-        "click", 
-        async (e) => {
-          e.preventDefault();
-          try {
-            const cfg = await playground.getConfig();
-            try {
-              let markDown:string = '';
-              let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
-              markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
-              if (cfg.markup.content !== "") {
-                markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
+      setIcon(openShareGist, 'github');
+      openShareGist.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          let conf = {
+            includeLivecodesLink: await playground.getConfig().then((t: any) => {return t.includeLivecodesLink}),
+            includeHtmlFile: await playground.getConfig().then((t: any) => {return t.includeHtmlFile}),
+            includeJsonFile: await playground.getConfig().then((t: any) => {return t.includeJsonFile}),
+            includeMarkdownFile: await playground.getConfig().then((t: any) => {return t.includeMarkdownFile}),
+          };
+          await openShareGistModal(
+              this.app,
+              this.plugin,
+              "Share as gist",
+              conf
+            )
+            .then(
+              async (setting) => {
+                if (setting !== null) {
+                  let gistSetting = JSON.parse(setting);
+                  const cfg = await playground.getConfig();
+                  try {
+                    let markDown:string = '';
+                    if (gistSetting.includeLivecodesLink && gistSetting.includeJsonFile) {
+                      let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
+                      markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
+                    }
+                    if (gistSetting.includeMarkdownFile) {
+                      if (cfg.markup.content !== "") {
+                        markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
+                      }
+                      if (cfg.style.content !== "") {
+                        markDown += "## "+cfg.style.language+"\n\n```"+cfg.style.language+"\n"+cfg.style.content+"\n```\n\n";
+                      }
+                      if (cfg.script.content !== "") {
+                        markDown += "## "+cfg.script.language+"\n\n```"+cfg.script.language+"\n"+cfg.script.content+"\n```\n\n";
+                      }
+                    }
+                    const code = await playground.getCode();
+
+                    await saveAsGist(gistSetting, cfg.title + '.md', markDown, cfg.title + '.html', code.result, cfg.title + '.json', JSON.stringify(cfg, null, 2) );
+
+                  } catch (error) {
+                    new Notice(
+                      "❌ " + error + " Click this message to dismiss.",
+                      0
+                    );
+                  }
+                }
               }
-              if (cfg.style.content !== "") {
-                markDown += "## "+cfg.style.language+"\n\n```"+cfg.style.language+"\n"+cfg.style.content+"\n```\n\n";
-              }
-              if (cfg.script.content !== "") {
-                markDown += "## "+cfg.script.language+"\n\n```"+cfg.script.language+"\n"+cfg.script.content+"\n```\n\n";
-              }
-              const code = await playground.getCode();
-              await saveAsGist(cfg.title + '.md', markDown, cfg.title + '.html', code.result, cfg.title + '.json', JSON.stringify(cfg) );
-            } catch (error) {
-              new Notice(
-                "❌ " + error + " Click this message to dismiss.",
-                0
-              );
-            }
-          } catch (error) {
-            console.log(error.message || error);
-          }
+            );
+        } catch (error) {
+          console.log(error.message || error);
         }
-      );
+      });
 
       setIcon(createNote, "file-plus-2");
       createNote.addEventListener("click", async (e) => {
         e.preventDefault();
         const cfg = await playground.getConfig();
-        let fName = await openPromptModal(
+        let fName = await saveAsModal(
           this.app,
           "Livecodes",
           "Save note as:",
@@ -361,7 +380,7 @@
             .then(
               async (setting) => {
                 let newConfig = JSON.parse(setting as unknown as string);
-                await playground.setConfig({ 
+                await playground.setConfig({
                   stylesheets: newConfig.stylesheets,
                   scripts: newConfig.scripts,
                   cssPreset: newConfig.cssPreset
@@ -393,7 +412,7 @@
             .then(
               async (setting) => {
                 let newConfig = JSON.parse(setting as unknown as string);
-                await playground.setConfig({ 
+                await playground.setConfig({
                   title: newConfig.title,
                   description: newConfig.description,
                   head: newConfig.head,
@@ -431,6 +450,40 @@
         }
       }
 
+      /*/
+      if (plugin.settings.wordWrap) {
+        setIcon(toggleWrap, "align-justify");
+      } else {
+        setIcon(toggleWrap, "wrap-text");
+      }
+      toggleWrap.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const currentWrap = plugin.settings.wordWrap
+          ? true
+          : false;
+        try {
+          if (currentWrap) {
+            await playground.setConfig({ wordWrap: false });
+            plugin.settings.wordWrap = false;
+            plugin.saveSettings();
+            setIcon(toggleWrap, "wrap-text");
+            toggleWrap.setAttribute(
+              "aria-label",
+              "Turn on word-wrap"
+            );
+          } else {
+            await playground.setConfig({ wordWrap: true });
+            plugin.settings.wordWrap = true;
+            plugin.saveSettings();
+            setIcon(toggleWrap, "align-justify");
+            toggleWrap.setAttribute("aria-label", "Turn off word-wrap");
+          }
+        } catch (error) {
+          console.log(error.message || error);
+        }
+      });
+      /**/
+
       setIcon(showHelp, "help-circle");
       showHelp.addEventListener("click", async (e) => {
         e.preventDefault();
@@ -447,8 +500,8 @@
               //     boarding.getSteps().length
               //   })`;
               // }, 0);
+              /*/
               setTimeout(() => {
-                // let stepsSpan = activeDocument.createElement("span");
                 let stepsDiv: HTMLDivElement = activeDocument.createElement("div");
                 stepsDiv.addClass("steps-bullets");
                 let stepsList: HTMLElement = activeDocument.createElement("ul");
@@ -478,6 +531,7 @@
                 // popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
                 popoverElements.popoverDescription.appendChild(stepsDiv);
               }, 0);
+              /**/
             },
             opacity: 0.75,
           });
@@ -522,12 +576,18 @@
       let result:string = pretty.replace(regex, "");
       return Promise.resolve(result);
     });
-    
+
   }
 
   const saveAsGist = async (
-    fileName: string, 
-    body: string, 
+    gistSettings: {
+      includeLivecodesLink: boolean,
+      includeHtmlFile: boolean,
+      includeJsonFile: boolean,
+      includeMarkdownFile: boolean
+    },
+    fileName: string,
+    body: string,
     htmlName: string,
     html: string,
     jsonName: string,
@@ -540,7 +600,7 @@
     }
     try {
       new Notice("Creating gist…", 5000);
-      let prettyHtml = await prettifyHtml(html, fileName);
+      let prettyHtml = await prettifyHtml(html, htmlName);
       /**
        * https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
        */
@@ -548,23 +608,31 @@
         'auth': token
       });
 
-      const result = await octokit.request('POST /gists', {
-        'description': fileName,
-        'public': plugin.settings.githubGistPublic,
-        'files': {
-          ["README.md"]: {
-            'content': "## Hello, world!",
-          },
-          [fileName]: {
-            'content': body,
-          },
-          [htmlName]: {
-            'content': "<!DOCTYPE html>\n" + prettyHtml,
-          },
-          [jsonName]: {
-            'content': json,
-          },
+      let filteredFiles = {
+        [fileName]: {
+          'content': body,
         },
+        [htmlName]: {
+          'content': "<!DOCTYPE html>\n" + prettyHtml,
+        },
+        [jsonName]: {
+          'content': json,
+        },
+      };
+      if (!gistSettings.includeHtmlFile) {
+        delete filteredFiles[`${htmlName}`]
+      }
+      if (!gistSettings.includeJsonFile) {
+        delete filteredFiles[`${jsonName}`]
+      }
+      if (!gistSettings.includeMarkdownFile) {
+        delete filteredFiles[`${fileName}`]
+      }
+
+      const result = await octokit.request('POST /gists', {
+        'description': "",
+        'public': plugin.settings.githubGistPublic,
+        'files': filteredFiles,
         'headers': {
           'X-GitHub-Api-Version': '2022-11-28'
         }
@@ -582,21 +650,11 @@
           url += livecodesUrl + openGistUrl;
         }
       })
-      await navigator.clipboard.writeText(url);
-      url.split("\n").forEach((url: string, index: number) => { 
-        let i= index+1;
-        console.log(i + ' - ' + url); 
-      })
-      if (livecodesUrl !== undefined) {
+      if (gistSettings.includeLivecodesLink && livecodesUrl!) {
         try {
           // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#update-a-gist
           const patch = await octokit.request('PATCH /gists/'+gistId, {
             'description': "👉️ Open this code in Livecodes: "+livecodesUrl,
-            'files': {
-              'README.md': {
-                content: openGistUrl
-              }
-            },
             'headers': {
               'X-GitHub-Api-Version': '2022-11-28'
             }
@@ -604,6 +662,15 @@
         } catch (error) {
           new Notice("❌ " + error + " Click this message to dismiss.", 0);
         }
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        url.split("\n").forEach((url: string, index: number) => {
+          let i= index+1;
+          console.log(i + ' - ' + url);
+        })
+      } catch (error) {
+        new Notice("❌ " + error + " Click this message to dismiss.", 0);
       }
       new Notice('Gist created - URLs copied to your clipboard and logged to the developer console');
     } catch (err) {
@@ -620,7 +687,7 @@
     data-height={plugin.settings.dataHeight || "600"}
   />
 
-  <div class="buttons-wrapper">
+  <div class="buttons-wrapper" style="display:none;" bind:this={buttonsWrapper}>
     <button
       aria-label="Watch for changes & SAVE"
       bind:this={onWatch}
@@ -658,16 +725,17 @@
       class="share-url-button clickable-icon"
     />
     <button
-      aria-label="Create Github gist"
-      bind:this={createGist}
+      aria-label="Share as Github gist"
+      bind:this={openShareGist}
       data-tooltip-position="bottom"
       class="create-gist-button clickable-icon"
     />
     <!-- <button
       aria-label="Open in Codepen"
       bind:this={openInCodepen}
-      data-tooltip-position="bottom">
-    </button> -->
+      data-tooltip-position="bottom"
+      class="codepen-button clickable-icon"
+    /> -->
     <button
       aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
       bind:this={toggleTheme}
@@ -692,6 +760,12 @@
       data-tooltip-position="bottom"
       class="clickable-icon"
     />
+    <!-- <button
+      aria-label="Turn {plugin.settings.wordWrap ? 'off' : 'on'} word-wrap"
+      bind:this={toggleWrap}
+      data-tooltip-position="bottom"
+      class="clickable-icon"
+    /> -->
   </div>
 </div>
 
@@ -700,7 +774,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 1em;
+    margin-block: 1em;
+    width: 100%;
+    flex-wrap: wrap;
   }
   .buttons-wrapper button {
     margin-inline: 0.25em;

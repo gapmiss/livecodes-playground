@@ -57,7 +57,6 @@ or:
 - [X] test Obsidian.md mobile app
 - [X] onboarding, add tour to playground buttons
 - [X] save as gist
-- [ ] gist README
 - [X] URL handler for opening a gist in Obsidian.md app
 - [X] tags
 - [ ] style settings support
@@ -66,7 +65,6 @@ or:
 - [X] open playground w/ choices of `markup`, `style`, & `script`
 - [X] loading animation for search
 - [ ] playground custom settings
-
 
 ## Tips
 

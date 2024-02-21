@@ -1,6 +1,14 @@
 /**
  * https://github.com/alangrainger/share-note/src/StatusMessage.ts
  */
+/*/
+import StatusMessage, { StatusType } from '../utils/StatusMessages';
+let status: StatusMessage;
+status = new StatusMessage('Initial status message', StatusType.Default, 3 * 1000)
+status.setStatus('Started process…'); // change message
+status.setStatus('Finished process'); // change message
+status.hide();
+/**/
 import { Notice } from 'obsidian'
 
 const pluginName = require('../../manifest.json').name

@@ -12,7 +12,7 @@ import {
 } from "obsidian";
 // import { livecodesStarters } from "src/utils/starters";
 // import { openPromptModal } from "./prompt-modal";
-import { blankPlayground, codeLanguages } from "../utils/livecodes";
+import { blankPlayground, codeLanguages } from "../livecodes";
 
 // type LanguageSelectCallback = () => void;
 type LanguageSelectCallback = (changes:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string}) => void;
@@ -107,19 +107,21 @@ export class LanguageSelectModal extends Modal {
     });
 
     new Setting(contentEl)
-    .setName('TailwindCss')
-    .setDesc('Enable Tailwind CSS processing')
+    .setName('CSS processing')
+    .setHeading();
+
+    new Setting(contentEl)
+    .setName('Tailwind CSS')
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.twcss)
       .onChange(async newValue => {
-        this.changes.twcss = true;
+        this.changes.twcss = newValue;
       })
     );
     
     new Setting(contentEl)
     .setName('Windy CSS')
-    .setDesc('Enable Windy CSS processing')
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.windicss)
@@ -130,7 +132,6 @@ export class LanguageSelectModal extends Modal {
     
     new Setting(contentEl)
     .setName('Uno CSS')
-    .setDesc('Enable Uno CSS processing')
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.unocss)
@@ -141,7 +142,6 @@ export class LanguageSelectModal extends Modal {
     
     new Setting(contentEl)
     .setName('Lightning CSS')
-    .setDesc('Enable Lightning CSS processing')
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.lightningcss)
@@ -217,8 +217,6 @@ export async function OpenLanguageSelectCallback(
       this.changes,
       callback ??
         (() => {
-          console.log('callback');
-          console.log(this.changes);
           return JSON.stringify(this.changes);
         })
     

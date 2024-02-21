@@ -1,29 +1,30 @@
-.livecodes-wrapper {
+/**
+ * playground
+ */
+ .livecodes-wrapper {
   resize: both !important;
-  overflow: hidden;
+  /* overflow: hidden; */
+  overflow: auto;
   padding:1em !important;
   border: 1px solid var(--interactive-accent) !important;
   background-color: var(--background-primary) !important;
   margin-bottom: 1em;
   border-radius: var(--size-2-3);
 }
-.open-with-livecodes-wrap {
-  position: relative;
-}
-.open-with-livecodes-wrap:hover .open-with-livecodes-button {
-  opacity: .8;
-}
-.open-with-livecodes-button {
-  position: absolute;
-  top: -15px;
-  left: -15px;
-  opacity: 0;
-  transition: opacity 0.25s;
-  cursor: pointer;	
-  border-radius: 15px;
-  padding: .5em;
-}
-.livecodes-prompt-modal input.prompt-input {
+
+/* span.button-divider {
+  display:inline-block;
+  width:.3em;
+  border-right:2px solid var(--color-base-30);
+  margin-right:.2em;
+  height:20px;
+  margin-top:4px;
+} */
+
+/**
+ * playground modals
+ */
+ .livecodes-prompt-modal input.prompt-input {
   width: 100%;
   padding: var(--size-4-6);
   background-color: var(--background-primary);
@@ -39,28 +40,6 @@
   border-bottom: none !important;
   box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
-.buttons-wrapper {
-  margin-top: 1em;
-}
-span.button-divider {
-  display:inline-block;
-  width:.3em;
-  border-right:2px solid var(--color-base-30);
-  margin-right:.2em;
-  height:20px;
-  margin-top:4px;
-}
-.choiceHidden {
-  display:none;
-}
-/* .title-setting input,
-[class*="livecodes-settings-input"] input,
-[class*="livecodes-settings-input"] .search-input-container {
-  width: 100%;
-  min-width: 10em;
-} */
-
-
 .livecodes-editor-settings-modal .title-setting input {
   width: 100%;
 }
@@ -68,26 +47,24 @@ span.button-divider {
 .livecodes-editor-settings-modal .setting-item-control  {
   justify-content: flex-start;
 }
-
 .scripts-setting textarea,
 .stylesheets-setting textarea,
 .head-setting textarea,
 .description-setting textarea,
 textarea.playground-editor-settings-textarea {
   width: 100%;
-  /* font-family: monospace; */
   font-size: var(--font-smaller);
   height: 10ch;
   margin-top: .25em;
-  /* white-space: pre;
-  overflow-wrap: normal;
-  overflow-x: scroll; */
+  /* font-family: monospace; */
+  /* white-space: pre; */
+  /* overflow-wrap: normal; */
+  /* overflow-x: scroll; */
 }
 .tags-setting textarea,
 .htmlattrs-setting textarea,
 textarea.playground-editor-settings-textarea {
   width: 100%;
-  /* font-family: monospace; */
   font-size: var(--font-smaller);
   height: 6ch;
   margin-top: .25em;
@@ -100,6 +77,26 @@ div.livecodes-editor-settings-modal .description-setting,
 div.livecodes-editor-settings-modal .tags-setting,
 div.livecodes-editor-settings-modal .htmlattrs-setting {
   display: block;
+}
+div.livecodes-editor-settings-modal div.setting-item-description {
+  margin-block-end: .5em !important;
+  font-size: var(--font-smaller);
+}
+div.modal-button-notice {
+  display:flex;
+  flex: 1;
+  gap: .5em;
+}
+.modal-button-notice-icon {
+  color: var(--color-yellow);
+}
+.modal-button-notice-text {
+  font-size: var(--font-smaller);
+  color: var(--text-faint);
+}
+button.share-gist-button:disabled {
+  background-color: var(--interactive-normal);
+  cursor:not-allowed;
 }
 /**
  * onboarding
@@ -319,67 +316,14 @@ div#boarding-popover-item .steps-progress {
   margin-inline: .5em;
   margin-block: .5em;
 }
-
-.steps-bullets {
-  text-align: center;
-  padding-block: .25em;
-  /* border:1px solid dodgerblue; */
-}
-
-.steps-bullets ul {
-  box-sizing: content-box;
-  clear: both;
-  margin: 0 auto 0;
-  padding: 0;
-  display:inline-block
-}
-
-.steps-bullets ul li {
-  box-sizing: content-box;
-  list-style: none;
-  float: left;
-  margin:0 2px
-}
-
-.steps-bullets ul li a {
-  transition: width .1s ease-in;
-  box-sizing: content-box;
-  display: block;
-  width: 6px;
-  height: 6px;
-  background: #ccc;
-  border-radius: 10px;
-  text-decoration: none;
-  cursor: default;
-}
-
-/* .steps-bullets ul li a:focus, .steps-bullets ul li a:hover {
-  width: 15px;
-  background: #999;
-  text-decoration: none;
-  outline:0
-} */
-
-.steps-bullets ul li a.active {
-  width: 15px;
-  background:#999
-}
-
-
-iframe.livecodes #external-resources-btn {
-  display: none;
-}
-
 body:has(div#boarding-popover-item) .tooltip {
-  z-index: 1000000001 !important;
+  z-index: calc(infinity) !important;
 }
-
-/* .setting-item {
-  flex-flow: row wrap;
-} */
-
-.setting-item-heading-onboarding .setting-item-description {
-  font-size: var(--font-ui-small)
+/**
+ * settings
+ */
+ .setting-item-heading-onboarding .setting-item-description {
+  font-size: var(--font-smaller)
 }
 .setting-item-heading-onboarding .setting-item-name {
   color: var(--text-accent)
@@ -393,43 +337,62 @@ body:has(div#boarding-popover-item) .tooltip {
 .livecodes-settings-tab .setting-item-heading .setting-item-name {
   color: var(--text-faint);
 }
-
-.livecodes-sponsorship {
+.livecodes-sponsorship-heading {
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+.livecodes-sponsorship {  
   background-color: var(--background-secondary);
   border-radius: var(--size-2-3);
   padding: 1em .5em !important;
   margin-top: 1em;
-  /* width: 70%; */
-  margin-top: 1em;
   text-align: center;
 }
-
 .livecodes-sponsorship a:has(svg) {
   display: inline-block;
 }
 .livecodes-sponsorship-button {
   margin: 10px;
 }
-
-
-.livecodes-status-error.notice {
+.choiceHidden {
+  display:none;
+}
+/**
+ * status-message
+ */
+ .livecodes-status-error.notice {
   background: #c10000;
   color: white
 }
-
 .livecodes-status-info.notice {
   background: hsl(204, 86%, 53%);
   color: white
 }
-
 .livecodes-status-success.notice {
   background: #629762;
   color: white
 }
 
-div.livecodes-editor-settings-modal div.setting-item-description {
-  margin-block-end: .5em !important;
+/* iframe.livecodes #external-resources-btn { */
+/*   display: none; */
+/* } */
+
+/* .open-with-livecodes-wrap {
+  position: relative;
 }
+.open-with-livecodes-wrap:hover .open-with-livecodes-button {
+  opacity: .8;
+}
+.open-with-livecodes-button {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  opacity: 0;
+  transition: opacity 0.25s;
+  cursor: pointer;	
+  border-radius: 15px;
+  padding: .5em;
+} */
+
 
 /* @settings
 name: Livecodes
@@ -459,5 +422,4 @@ settings:
   description: "This is *informational* text"
   type: info-text
   markdown: true
-
 */

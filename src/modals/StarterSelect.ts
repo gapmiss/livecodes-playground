@@ -7,9 +7,9 @@ import {
   Notice,
   TFile
 } from "obsidian";
-import { livecodesStarters } from "../utils/starters";
-import { openPromptModal } from "./prompt-modal";
-import { blankPlayground } from "../utils/livecodes";
+import { livecodesStarters } from "../livecodes/starters";
+import { saveAsModal } from "./SaveAs";
+import { blankPlayground } from "../livecodes";
 
 export class StarterSelectModal extends FuzzySuggestModal<string> {
   plugin: LivecodesPlugin;
@@ -56,7 +56,7 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
   }
 
   async onChooseItem(starter: any) {
-    await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
+    await saveAsModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
       .then(async (fName:string) => {				
         if (fName?.length === 0) {
           return;
@@ -69,6 +69,7 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
         let foundScript: boolean = starter.script !== undefined;
         let foundStylesheets: boolean = starter.stylesheets !== undefined;
         let foundScripts: boolean = starter.scripts !== undefined;
+        let foundCustomSettings: boolean = starter.customSettings !== undefined;
         if (foundHead) {
           newPlayground.head = starter.head;
         }
@@ -93,6 +94,9 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
         if (foundScripts) {
           newPlayground.scripts = starter.scripts;
         }
+        if (foundCustomSettings) {
+          newPlayground.customSettings = starter.customSettings;
+        }
         if (starter.activeEditor !== undefined) {
           newPlayground.activeEditor = starter.activeEditor;
         }
@@ -114,7 +118,8 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
         newPlayground.enableAI = this.plugin.settings.enableAI;
         newPlayground.autoupdate = this.plugin.settings.autoUpdate;
         newPlayground.delay = this.plugin.settings.delay;
-
+        // console.log('newPlayground');
+        // console.log(newPlayground);
         let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
         try {
           await this.app.vault

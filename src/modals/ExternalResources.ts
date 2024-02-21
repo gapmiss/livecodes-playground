@@ -1,4 +1,4 @@
-import { App, Modal, Setting, ButtonComponent, TextComponent, TextAreaComponent } from "obsidian";
+import { App, Modal, Setting, ButtonComponent, setIcon } from "obsidian";
 import LivecodesPlugin from '../main';
 
 type ExternalResourcesCallback = (text: string | null) => void;
@@ -70,9 +70,15 @@ export class ExternalResourcesModal extends Modal {
           });
         });
 
-      const buttonDiv = contentEl.createDiv({
-          cls: "modal-button-container",
-      });
+      let buttonDiv = contentEl.createDiv({cls: "modal-button-container"});
+      let noticeDiv = buttonDiv.createDiv({cls: "modal-button-notice"});
+      let noticeIcon = noticeDiv.createSpan({cls: "modal-button-notice-icon"});
+      noticeIcon.setAttribute("aria-label", "Notice");
+      let noticeText = noticeDiv.createSpan({cls: "modal-button-notice-text"});
+      noticeText.textContent = "Please note: Updating these settings will reset the playground editor and clipboard history.";
+      setIcon((noticeIcon), "alert-triangle");
+      
+      buttonDiv.appendChild(noticeDiv);
 
       new ButtonComponent(buttonDiv)
           .setButtonText("Update")
