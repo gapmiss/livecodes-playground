@@ -1,6 +1,6 @@
 {
 	"name": "livecodes-playgrounds",
-	"version": "0.8.1",
+	"version": "0.9.0",
 	"description": "Livecodes code playground plugin for Obsidian.md",
 	"main": "main.js",
 	"scripts": {
@@ -23,10 +23,8 @@
 	},
 	"dependencies": {
 		"@octokit/rest": "^20.0.2",
-		"@orama/orama": "^2.0.5",
 		"@popperjs/core": "^2.11.8",
 		"@tsconfig/svelte": "^5.0.2",
-		"@types/lunr": "^2.3.7",
 		"boarding.js": "^3.5.2",
 		"esbuild-svelte": "^0.8.0",
 		"livecodes": "^0.4.0",
