@@ -44,25 +44,3 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
       console.error('Failed to copy to clipboard: ', error)
     })
 }
-
-/**
- * https://blog.codepen.io/documentation/prefill/
- */
-/*/
-export async function postToCodepen(ele: HTMLElement, params: string, path: string = "https://codepen.io/pen/define", method: string='POST') {
-  console.log(params);  
-  const form = window.document.createElement('form');
-  form.method = method;
-  form.action = path;
-  form.target = '_blank';
-  form.setAttribute('style', 'display:none;');
-  const button = window.document.createElement('button');
-  button.name = 'data';
-  button.value = params;	
-  form.appendChild(button);
-  ele.appendChild(form);
-  // console.log(form);
-  // form.submit();
-  // form.detach();
-}
-/**/

@@ -1,4 +1,3 @@
-// from: https://github.com/eoureo/obsidian-runjs/blob/c4d64a9f7b8305a813bf81beadaac4395e8367df/src/prompt_modal.ts
 import { App, Modal, ButtonComponent, TextComponent, TextAreaComponent } from "obsidian";
 
 type SaveAsCallback = (text: string | null) => void;
@@ -72,9 +71,7 @@ export class SaveAsModal extends Modal {
       })
       .setCta();
 
-    new ButtonComponent(buttonDiv).setButtonText("Cancel").onClick(() => {
-      this.close();
-    });
+    new ButtonComponent(buttonDiv).setButtonText("Cancel").onClick(() => { this.close() });
   }
 
   onClose() {

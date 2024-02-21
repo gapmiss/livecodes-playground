@@ -103,7 +103,6 @@ export class PlaygroundSettingsModal extends Modal {
       this.close();
     });
 
-
   }
 
   onClose() {

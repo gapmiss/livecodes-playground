@@ -30,10 +30,8 @@
   let copyShareUrl: HTMLButtonElement;
   let toggleTheme: HTMLButtonElement;
   let onWatch: HTMLButtonElement;
-  // let openInCodepen:HTMLButtonElement;
   let openShareGist:HTMLButtonElement;
   let showHelp:HTMLButtonElement;
-  // let toggleWrap:HTMLButtonElement;
   let openExternalResources: HTMLButtonElement;
   let openPlaygroundSettings: HTMLButtonElement;
   let buttonsWrapper: HTMLDivElement;
@@ -57,7 +55,7 @@
       tabSize: Number(plugin.settings.tabSize),
       console: "open", // or full
       lineNumbers: plugin.settings.lineNumbers,
-      // wordWrap: plugin.settings.wordWrap,
+      wordWrap: plugin.settings.wordWrap,
       // @ts-ignore
       enableAI: plugin.settings.enableAI,
       editor: plugin.settings.editor,
@@ -172,11 +170,11 @@
       });
 
       // playground.watch('load', () => {
-      //   console.log('Livecodes playground loaded');
+      //   // Livecodes playground loaded
       // });
 
       playground.watch('ready', () => {
-        // console.log('Livecodes playground ready');
+        // Livecodes playground ready
         buttonsWrapper.setAttribute('style', '');
       });
 
@@ -219,34 +217,6 @@
           );
         }
       });
-
-      /**
-       * CANNOT POST FORM from Obsidian.md; CORS issue?
-       */
-
-      /*/
-      setIcon(openInCodepen, 'codepen');
-      openInCodepen.addEventListener(
-        "click",
-        async (e) => {
-          e.preventDefault();
-          try {
-            let json = {"title": "New Pen", "html": "<div>Hello, World</div>"};
-            postToCodepen(
-              container,
-              JSON.stringify(json)
-                // Quotes will screw up the JSON
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&apos;")
-                .replace(/\</g, "&lt;")
-                .replace(/>/g, "&gt;")
-            );
-          } catch (error) {
-            console.log(error.message || error);
-          }
-        }
-      );
-      /**/
 
       setIcon(openShareGist, 'github');
       openShareGist.addEventListener("click", async (e) => {
@@ -450,40 +420,6 @@
         }
       }
 
-      /*/
-      if (plugin.settings.wordWrap) {
-        setIcon(toggleWrap, "align-justify");
-      } else {
-        setIcon(toggleWrap, "wrap-text");
-      }
-      toggleWrap.addEventListener("click", async (e) => {
-        e.preventDefault();
-        const currentWrap = plugin.settings.wordWrap
-          ? true
-          : false;
-        try {
-          if (currentWrap) {
-            await playground.setConfig({ wordWrap: false });
-            plugin.settings.wordWrap = false;
-            plugin.saveSettings();
-            setIcon(toggleWrap, "wrap-text");
-            toggleWrap.setAttribute(
-              "aria-label",
-              "Turn on word-wrap"
-            );
-          } else {
-            await playground.setConfig({ wordWrap: true });
-            plugin.settings.wordWrap = true;
-            plugin.saveSettings();
-            setIcon(toggleWrap, "align-justify");
-            toggleWrap.setAttribute("aria-label", "Turn off word-wrap");
-          }
-        } catch (error) {
-          console.log(error.message || error);
-        }
-      });
-      /**/
-
       setIcon(showHelp, "help-circle");
       showHelp.addEventListener("click", async (e) => {
         e.preventDefault();
@@ -491,48 +427,6 @@
           const boarding = new Boarding(
             {
             strictClickHandling: "block-all",
-            onPopoverRender: (popoverElements) => {
-              // setTimeout, so we the count runs immediatly after all internal boarding logic has run. Otherwise we would get an outdated boarding.currentStep number
-              // setTimeout(() => {
-              //   popoverElements.popoverTitle.innerText = `${
-              //     popoverElements.popoverTitle.innerText
-              //   } (${boarding.currentStep + 1}/${
-              //     boarding.getSteps().length
-              //   })`;
-              // }, 0);
-              /*/
-              setTimeout(() => {
-                let stepsDiv: HTMLDivElement = activeDocument.createElement("div");
-                stepsDiv.addClass("steps-bullets");
-                let stepsList: HTMLElement = activeDocument.createElement("ul");
-                stepsList.setAttribute("role", "tablist");
-                let i = 0;
-                boarding.getSteps().forEach((step)=>{
-                  let newStep: HTMLElement = activeDocument.createElement("li");
-                  newStep.setAttribute("role", "presentation")
-                  let stepLink: HTMLElement = activeDocument.createElement("a");
-                  stepLink.setAttribute("role", "button");
-                  if (i === boarding.currentStep) {
-                    stepLink.addClass("active");
-                  }
-                  stepLink.setAttribute("data-step-number", `${i}`);
-                  // stepLink.addEventListener("mouseenter",  async function (e) {
-                  //   e.stopPropagation();
-                  //   setTimeout(async () => {
-                  //     boarding.start(i);
-                  //   }, 1000);
-                  // });
-                  newStep.appendChild(stepLink);
-                  stepsList.appendChild(newStep);
-                  i++;
-                });
-                stepsDiv.appendChild(stepsList);
-                // stepsSpan.innerText = `(${boarding.currentStep + 1}/${boarding.getSteps().length})`;
-                // popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
-                popoverElements.popoverDescription.appendChild(stepsDiv);
-              }, 0);
-              /**/
-            },
             opacity: 0.75,
           });
           boarding.defineSteps(buttonTour);
@@ -653,7 +547,7 @@
       if (gistSettings.includeLivecodesLink && livecodesUrl!) {
         try {
           // https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#update-a-gist
-          const patch = await octokit.request('PATCH /gists/'+gistId, {
+          await octokit.request('PATCH /gists/'+gistId, {
             'description': "👉️ Open this code in Livecodes: "+livecodesUrl,
             'headers': {
               'X-GitHub-Api-Version': '2022-11-28'
@@ -730,12 +624,6 @@
       data-tooltip-position="bottom"
       class="create-gist-button clickable-icon"
     />
-    <!-- <button
-      aria-label="Open in Codepen"
-      bind:this={openInCodepen}
-      data-tooltip-position="bottom"
-      class="codepen-button clickable-icon"
-    /> -->
     <button
       aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
       bind:this={toggleTheme}
@@ -760,12 +648,6 @@
       data-tooltip-position="bottom"
       class="clickable-icon"
     />
-    <!-- <button
-      aria-label="Turn {plugin.settings.wordWrap ? 'off' : 'on'} word-wrap"
-      bind:this={toggleWrap}
-      data-tooltip-position="bottom"
-      class="clickable-icon"
-    /> -->
   </div>
 </div>
 

@@ -1,6 +1,5 @@
 import { App, Modal, Setting, ButtonComponent, setIcon } from "obsidian";
 import LivecodesPlugin from '../main';
-import Tags from "../components/Tags.svelte";
 
 type ShareGistCallback = (text: string | null) => void;
 
@@ -31,52 +30,52 @@ export class ShareGistModal extends Modal {
     if (this.title) this.titleEl.setText(this.title);
 
     new Setting(contentEl)
-    .setName('Playground link')
-    .setDesc('Include link to open playground in Livecodes')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.changes.includeLivecodesLink)
-      .onChange(async newValue => {
-        this.changes.includeLivecodesLink = newValue;
-        checkIsDisabled();
-      })
-    );
+      .setName('Playground link')
+      .setDesc('Include link to open playground in Livecodes')
+      .addToggle(toggle =>
+        toggle
+        .setValue(this.changes.includeLivecodesLink)
+        .onChange(async newValue => {
+          this.changes.includeLivecodesLink = newValue;
+          checkIsDisabled();
+        })
+      );
 
     new Setting(contentEl)
-    .setName('HTML file')
-    .setDesc('Include HTML results file')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.changes.includeHtmlFile)
-      .onChange(async newValue => {
-        this.changes.includeHtmlFile = newValue;
-        checkIsDisabled();
-      })
-    );
+      .setName('HTML file')
+      .setDesc('Include HTML results file')
+      .addToggle(toggle =>
+        toggle
+        .setValue(this.changes.includeHtmlFile)
+        .onChange(async newValue => {
+          this.changes.includeHtmlFile = newValue;
+          checkIsDisabled();
+        })
+      );
 
     new Setting(contentEl)
-    .setName('JSON file')
-    .setDesc('Include JSON template file')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.changes.includeJsonFile)
-      .onChange(async newValue => {
-        this.changes.includeJsonFile = newValue;
-        checkIsDisabled();
-      })
-    );
+      .setName('JSON file')
+      .setDesc('Include JSON template file')
+      .addToggle(toggle =>
+        toggle
+        .setValue(this.changes.includeJsonFile)
+        .onChange(async newValue => {
+          this.changes.includeJsonFile = newValue;
+          checkIsDisabled();
+        })
+      );
 
     new Setting(contentEl)
-    .setName('Markdown file')
-    .setDesc('Include markdown file with frontmatter and fenced codeblocks')
-    .addToggle(toggle =>
-      toggle
-      .setValue(this.changes.includeMarkdownFile)
-      .onChange(async newValue => {
-        this.changes.includeMarkdownFile = newValue;
-        checkIsDisabled();
-      })
-    );
+      .setName('Markdown file')
+      .setDesc('Include markdown file with frontmatter and fenced codeblocks')
+      .addToggle(toggle =>
+        toggle
+        .setValue(this.changes.includeMarkdownFile)
+        .onChange(async newValue => {
+          this.changes.includeMarkdownFile = newValue;
+          checkIsDisabled();
+        })
+      );
 
     let buttonDiv = contentEl.createDiv({cls: "modal-button-container"});
     let noticeDiv = buttonDiv.createDiv({cls: "modal-button-notice"});
@@ -139,7 +138,7 @@ export async function openShareGistModal(
   changes: {includeLivecodesLink: true, includeHtmlFile: true, includeJsonFile: true, includeMarkdownFile: true},
   callback?: ShareGistCallback
 ): Promise<string | null> {
-  return await new Promise((resolve, reject) => {
+  return await new Promise((resolve) => {
     new ShareGistModal(
       app,
       plugin,

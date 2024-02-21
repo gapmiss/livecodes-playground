@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent, setIcon } from 'obsidian';
+import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent } from 'obsidian';
 import { onboardingSteps, helpPopovers } from "./onboarding";
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
@@ -337,7 +337,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           })
       });
 
-    /**/
     new Setting(containerEl)
       .setName('AI code assistant')
       .setDesc('Enable Codeium AI')
@@ -368,7 +367,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
             )
           })
       });
-    /**/
 
     new Setting(containerEl)
       .setHeading()
@@ -755,7 +753,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         cb.settingEl.classList.add("setting-head");
       });
 
-
     new Setting(containerEl)
       .setHeading()
       .setName("Support the developers")
@@ -781,13 +778,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     const div = containerEl.createEl('div', {
       cls: 'livecodes-sponsorship',
     });
-    // const sponsorship = document.createElement('p');
-    // sponsorship.append(
-    //   'If this plugin adds value for you and you would like to help',
-    //   sponsorship.createEl("br"),
-    //   'support continued development, please consider sponsoring:'
-    // );
-    // div.appendChild(sponsorship);
     const parser = new DOMParser();
     div.appendChild(
       createDonateButton(

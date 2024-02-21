@@ -1,4 +1,4 @@
-import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl, WorkspaceLeaf } from "obsidian";
+import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
@@ -238,9 +238,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.registerEvent(
       this.app.workspace.on("file-menu", async (menu, file) => {
-
         const f = this.app.vault.getAbstractFileByPath(file.path);
-
         if (f instanceof TFolder && f.children.length > 1 && f.children.length <= 3) {
           const ALLOWED_EXTS = ["html","css","js","ts","json"];
           let showMenu = false;
@@ -251,7 +249,6 @@ export default class LivecodesPlugin extends Plugin {
               return;
             }
           });
-
           if (showMenu) {
             menu.addItem( (item) => {
               item
@@ -268,9 +265,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.registerEvent(
       this.app.workspace.on("file-menu", async (menu, file) => {
-
         const f = this.app.vault.getAbstractFileByPath(file.path);
-
         if (f instanceof TFile) {
           const ALLOWED_EXTS = ["html","css","js","ts"];
           let showMenu = false;
@@ -278,7 +273,6 @@ export default class LivecodesPlugin extends Plugin {
           if (ALLOWED_EXTS.includes(fileExt as string)) {
             showMenu = true;
           }
-
           if (showMenu) {
             menu.addItem( (item) => {
               item
@@ -333,78 +327,71 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   async newLanguageSelectPlayground(res:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string}) {
-    // await openPromptModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
-      // .then(async (fName:string) => {
+    if (res.title?.length === 0) {
+      return;
+    }
+    let newPlayground = blankPlayground;
+    let processors = [];
+    
+    if (res.twcss) {
+      newPlayground.customSettings = JSON.stringify({"imports":{},"tailwindcss":{"plugins":["@tailwindcss/forms","@tailwindcss/typography","@tailwindcss/aspect-ratio","@tailwindcss/line-clamp"],"theme":{"extend":{"colors":{"sky":{"50":"#f0f9ff","100":"#e0f2fe","200":"#bae6fd","300":"#7dd3fc","400":"#38bdf8","500":"#0ea5e9","600":"#0284c7","700":"#0369a1","800":"#075985","900":"#0c4a6e"},"cyan":{"50":"#ecfeff","100":"#cffafe","200":"#a5f3fc","300":"#67e8f9","400":"#22d3ee","500":"#06b6d4","600":"#0891b2","700":"#0e7490","800":"#155e75","900":"#164e63"}}}}}});
+      newPlayground.style.content = "@tailwind base;\n@tailwind components;\n@tailwind utilities;";
+      processors.push("tailwindcss");
+    }
 
-        if (res.title?.length === 0) {
-          return;
-        }
+    if (res.lightningcss) {
+      processors.push("lightningcss");
+    }
 
-        let newPlayground = blankPlayground;
+    if (res.unocss) {
+      processors.push("unocss");
+    }
 
-        // console.log(res.title);
-        // console.log(res);
-        let processors = [];
-        if (res.twcss) {
-          newPlayground.customSettings = JSON.stringify({"imports":{},"tailwindcss":{"plugins":["@tailwindcss/forms","@tailwindcss/typography","@tailwindcss/aspect-ratio","@tailwindcss/line-clamp"],"theme":{"extend":{"colors":{"sky":{"50":"#f0f9ff","100":"#e0f2fe","200":"#bae6fd","300":"#7dd3fc","400":"#38bdf8","500":"#0ea5e9","600":"#0284c7","700":"#0369a1","800":"#075985","900":"#0c4a6e"},"cyan":{"50":"#ecfeff","100":"#cffafe","200":"#a5f3fc","300":"#67e8f9","400":"#22d3ee","500":"#06b6d4","600":"#0891b2","700":"#0e7490","800":"#155e75","900":"#164e63"}}}}}});
-          newPlayground.style.content = "@tailwind base;\n@tailwind components;\n@tailwind utilities;";
-          processors.push("tailwindcss");
-        }
+    if (res.windicss) {
+      processors.push("windicss");
+    }
+    newPlayground.processors = processors as unknown as string;
+    newPlayground.markup.language = res.markup;
+    newPlayground.style.language = res.style;
+    newPlayground.script.language = res.script;
 
-        if (res.lightningcss) {
-          processors.push("lightningcss");
-        }
+    newPlayground.title = res.title;
+    newPlayground.appUrl = this.settings.appUrl;
+    newPlayground.fontFamily = this.settings.fontFamily;
+    newPlayground.fontSize = this.settings.fontSize;
+    newPlayground.editor = this.settings.editor;
+    newPlayground.editorTheme = this.settings.editorTheme;
+    newPlayground.lineNumbers = this.settings.lineNumbers;
+    newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+    newPlayground.useTabs = this.settings.useTabs;
+    newPlayground.tabSize = this.settings.tabSize;
+    newPlayground.closeBrackets = this.settings.closeBrackets;
+    newPlayground.semicolons = this.settings.semicolons;
+    newPlayground.singleQuote = this.settings.singleQuote;
+    newPlayground.trailingComma = this.settings.trailingComma;
+    newPlayground.wordWrap = this.settings.wordWrap;
+    newPlayground.enableAI = this.settings.enableAI;
+    newPlayground.autoupdate = this.settings.autoUpdate;
+    newPlayground.delay = this.settings.delay;
 
-        if (res.unocss) {
-          processors.push("unocss");
-        }
-
-        if (res.windicss) {
-          processors.push("windicss");
-        }
-        newPlayground.processors = processors as unknown as string;
-        newPlayground.markup.language = res.markup;
-        newPlayground.style.language = res.style;
-        newPlayground.script.language = res.script;
-
-        newPlayground.title = res.title;
-        newPlayground.appUrl = this.settings.appUrl;
-        newPlayground.fontFamily = this.settings.fontFamily;
-        newPlayground.fontSize = this.settings.fontSize;
-        newPlayground.editor = this.settings.editor;
-        newPlayground.editorTheme = this.settings.editorTheme;
-        newPlayground.lineNumbers = this.settings.lineNumbers;
-        newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
-        newPlayground.useTabs = this.settings.useTabs;
-        newPlayground.tabSize = this.settings.tabSize;
-        newPlayground.closeBrackets = this.settings.closeBrackets;
-        newPlayground.semicolons = this.settings.semicolons;
-        newPlayground.singleQuote = this.settings.singleQuote;
-        newPlayground.trailingComma = this.settings.trailingComma;
-        newPlayground.wordWrap = this.settings.wordWrap;
-        newPlayground.enableAI = this.settings.enableAI;
-        newPlayground.autoupdate = this.settings.autoUpdate;
-        newPlayground.delay = this.settings.delay;
-
-        let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
-        try {
-          await this.app.vault
-            .create(
-              this.settings.playgroundFolder+'/'+res.title + ".json",
-              await this.createText(
-                prettyCfg
-              )
-            ).then(async (f:TFile) => {
-                this.settings.jsonTemplate = f;
-                await this.saveSettings();
-                await this.activatePlaygroundView();
-              }
-            );
-          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+res.title + ".json");
-        } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
-        }
-      // })
+    let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
+    try {
+      await this.app.vault
+        .create(
+          this.settings.playgroundFolder+'/'+res.title + ".json",
+          await this.createText(
+            prettyCfg
+          )
+        ).then(async (f:TFile) => {
+            this.settings.jsonTemplate = f;
+            await this.saveSettings();
+            await this.activatePlaygroundView();
+          }
+        );
+      new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+res.title + ".json");
+    } catch (error) {
+      new Notice("❌ " + error + " Click this message to dismiss.", 0);
+    }
   }
 
   async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {

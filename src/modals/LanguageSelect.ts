@@ -3,18 +3,13 @@ import {
   FileSystemAdapter,
   Modal,
   Vault,
-  Notice,
-  TFile,
   Setting, 
   ButtonComponent,
   DropdownComponent,
   App
 } from "obsidian";
-// import { livecodesStarters } from "src/utils/starters";
-// import { openPromptModal } from "./prompt-modal";
-import { blankPlayground, codeLanguages } from "../livecodes";
+import { codeLanguages } from "../livecodes";
 
-// type LanguageSelectCallback = () => void;
 type LanguageSelectCallback = (changes:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string}) => void;
 
 export class LanguageSelectModal extends Modal {
@@ -44,24 +39,14 @@ export class LanguageSelectModal extends Modal {
     this.callback = callback;
   }
 
-
   onOpen() {
     const { contentEl } = this;
     this.contentEl.addClass("livecodes-language-select-modal");
     contentEl.empty();
     if (this.title) this.titleEl.setText(this.title);
-    
-      // () => {
-      //   const element = codeLanguages();
-      //   console.log('element');
-      //   console.log(element);
-      // }
-
 
     new Setting(contentEl)
     .setName('Title')
-    // .setDesc('For creating Github gists. Click the help icon for further details.')
-    // .setClass("livecodes-settings-input-githubtoken")
     .addText(text => text
       .setPlaceholder('New Playground')
       .setValue(this.changes.title)
@@ -70,23 +55,20 @@ export class LanguageSelectModal extends Modal {
       })
     )
 
-
-
-      new Setting(contentEl)
-    .setName('Markup')
-    .setClass("dropdown-markup-select")
-    .addDropdown((dropdown: DropdownComponent) => {
-      
-      codeLanguages().markup.forEach(({ name, title }) => {
+    new Setting(contentEl)
+      .setName('Markup')
+      .setClass("dropdown-markup-select")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codeLanguages().markup.forEach(({ name, title }) => {
+          dropdown
+          .addOption(name, title)
+        })
         dropdown
-        .addOption(name, title)
-      })
-      dropdown
-      .setValue(this.changes.markup)
-      .onChange(async (newValue) => {
-        this.changes.markup = newValue;
+        .setValue(this.changes.markup)
+        .onChange(async (newValue) => {
+          this.changes.markup = newValue;
+        });
       });
-    });
     
     new Setting(contentEl)
     .setName('Style')
@@ -154,7 +136,6 @@ export class LanguageSelectModal extends Modal {
     .setName('Script')
     .setClass("dropdown-script-select")
     .addDropdown((dropdown: DropdownComponent) => {
-      
       codeLanguages().script.forEach(({ name, title }) => {
         dropdown
         .addOption(name, title)
@@ -166,7 +147,6 @@ export class LanguageSelectModal extends Modal {
       });
     });
 
-  
     const buttonDiv = contentEl.createDiv({
         cls: "modal-button-container",
     });

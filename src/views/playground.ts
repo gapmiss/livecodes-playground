@@ -40,8 +40,7 @@ export class PlaygroundView extends ItemView {
         this.settings.playgroundFolder + "/",
         ""
       );
-    // return "<Livecodes> "+fileName;
-    return `${fileName}`;
+    return `${fileName}`; // return "<Livecodes> "+fileName;
   }
 
   getIcon(): string {
@@ -76,7 +75,6 @@ export class PlaygroundView extends ItemView {
   }
 
   async onClose() {
-    // console.log(this.containerEl);
     this.component.$destroy();
   }
 }
