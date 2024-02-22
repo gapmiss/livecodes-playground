@@ -52,7 +52,7 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
   async onChooseItem(f: TFile) {
     if (f.path) {
       this.plugin.settings.jsonTemplate = f;
-      this.plugin.saveSettings;
+      this.plugin.saveSettings();
       await this.plugin.activatePlaygroundView();
       return Promise.resolve;
     } else {

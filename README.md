@@ -54,22 +54,16 @@ or:
 
 ## 🚧 ROADMAP
 
-- [X] test Obsidian.md mobile app
-- [X] onboarding, add tour to playground buttons
-- [X] save as gist
-- [X] URL handler for opening a gist in Obsidian.md app
-- [X] tags
 - [ ] style settings support
 - [ ] gist MD codeblock script `language`
 - [ ] test vault
-- [X] open playground w/ choices of `markup`, `style`, & `script`
-- [X] loading animation for search
-- [ ] playground custom settings
+- [ ] create Livecodes snippet for including in blog post, etc.
 
 ## Tips
 
 - [ ] cursor position and Obsidian.md commands when inside the playground iframe
 - [ ] which button SDK updates effect undo/redo history stack?
+- [ ] tips to not accidentally close playground via keyboard or close button
 
 ## Issues and bug reports
 

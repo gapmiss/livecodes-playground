@@ -2,7 +2,6 @@
   import { Notice, WorkspaceLeaf, setIcon } from "obsidian";
   import { createPlayground, EmbedOptions } from "livecodes";
   import { Boarding } from "boarding.js";
-  const { Octokit } = require("@octokit/rest");
   import * as prettier from "prettier/standalone";
   import * as htmlPlugin from "prettier/plugins/html";
   import { onMount } from "svelte";
@@ -13,6 +12,7 @@
   import { openExternalResourcesModal } from "../modals/ExternalResources";
   import { openPlaygroundSettingsModal } from "../modals/PlaygroundSettings";
   import moment from "moment";
+  const { Octokit } = require("@octokit/rest");
 
   const app = this.app;
   const plugin = app.plugins.plugins["livecodes-playground"];
@@ -73,7 +73,7 @@
         e.preventDefault();
         try {
           const code = await playground.getCode();
-          await copyStringToClipboard(code.result, "HTML code");
+          await copyStringToClipboard(await prettifyHtml("<!DOCTYPE html>\n" + code.result, "file.html"), "HTML code");
         } catch (error) {
           console.log(error.message || error);
         }
@@ -90,7 +90,7 @@
             playgroundPath.length
           );
           downloadFile(
-            code.result,
+            await prettifyHtml("<!DOCTYPE html>\n" + code.result, fileName),
             fileName.replace(/\.json/, ".html")
           );
         } catch (error) {
@@ -176,6 +176,19 @@
       playground.watch('ready', () => {
         // Livecodes playground ready
         buttonsWrapper.setAttribute('style', '');
+        // prevent closing of Livecodes tabs?
+        // activeDocument.querySelectorAll('.mod-root div.workspace-tab-header')
+        //   .forEach((tab) => {
+        //     if (tab.getAttribute("data-type") === "Livecodes-view") {
+        //       let closeButton = tab.querySelector('.workspace-tab-header-inner-close-button');
+        //       if (closeButton?.getAttribute("aria-label") === "Close") {
+        //         closeButton.addEventListener("click", (evt) => {
+        //           evt.preventDefault();
+        //           console.log(evt.target);
+        //         })
+        //       }
+        //     }
+        //   });
       });
 
       setIcon(saveAsJSON, "file-json-2");
@@ -454,22 +467,27 @@
      * derived from https://github.com/alexgavrusev/obsidian-plugin-prettier-2/blob/master/src/main.ts
      * https://prettier.io/docs/en/options
      */
-    return await prettier.format(src, {
-      filepath: fileName,
-      parser: "html",
-      bracketSameLine: true,
-      printWidth: 1000,
-      // singleAttributePerLine: true,
-      htmlWhitespaceSensitivity: "ignore",
-      plugins: [
-        htmlPlugin
-      ]
-    })
-    .then((pretty) => {
-      let regex:RegExp = /^\s*$(?:\r\n?|\n)/gm;
-      let result:string = pretty.replace(regex, "");
-      return Promise.resolve(result);
-    });
+    try {
+      return await prettier.format(src, {
+        filepath: fileName,
+        parser: "html",
+        bracketSameLine: true,
+        printWidth: 1000,
+        // singleAttributePerLine: true,
+        htmlWhitespaceSensitivity: "ignore",
+        plugins: [
+          htmlPlugin
+        ]
+      })
+      .then((pretty) => {
+        let regex:RegExp = /^\s*$(?:\r\n?|\n)/gm;
+        let result:string = pretty.replace(regex, "");
+        return Promise.resolve(result);
+      });      
+    } catch (error) {
+      new Notice("❌ PRETTIFY ERROR: " + error + " Click this message to dismiss.", 0);
+      return Promise.resolve(src);
+    }
 
   }
 

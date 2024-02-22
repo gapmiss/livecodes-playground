@@ -19,6 +19,9 @@ export class LivecodesSettingsTab extends PluginSettingTab {
   }
 
   display(): void {
+    let { containerEl } = this;
+    containerEl.empty();
+    containerEl.addClass("livecodes-settings-tab");
 
     let debounceNotice = debounce(
       () => {
@@ -26,9 +29,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       },
       1000
     );
-    let { containerEl } = this;
-    containerEl.addClass("livecodes-settings-tab");
-    containerEl.empty();
 
     let desc = document.createDocumentFragment();
     desc.append(
@@ -745,7 +745,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setTooltip("Reload plugin")
           .onClick(async () => {
             await this.plugin.reload();
-            new Notice(`[${this.plugin.manifest.name} v${this.plugin.manifest.version}] reloaded`);
+            new Notice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`);
           });
         component.extraSettingsEl.classList.add("mod-warning");
       })
@@ -775,17 +775,17 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           })
       });
 
-    const div = containerEl.createEl('div', {
+    const sponsorEl = containerEl.createEl('div', {
       cls: 'livecodes-sponsorship',
     });
     const parser = new DOMParser();
-    div.appendChild(
+    sponsorEl.appendChild(
       createDonateButton(
         'https://livecodes.io/docs/sponsor',
         parser.parseFromString(liveCodesLogo, 'text/xml').documentElement,
       ),
     );
-    div.appendChild(
+    sponsorEl.appendChild(
       createDonateButton(
         'https://www.buymeacoffee.com/gapmiss',
         parser.parseFromString(buyMeACoffee, 'text/xml').documentElement,

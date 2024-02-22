@@ -125,7 +125,7 @@ export const blankPlayground = {
   },
   stylesheets: "[]",
   scripts: "[]",
-  cssPreset: "normalize.css",
+  cssPreset: "",
   imports: "{}",
   types: "{}",
   tests: {

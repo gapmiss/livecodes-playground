@@ -62,6 +62,7 @@ export class PlaygroundView extends ItemView {
       let playgroundPath = normalizePath((this.jsonTemplate!).path);
       let tpl = await this.adapter.read(playgroundPath);
       newTemplate = JSON.parse(tpl) as Partial<config>;
+      delete this.settings.jsonTemplate;
     }
 
     this.component = new Component({
