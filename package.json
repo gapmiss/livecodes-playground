@@ -1,6 +1,6 @@
 {
 	"name": "livecodes-playgrounds",
-	"version": "0.9.0",
+	"version": "0.9.1",
 	"description": "Livecodes code playground plugin for Obsidian.md",
 	"main": "main.js",
 	"scripts": {
