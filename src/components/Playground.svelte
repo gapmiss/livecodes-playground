@@ -253,12 +253,31 @@
                   let gistSetting = JSON.parse(setting);
                   const cfg = await playground.getConfig();
                   try {
+                    let link:string = '';
                     let markDown:string = '';
                     if (gistSetting.includeLivecodesLink && gistSetting.includeJsonFile) {
-                      let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
-                      markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\nplayground: \""+link+"\"\n---\n\n";
+                      link = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
                     }
                     if (gistSetting.includeMarkdownFile) {
+                      markDown += "---\n";
+                      markDown += "created: "+moment().format("YYYY-MM-DD")+"\n"
+                      if (cfg.title !== "") {
+                        markDown += "title: "+cfg.title+"\n";
+                      }
+                      if (cfg.description !== "") {
+                        markDown += "description: "+cfg.description+"\n";
+                      }
+                      if (cfg.tags.length) {
+                        markDown += "tags: \n"
+                        cfg.tags.forEach((tag:string) => {
+                          markDown += "  - "+tag+"\n";
+                        })
+                      }
+                      if (link !== '') {
+                        markDown += "playground: \""+link+"\"\n";
+                      }
+                      markDown += "---\n\n";
+
                       if (cfg.markup.content !== "") {
                         markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
                       }
@@ -305,7 +324,25 @@
         try {
           let markDown:string = '';
           let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
-          markDown += "---\ncreated: "+moment().format("YYYY-MM-DD")+"\ntitle: \""+cfg.title+"\"\ndescription: \""+cfg.description+"\"\nplayground: \""+link+"\"\ntags: [\""+(cfg.tags).join("\", \"")+"\"\]\n---\n\n";
+
+          markDown += "---\n";
+          markDown += "created: "+moment().format("YYYY-MM-DD")+"\n"
+          if (cfg.title !== "") {
+            markDown += "title: "+cfg.title+"\n";
+          }
+          if (cfg.description !== "") {
+            markDown += "description: "+cfg.description+"\n";
+          }
+          if (cfg.tags.length) {
+            markDown += "tags: \n"
+            cfg.tags.forEach((tag:string) => {
+              markDown += "  - "+tag+"\n";
+            })
+          }
+          if (link !== '') {
+            markDown += "playground: \""+link+"\"\n";
+          }
+          markDown += "---\n\n";
           if (cfg.markup.content !== "") {
             markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
           }
