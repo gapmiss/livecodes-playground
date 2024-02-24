@@ -1,4 +1,4 @@
-import { Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl } from "obsidian";
+import { App, Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
@@ -7,6 +7,7 @@ import { LanguageSelectModal } from "./modals/LanguageSelect";
 import { saveAsModal } from "./modals/SaveAs";
 import { blankPlayground } from "./livecodes";
 import { Parameters } from "../@types/global";
+// import { LocalStorageSettings } from "./utils/localStorageSettings";
 // @ts-ignore
 import { config } from 'livecodes';
 
@@ -111,9 +112,24 @@ export default class LivecodesPlugin extends Plugin {
   jsonTemplate: TFile | undefined;
   dataHeight: string | undefined;
   logDebug: boolean = true;
+  // public localStorage: LocalStorageSettings;
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest);
+    // this.localStorage = new LocalStorageSettings(this);
+	}
 
   async onload() {
     await this.loadSettings();
+
+    // this.localStorage.setCount("1");
+    // let test = this.localStorage.getCount() ?? undefined;
+    // console.log(test);
+    // this.localStorage.setCount("");
+
+    // this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
+		// 	console.log('click', evt);
+		// });
 
     this.registerView(
       VIEW_TYPE_PLAYGROUND,
@@ -177,8 +193,8 @@ export default class LivecodesPlugin extends Plugin {
       const parameters = e as unknown as Parameters;
       if (parameters.playgroundPath) {
         try {
-          const f = this.app.vault.getAbstractFileByPath(parameters.playgroundPath!);
-          if (f instanceof TFile) {
+          const f = this.app.vault.getFileByPath(parameters.playgroundPath!);
+          if (f) {
             this.settings.jsonTemplate = f;
             await this.saveSettings();
             await this.activatePlaygroundView();
@@ -200,46 +216,44 @@ export default class LivecodesPlugin extends Plugin {
 
     this.registerEvent(
       this.app.workspace.on("file-menu", (menu, file) => {
-        const f = this.app.vault.getAbstractFileByPath(file.path);
-        if (f instanceof TFile) {
-          if (f.extension.toLowerCase() === "json" && f.path.contains(this.settings.playgroundFolder)) {
-            menu.addItem((item) => {
-              item
-                .setTitle("Open playground")
-                .setIcon("code")
-                .onClick(async () => {
-                  this.settings.jsonTemplate = f;
-                  await this.saveSettings();
-                  await this.activatePlaygroundView();
-                });
-            });
-            menu.addItem((item) => {
-              item
-                .setTitle("Copy markdown link to playground")
-                .setIcon("link")
-                .onClick(async () => {
-                  let playgroundPath = normalizePath(f.path);
-                  await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath)+")");
-                });
-            });
-            menu.addItem((item) => {
-              item
-                .setTitle("Copy Obsidian URL to playground")
-                .setIcon("link")
-                .onClick(async () => {
-                  let playgroundPath = normalizePath(f.path);
-                  await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath));
-                });
-            });
-          }
+        const f = this.app.vault.getFileByPath(file.path);
+        if (f && f.extension.toLowerCase() === "json" && f.path.contains(this.settings.playgroundFolder)) {
+          menu.addItem((item) => {
+            item
+              .setTitle("Open playground")
+              .setIcon("code")
+              .onClick(async () => {
+                this.settings.jsonTemplate = f;
+                await this.saveSettings();
+                await this.activatePlaygroundView();
+              });
+          });
+          menu.addItem((item) => {
+            item
+              .setTitle("Copy markdown link to playground")
+              .setIcon("link")
+              .onClick(async () => {
+                let playgroundPath = normalizePath(f.path);
+                await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath)+")");
+              });
+          });
+          menu.addItem((item) => {
+            item
+              .setTitle("Copy Obsidian URL to playground")
+              .setIcon("link")
+              .onClick(async () => {
+                let playgroundPath = normalizePath(f.path);
+                await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath));
+              });
+          });
         }
       })
     );
 
     this.registerEvent(
       this.app.workspace.on("file-menu", async (menu, file) => {
-        const f = this.app.vault.getAbstractFileByPath(file.path);
-        if (f instanceof TFolder && f.children.length > 1 && f.children.length <= 3) {
+        const f = this.app.vault.getFolderByPath(file.path);
+        if (f && f.children.length > 1 && f.children.length <= 3) {
           const ALLOWED_EXTS = ["html","mdx","css","scss","js","jsx","ts","tsx","astro","svelte"];
           let showMenu = false;
           f.children.forEach((f) => {
@@ -265,8 +279,8 @@ export default class LivecodesPlugin extends Plugin {
 
     this.registerEvent(
       this.app.workspace.on("file-menu", async (menu, file) => {
-        const f = this.app.vault.getAbstractFileByPath(file.path);
-        if (f instanceof TFile) {
+        const f = this.app.vault.getFileByPath(file.path);
+        if (f) {
           const ALLOWED_EXTS = ["html","mdx","css","scss","js","jsx","ts","tsx","astro","svelte"];
           let showMenu = false;
           let fileExt = f.name.split('.').pop();
@@ -325,6 +339,11 @@ export default class LivecodesPlugin extends Plugin {
   public async saveSettings() {
     await this.saveData(this.settings);
   }
+
+	async onExternalSettingsChange(): Promise<void> {
+    console.log('onExternalSettingsChange');
+		await this.loadSettings();
+	}
 
   async newLanguageSelectPlayground(res:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string}) {
     if (res.title?.length === 0) {
@@ -627,6 +646,7 @@ export default class LivecodesPlugin extends Plugin {
           new Notice("❌ " + error + " Click this message to dismiss.", 0);
         }
       });
+
   };
 
   /**

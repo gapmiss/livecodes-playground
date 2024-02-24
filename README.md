@@ -55,9 +55,8 @@ or:
 ## 🚧 ROADMAP
 
 - [ ] style settings support
-- [ ] gist MD codeblock script `language`
 - [ ] test vault
-- [ ] create Livecodes snippet for including in blog post, etc.
+- [ ] create Livecodes embed snippet for including in blog post, etc.
 
 ## Tips
 
