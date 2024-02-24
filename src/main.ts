@@ -7,7 +7,6 @@ import { LanguageSelectModal } from "./modals/LanguageSelect";
 import { saveAsModal } from "./modals/SaveAs";
 import { blankPlayground } from "./livecodes";
 import { Parameters } from "../@types/global";
-// import { LocalStorageSettings } from "./utils/localStorageSettings";
 // @ts-ignore
 import { config } from 'livecodes';
 
@@ -112,20 +111,13 @@ export default class LivecodesPlugin extends Plugin {
   jsonTemplate: TFile | undefined;
   dataHeight: string | undefined;
   logDebug: boolean = true;
-  // public localStorage: LocalStorageSettings;
 
 	constructor(app: App, manifest: PluginManifest) {
 		super(app, manifest);
-    // this.localStorage = new LocalStorageSettings(this);
 	}
 
   async onload() {
     await this.loadSettings();
-
-    // this.localStorage.setCount("1");
-    // let test = this.localStorage.getCount() ?? undefined;
-    // console.log(test);
-    // this.localStorage.setCount("");
 
     // this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
 		// 	console.log('click', evt);
