@@ -7,7 +7,8 @@ import { LanguageSelectModal } from "./modals/LanguageSelect";
 import { saveAsModal } from "./modals/SaveAs";
 import { blankPlayground } from "./livecodes";
 import { Parameters } from "../@types/global";
-import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/types';
+import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
+import * as localforage from "localforage";
 // @ts-ignore
 import { config } from 'livecodes';
 
@@ -51,6 +52,21 @@ export default class LivecodesPlugin extends Plugin {
 
   async onload() {
     await this.loadSettings();
+
+    // https://github.com/joethei/obsidian-plantuml/
+    await localforage.setItem('count', '1');
+    let myCount: string|null = await localforage.getItem('count');
+    console.log('myCount');
+    console.log(myCount);
+    console.log('------------');
+    await localforage.iterate((value, key) => {
+      console.log('key: ' + key, 'value: '+ value);
+    });
+    console.log('------------');
+    await localforage.removeItem("count");
+    console.log('myCount');
+    console.log(await localforage.getItem('count'));
+
 
     this.registerView(
       VIEW_TYPE_PLAYGROUND,

@@ -57,12 +57,14 @@ or:
 - [ ] style settings support
 - [ ] test vault
 - [ ] create Livecodes embed snippet for including in blog post, etc.
+- [ ] create autowatch (debounce) delay setting
 
 ## Tips
 
 - [ ] cursor position and Obsidian.md commands when inside the playground iframe
 - [ ] which button SDK updates effect undo/redo history stack?
 - [ ] tips to not accidentally close playground via keyboard or close button
+- [ ] nested selectors CSS support issue
 
 ## Issues and bug reports
 
