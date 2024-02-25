@@ -11,7 +11,6 @@
   margin-bottom: 1em;
   border-radius: var(--size-2-3);
 }
-
 /* span.button-divider {
   display:inline-block;
   width:.3em;
@@ -20,7 +19,6 @@
   height:20px;
   margin-top:4px;
 } */
-
 /**
  * playground modals
  */
@@ -371,28 +369,58 @@ body:has(div#boarding-popover-item) .tooltip {
   background: #629762;
   color: white
 }
-
+/**
+ * fenced codeblock button
+ */
+ .open-with-livecodes-codeblock pre:not(:hover) > button.copy-code-button {
+  display: none;
+}
+.open-with-livecodes-codeblock button.copy-code-button {
+  margin: 6px;
+  padding: 6px 8px;
+  height: auto;
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-family: var(--font-interface);
+  position: absolute;
+  top: 0;
+  right: 40px;
+}
+.open-with-livecodes-codeblock {
+  position: relative;
+}
+.open-with-livecodes-codeblock pre:not(:hover) > button.open-with-livecodes-button{
+  display: none;
+}
+.open-with-livecodes-codeblock:hover button.open-with-livecodes-button {
+  opacity: .8;
+}
+.open-with-livecodes-codeblock button.open-with-livecodes-button svg {
+  width: 18px;
+  height: 18px;
+}
+.open-with-livecodes-codeblock button.open-with-livecodes-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  margin: 6px;
+  padding: 5px 8px;
+  height: auto;
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+}
+@media (hover: hover) {
+  .open-with-livecodes-codeblock button.open-with-livecodes-button:hover {
+    background-color: var(--background-modifier-hover);
+  }
+}
 /* iframe.livecodes #external-resources-btn { */
 /*   display: none; */
 /* } */
-
-/* .open-with-livecodes-wrap {
-  position: relative;
-}
-.open-with-livecodes-wrap:hover .open-with-livecodes-button {
-  opacity: .8;
-}
-.open-with-livecodes-button {
-  position: absolute;
-  top: -15px;
-  left: -15px;
-  opacity: 0;
-  transition: opacity 0.25s;
-  cursor: pointer;	
-  border-radius: 15px;
-  padding: .5em;
-} */
-
 
 /* @settings
 name: Livecodes

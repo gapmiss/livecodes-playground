@@ -31,9 +31,7 @@ export function codeLanguages() {
       { name: 'tailwindcss', title: 'Tailwind CSS', processor: true },
       { name: 'windicss', title: 'Windi CSS', processor: true },
       { name: 'unocss', title: 'UnoCSS', processor: true },
-      // { name: 'tokencss', title: 'Token CSS', processor: true },
       { name: 'lightningcss', title: 'Lightning CSS', processor: true },
-      // { name: 'cssmodules', title: 'CSS Modules', processor: true },
     ],
     script: [
       { name: 'assemblyscript', title: 'AssemblyScript' },
@@ -91,13 +89,62 @@ export function codeLanguages() {
   return lists;
 };
 
+export function codeBlockLanguages() {
+  const lists = {
+    markup: [
+      { name: 'asciidoc', title: 'AsciiDoc' },
+      { name: 'ejs', title: 'EJS' },
+      { name: 'haml', title: 'Haml' },
+      { name: 'handlebars', title: 'Handlebars' },
+      { name: 'html', title: 'HTML' },
+      { name: 'liquid', title: 'Liquid' },
+      { name: 'markdown', title: 'Markdown' },
+      { name: 'pug', title: 'Pug' },
+      { name: 'twig', title: 'Twig' },
+    ],
+    style: [
+      { name: 'css', title: 'CSS' },
+      { name: 'less', title: 'Less' },
+      { name: 'sass', title: 'Sass' },
+      { name: 'scss', title: 'SCSS' },
+      { name: 'stylus', title: 'Stylus' },
+    ],
+    script: [
+      { name: 'coffeescript', title: 'CoffeeScript' },
+      { name: 'cpp', title: 'C++' },
+      { name: 'flow', title: 'Flow' },
+      { name: 'go', title: 'Go' },
+      { name: 'javascript', title: 'JS' },
+      { name: 'jsx', title: 'JSX' },
+      { name: 'julia', title: 'Julia' },
+      { name: 'livescript', title: 'LiveScript' },
+      { name: 'lua', title: 'Lua' },
+      { name: 'ocaml', title: 'OCaml' },
+      { name: 'perl', title: 'Perl' },
+      { name: 'php', title: 'PHP' },
+      { name: 'prolog', title: 'Prolog' },
+      { name: 'python', title: 'Python' },
+      { name: 'r', title: 'R' },
+      { name: 'reason', title: 'Reason' },
+      { name: 'ruby', title: 'Ruby' },
+      { name: 'scheme', title: 'Scheme' },
+      { name: 'solid', title: 'Solid' },
+      { name: 'sql', title: 'SQL' },
+      { name: 'tcl', title: 'Tcl' },
+      { name: 'tsx', title: 'TSX' },
+      { name: 'typescript', title: 'Typescript' },
+    ],
+  }
+  return lists;
+};
+
 export const blankPlayground = {
   appUrl: "https://v24.livecodes.io/",
   title: "New Playground",
   description: "",
   head: "<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",
   htmlAttrs: "lang=\"en\" class=\"\"",
-  tags: "[]",
+  tags: '[]',
   autoupdate: false,
   autosave: false,
   autotest: false,
@@ -123,11 +170,11 @@ export const blankPlayground = {
     language: "javascript",
     content: ""
   },
-  stylesheets: "[]",
-  scripts: "[]",
+  stylesheets: '[]',
+  scripts: '[]',
   cssPreset: "",
-  imports: "{}",
-  types: "{}",
+  imports: '{}',
+  types: '{}',
   tests: {
     language: "typescript",
     content: ""
@@ -138,8 +185,8 @@ export const blankPlayground = {
     status: "open"
   },
   zoom: 1,
-  processors: "[]",
-  customSettings: "{}",
+  processors: '[]',
+  customSettings: '{}',
   editor: "monaco",
   fontFamily: "Iosevka",
   fontSize: 12,

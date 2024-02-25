@@ -5,9 +5,10 @@ import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
 import { StarterSelectModal } from "./modals/StarterSelect";
 import { LanguageSelectModal } from "./modals/LanguageSelect";
 import { saveAsModal } from "./modals/SaveAs";
-import { blankPlayground } from "./livecodes";
+import { blankPlayground, codeBlockLanguages } from "./livecodes";
 import { Parameters } from "../@types/global";
 import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
+import { codeBlockPostProcessor } from './editor/codeblockProcessor';
 // @ts-ignore
 import { config } from 'livecodes';
 
@@ -45,12 +46,16 @@ export default class LivecodesPlugin extends Plugin {
   dataHeight: string | undefined;
   logDebug: boolean = true;
 
-	constructor(app: App, manifest: PluginManifest) {
-		super(app, manifest);
-	}
+  constructor(app: App, manifest: PluginManifest) {
+    super(app, manifest);
+  }
 
   async onload() {
     await this.loadSettings();
+
+    this.registerMarkdownPostProcessor((el, ctx) => {
+      codeBlockPostProcessor(el, ctx, this.app, this);
+    });
 
     this.registerView(
       VIEW_TYPE_PLAYGROUND,
@@ -261,18 +266,18 @@ export default class LivecodesPlugin extends Plugin {
     await this.saveData(this.settings);
   }
 
-	async onExternalSettingsChange(): Promise<void> {
-    console.log('onExternalSettingsChange');
-		await this.loadSettings();
-	}
+  async onExternalSettingsChange(): Promise<void> {
+    // console.log('onExternalSettingsChange');
+    await this.loadSettings();
+  }
 
   async newLanguageSelectPlayground(res:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string}) {
     if (res.title?.length === 0) {
       return;
     }
-    let newPlayground = blankPlayground;
+    let newPlayground:Partial<config> = blankPlayground;
     let processors = [];
-    
+
     if (res.twcss) {
       newPlayground.customSettings = JSON.stringify({"imports":{},"tailwindcss":{"plugins":["@tailwindcss/forms","@tailwindcss/typography","@tailwindcss/aspect-ratio","@tailwindcss/line-clamp"],"theme":{"extend":{"colors":{"sky":{"50":"#f0f9ff","100":"#e0f2fe","200":"#bae6fd","300":"#7dd3fc","400":"#38bdf8","500":"#0ea5e9","600":"#0284c7","700":"#0369a1","800":"#075985","900":"#0c4a6e"},"cyan":{"50":"#ecfeff","100":"#cffafe","200":"#a5f3fc","300":"#67e8f9","400":"#22d3ee","500":"#06b6d4","600":"#0891b2","700":"#0e7490","800":"#155e75","900":"#164e63"}}}}}});
       newPlayground.style.content = "@tailwind base;\n@tailwind components;\n@tailwind utilities;";
@@ -340,7 +345,7 @@ export default class LivecodesPlugin extends Plugin {
         if (fName?.length === 0) {
           return;
         }
-        let newPlayground = blankPlayground;
+        let newPlayground:Partial<config> = blankPlayground;
         if (fromMenu && file !== null && (file instanceof TFile || file instanceof TFolder)) {
           let foundHtml: boolean = false;
           let foundMdx: boolean = false;
@@ -518,8 +523,6 @@ export default class LivecodesPlugin extends Plugin {
         newPlayground.autoupdate = this.settings.autoUpdate;
         newPlayground.delay = this.settings.delay;
         let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
-        // reset?
-        newPlayground = blankPlayground;
         try {
           await this.app.vault
             .create(
@@ -568,6 +571,117 @@ export default class LivecodesPlugin extends Plugin {
         }
       });
 
+  };
+
+  async newLivecodesPlaygroundFromCodeblock(language: string, code: string) {
+    await saveAsModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
+      .then(async (fName:string) => {
+        if (fName?.length === 0) {
+          return;
+        }
+        let newPlayground = blankPlayground;
+        let foundMarkup: boolean = false;
+        let foundStyle:  boolean = false;
+        let foundScript: boolean = false;
+
+        codeBlockLanguages().markup.forEach((l) => {
+          if (l.name === language) {
+            foundMarkup = true;
+            return;
+          }
+        });
+        codeBlockLanguages().style.forEach((l) => {
+          if (l.name === language) {
+            foundStyle = true;
+            return;
+          }
+        });
+        codeBlockLanguages().script.forEach((l) => {
+          if (l.name === language) {
+            foundScript = true;
+            return;
+          }
+        });
+
+        if (foundMarkup) {
+          newPlayground.style.content = '';
+          newPlayground.style.language = 'css';
+          newPlayground.script.content = '';
+          newPlayground.script.language = 'javascript';
+          newPlayground.markup.content = code;
+          newPlayground.markup.language = language;
+          newPlayground.activeEditor = 'markup';
+        }
+        if (foundStyle) {
+          newPlayground.markup.content = '';
+          newPlayground.markup.language = 'html';
+          newPlayground.script.language = 'javascript';
+          newPlayground.script.content = '';
+          newPlayground.style.content = code;
+          newPlayground.style.language = language;
+          newPlayground.activeEditor = 'style';
+          if (
+            language === 'tailwindcss' ||
+            language === 'unocss' ||
+            language === 'windicss' ||
+            language === 'lightningcss'
+          ) {
+            let processors = [];
+            processors.push(language);;
+            newPlayground.processors = processors as unknown as string;
+            if (language === 'tailwindcss') {
+              newPlayground.style.content = "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n" + code;
+              newPlayground.style.language = "tailwindcss";
+            }
+          }
+        }
+        if (foundScript) {
+          newPlayground.markup.content = '';
+          newPlayground.markup.language = 'html';
+          newPlayground.style.content = '';
+          newPlayground.style.language = 'css';
+          newPlayground.script.content = code;
+          newPlayground.script.language = language;
+          newPlayground.activeEditor = 'script';
+        }
+        newPlayground.title = fName;
+        newPlayground.appUrl = this.settings.appUrl;
+        newPlayground.fontFamily = this.settings.fontFamily;
+        newPlayground.fontSize = this.settings.fontSize;
+        newPlayground.editor = this.settings.editor;
+        newPlayground.editorTheme = this.settings.editorTheme;
+        newPlayground.lineNumbers = this.settings.lineNumbers;
+        newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+        newPlayground.useTabs = this.settings.useTabs;
+        newPlayground.tabSize = this.settings.tabSize;
+        newPlayground.closeBrackets = this.settings.closeBrackets;
+        newPlayground.semicolons = this.settings.semicolons;
+        newPlayground.singleQuote = this.settings.singleQuote;
+        newPlayground.trailingComma = this.settings.trailingComma;
+        newPlayground.wordWrap = this.settings.wordWrap;
+        newPlayground.enableAI = this.settings.enableAI;
+        newPlayground.autoupdate = this.settings.autoUpdate;
+        newPlayground.delay = this.settings.delay;
+        let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
+        try {
+          await this.app.vault
+            .create(
+              this.settings.playgroundFolder+'/'+fName + ".json",
+              await this.createText(
+                prettyCfg
+              )
+            ).then(async (f:TFile) => {
+                this.settings.jsonTemplate = f;
+                await this.saveSettings();
+                await this.activatePlaygroundView();
+              }
+            );
+          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
+        } catch (error) {
+          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        }
+        /**/
+      });
   };
 
   /**
