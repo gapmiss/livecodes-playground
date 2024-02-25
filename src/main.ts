@@ -335,7 +335,7 @@ export default class LivecodesPlugin extends Plugin {
         );
       new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+res.title + ".json");
     } catch (error) {
-      new Notice("❌ " + error + " Click this message to dismiss.", 0);
+      new Notice("❌ " + this.settings.playgroundFolder+'/'+res.title + ".json - " + error + " Click this message to dismiss.", 0);
     }
   }
 
@@ -538,7 +538,7 @@ export default class LivecodesPlugin extends Plugin {
             );
           new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
         } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }
       });
   };
@@ -567,7 +567,7 @@ export default class LivecodesPlugin extends Plugin {
             );
           new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
         } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }
       });
 
@@ -678,7 +678,7 @@ export default class LivecodesPlugin extends Plugin {
             );
           new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
         } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }
         /**/
       });

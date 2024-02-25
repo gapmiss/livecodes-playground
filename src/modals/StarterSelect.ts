@@ -136,7 +136,7 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
             );
           new Notice("New playground saved as: " + this.plugin.settings.playgroundFolder+'/'+fName + ".json");
         } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+          new Notice("❌ " + this.plugin.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }
       }
     );

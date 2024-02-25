@@ -224,10 +224,7 @@
               ".json"
           );
         } catch (error) {
-          new Notice(
-            "❌ " + error + " Click this message to dismiss.",
-            0
-          );
+          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }
       });
 
@@ -352,10 +349,15 @@
           if (cfg.script.content !== "") {
             markDown += "## "+cfg.script.language+"\n\n```"+cfg.script.language+"\n"+cfg.script.content+"\n```\n\n";
           }
-          await this.app.vault.create(
-            plugin.settings.notesFolder + "/" + fName + ".md",
-            await createText(markDown)
-          );
+          try {
+            await this.app.vault.create(
+              plugin.settings.notesFolder + "/" + fName + ".md",
+              await createText(markDown)
+            );
+          } catch (error) {
+            new Notice("❌ " + plugin.settings.notesFolder+'/'+fName + ".md - " + error + " Click this message to dismiss.", 0);
+            return;
+          }
           new Notice(
             "Note saved as: " +
               plugin.settings.notesFolder +
