@@ -395,27 +395,29 @@ body:has(div#boarding-popover-item) .tooltip {
   display: none;
 }
 .open-with-livecodes-codeblock:hover button.open-with-livecodes-button {
-  opacity: .8;
+  opacity: 1;
 }
 .open-with-livecodes-codeblock button.open-with-livecodes-button svg {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
 }
 .open-with-livecodes-codeblock button.open-with-livecodes-button {
-  /* position: absolute;
+  position: absolute;
   top: 0;
-  right: 50px; */
+  right: 50px;
   opacity: 0;
   margin: 6px;
   padding: 5px 8px;
   height: auto;
-  background-color: transparent;
+  /* background-color: transparent; */
   box-shadow: none;
   color: var(--text-muted);
 }
 @media (hover: hover) {
   .open-with-livecodes-codeblock button.open-with-livecodes-button:hover {
-    background-color: var(--background-modifier-hover);
+    /* background-color: var(--background-modifier-hover); */
+    /* background-color: transparent; */
+    color: var(--interactive-accent);
   }
 }
 

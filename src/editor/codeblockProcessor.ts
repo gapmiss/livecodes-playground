@@ -40,7 +40,7 @@ export function codeBlockPostProcessor(
   }
   pre?.parentElement?.addClass(`open-with-livecodes-codeblock`);
   const button = createEl('button', {cls:'open-with-livecodes-button'});
-  button.setAttribute('aria-label', 'Open in livecodes');
+  button.setAttribute('aria-label', 'Open in Livecodes');
   setIcon(button, "code");
   pre?.appendChild(button);
 

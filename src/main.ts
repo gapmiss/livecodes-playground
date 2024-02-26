@@ -1,4 +1,4 @@
-import { App, Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl } from "obsidian";
+import { App, Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
@@ -12,6 +12,10 @@ import { codeBlockPostProcessor } from './editor/codeblockProcessor';
 import { showNotice } from './utils/notice';
 // @ts-ignore
 import { config } from 'livecodes';
+
+interface Listener {
+  (this: Document, ev: Event): any;
+}
 
 export default class LivecodesPlugin extends Plugin {
   settings!: LivecodesSettings;
@@ -54,9 +58,21 @@ export default class LivecodesPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
 
-    this.registerMarkdownPostProcessor((el, ctx) => {
-      codeBlockPostProcessor(el, ctx, this.app, this);
-    });
+
+    if (Platform.isDesktop) {
+      this.register(
+        this.onElement(
+          document,
+          "contextmenu" as keyof HTMLElementEventMap,
+          "div",
+          this.onClick.bind(this)
+        )
+      );
+    }
+
+    // this.registerMarkdownPostProcessor((el, ctx) => {
+    //   codeBlockPostProcessor(el, ctx, this.app, this);
+    // });
 
     this.registerView(
       VIEW_TYPE_PLAYGROUND,
@@ -746,4 +762,56 @@ export default class LivecodesPlugin extends Plugin {
       return fileContent?.trim() as string;
   }
 
+  onElement(
+    el: Document,
+    event: keyof HTMLElementEventMap,
+    selector: string,
+    listener: Listener,
+    options?: { capture?: boolean }
+  ) {
+    el.on(event, selector, listener, options);
+    return () => el.off(event, selector, listener, options);
+  }
+
+  onClick(event: MouseEvent) {
+    // event.preventDefault();
+    const target = event.target as Element;
+    const nodeType = target.localName;
+    const menu = new Menu();
+    // console.log(nodeType);
+    // console.log(target.parentElement?.tagName);
+    if (nodeType === 'code' && target.parentElement?.tagName.toLowerCase() === 'pre' || nodeType === 'pre') {
+      menu.addItem((item: MenuItem) =>
+        item
+          .setIcon("code")
+          .setTitle("Open in Livecodes")
+          .onClick(async (ele) => {
+            let code:string = '';
+            if (nodeType === 'code') {
+              code = target.textContent!;
+            } else {
+              code = target.firstChild?.textContent!;
+            }
+            let lang = 'text';
+            const LANG_REGEX = /^language-/;
+            target.classList.forEach((val, key) => {
+              if (LANG_REGEX.test(val)) {
+                lang = val.replace(`language-`, '');
+                return;
+              }
+            });
+            await this.newLivecodesPlaygroundFromCodeblock(lang, code);
+          })
+      );
+    }
+    
+    let offset = 0;
+    menu.showAtPosition({
+      x: event.pageX + offset,
+      y: event.pageY + offset,
+    });
+    this.app.workspace.trigger("html-contextmenu:contextmenu", menu);
+  }
+
 }
+
