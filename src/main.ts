@@ -9,6 +9,7 @@ import { blankPlayground, codeBlockLanguages } from "./livecodes";
 import { Parameters } from "../@types/global";
 import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
 import { codeBlockPostProcessor } from './editor/codeblockProcessor';
+import { showNotice } from './utils/notice';
 // @ts-ignore
 import { config } from 'livecodes';
 
@@ -244,7 +245,7 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   async activatePlaygroundView() {
-    new Notice("Loading playground…", 5000);
+    showNotice("Loading playground…", 5000, 'loading');
 
     await this.app.workspace.getLeaf(true).setViewState({
       type: VIEW_TYPE_PLAYGROUND,
@@ -333,7 +334,7 @@ export default class LivecodesPlugin extends Plugin {
             await this.activatePlaygroundView();
           }
         );
-      new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+res.title + ".json");
+      showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+res.title + ".json", 3000, 'success');
     } catch (error) {
       new Notice("❌ " + this.settings.playgroundFolder+'/'+res.title + ".json - " + error + " Click this message to dismiss.", 0);
     }
@@ -536,7 +537,7 @@ export default class LivecodesPlugin extends Plugin {
                 await this.activatePlaygroundView();
               }
             );
-          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
+          showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
         } catch (error) {
           new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }
@@ -565,7 +566,7 @@ export default class LivecodesPlugin extends Plugin {
                 await this.activatePlaygroundView();
               }
             );
-          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
+          showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
         } catch (error) {
           new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }
@@ -676,7 +677,7 @@ export default class LivecodesPlugin extends Plugin {
                 await this.activatePlaygroundView();
               }
             );
-          new Notice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json");
+          showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
         } catch (error) {
           new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
         }

@@ -372,22 +372,22 @@ body:has(div#boarding-popover-item) .tooltip {
 /**
  * fenced codeblock button
  */
- .open-with-livecodes-codeblock pre:not(:hover) > button.copy-code-button {
-  display: none;
-}
-.open-with-livecodes-codeblock button.copy-code-button {
-  margin: 6px;
-  padding: 6px 8px;
-  height: auto;
-  background-color: transparent;
-  box-shadow: none;
-  color: var(--text-muted);
-  font-size: var(--font-ui-smaller);
-  font-family: var(--font-interface);
-  position: absolute;
-  top: 0;
-  right: 40px;
-}
+ /* .open-with-livecodes-codeblock pre:not(:hover) > button.copy-code-button { */
+  /* display: none; */
+/* } */
+/* .open-with-livecodes-codeblock button.copy-code-button { */
+  /* margin: 6px; */
+  /* padding: 6px 8px; */
+  /* height: auto; */
+  /* background-color: transparent; */
+  /* box-shadow: none; */
+  /* color: var(--text-muted); */
+  /* font-size: var(--font-ui-smaller); */
+  /* font-family: var(--font-interface); */
+  /* position: absolute; */
+  /* top: 0; */
+  /* right: 40px; */
+/* } */
 .open-with-livecodes-codeblock {
   position: relative;
 }
@@ -402,9 +402,9 @@ body:has(div#boarding-popover-item) .tooltip {
   height: 18px;
 }
 .open-with-livecodes-codeblock button.open-with-livecodes-button {
-  position: absolute;
+  /* position: absolute;
   top: 0;
-  right: 0;
+  right: 50px; */
   opacity: 0;
   margin: 6px;
   padding: 5px 8px;
@@ -417,6 +417,11 @@ body:has(div#boarding-popover-item) .tooltip {
   .open-with-livecodes-codeblock button.open-with-livecodes-button:hover {
     background-color: var(--background-modifier-hover);
   }
+}
+
+
+svg.indicator {
+  fill: var(--interactive-accent);
 }
 /* iframe.livecodes #external-resources-btn { */
 /*   display: none; */

@@ -12,6 +12,7 @@
   import { openExternalResourcesModal } from "../modals/ExternalResources";
   import { openPlaygroundSettingsModal } from "../modals/PlaygroundSettings";
   import moment from "moment";
+  import { showNotice } from '../utils/notice';
   const { Octokit } = require("@octokit/rest");
 
   const app = this.app;
@@ -355,21 +356,14 @@
               await createText(markDown)
             );
           } catch (error) {
-            new Notice("❌ " + plugin.settings.notesFolder+'/'+fName + ".md - " + error + " Click this message to dismiss.", 0);
+            showNotice(plugin.settings.notesFolder+'/'+fName + ".md - " + error + " Click this message to dismiss.", 0, 'error');
             return;
           }
-          new Notice(
-            "Note saved as: " +
-              plugin.settings.notesFolder +
-              "/" +
-              fName
-          );
+          showNotice("Note saved as: " + plugin.settings.notesFolder + "/" + fName, 3000, 'success');
           await this.app.workspace.openLinkText(fName, plugin.settings.notesFolder);
         } catch (error) {
-          new Notice(
-            "❌ " + error + " Click this message to dismiss.",
-            0
-          );
+          // showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
+          console.log("Error: " + error);
         }
       });
 
