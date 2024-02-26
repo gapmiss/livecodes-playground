@@ -83,7 +83,7 @@
       setIcon(downloadHTML, "file-code-2");
       downloadHTML.addEventListener("click", async (e) => {
         e.preventDefault();
-        new Notice("Preparing HTML");
+        showNotice('Preparing HTML…', 3000, 'loading');
         try {
           const code = await playground.getCode();
           let fileName = playgroundPath.substring(
@@ -104,13 +104,13 @@
         e.preventDefault();
         try {
           if (!watcher) {
-            new Notice("Watching for changes");
+            showNotice('Watching for changes', 2000, 'success');
             watcher = playground.watch(
               "code",
               //@ts-ignore
               ({ config }) => {
                 handleWatchedTemplate(playgroundPath, config);
-                new Notice("Changes saved");
+                showNotice('Changes saved', 2000, 'success');
               }
             );
             setIcon(onWatch, "eye-off");
@@ -131,7 +131,7 @@
               "Watch for changes and SAVE"
             );
             onWatch.setAttribute("style", "color:unset;");
-            new Notice("Stopped watching for changes");
+            showNotice('Stopped watching for changes', 2000, 'warning');
           }
         } catch (error) {
           console.log(error.message || error);
@@ -217,15 +217,9 @@
             plugin.settings.playgroundFolder + "/" + fName + ".json",
             await createText(prettyCfg)
           );
-          new Notice(
-            "Template saved as: " +
-              plugin.settings.playgroundFolder +
-              "/" +
-              fName +
-              ".json"
-          );
+          showNotice("Template saved as: " + plugin.settings.playgroundFolder + "/" + fName + ".json", 3000, 'success');
         } catch (error) {
-          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
+          showNotice(plugin.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0, 'error');
         }
       });
 
@@ -291,10 +285,7 @@
                     await saveAsGist(gistSetting, cfg.title + '.md', markDown, cfg.title + '.html', code.result, cfg.title + '.json', JSON.stringify(cfg, null, 2) );
 
                   } catch (error) {
-                    new Notice(
-                      "❌ " + error + " Click this message to dismiss.",
-                      0
-                    );
+                    showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
                   }
                 }
               }
@@ -359,10 +350,9 @@
             showNotice(plugin.settings.notesFolder+'/'+fName + ".md - " + error + " Click this message to dismiss.", 0, 'error');
             return;
           }
-          showNotice("Note saved as: " + plugin.settings.notesFolder + "/" + fName, 3000, 'success');
+          showNotice("Note saved as: " + plugin.settings.notesFolder + "/" + fName + '.md', 3000, 'success');
           await this.app.workspace.openLinkText(fName, plugin.settings.notesFolder);
         } catch (error) {
-          // showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
           console.log("Error: " + error);
         }
       });
@@ -458,7 +448,7 @@
             //@ts-ignore
             ({ config }) => {
               handleWatchedTemplate(playgroundPath, config);
-              new Notice("Changes saved");
+              showNotice('Changes saved', 2000, 'success');
             }
           );
         } catch (error) {
@@ -518,7 +508,7 @@
         return Promise.resolve(result);
       });      
     } catch (error) {
-      new Notice("❌ PRETTIFY ERROR: " + error + " Click this message to dismiss.", 0);
+      showNotice('Prettify error: ' + error + " Click this message to dismiss.", 0, 'error');
       return Promise.resolve(src);
     }
 
@@ -540,11 +530,11 @@
   ) => {
     const token = plugin.settings.githubApiToken;
     if (!token) {
-      new Notice("❌ GitHub token not found, check livecodes settings. Click this message to dismiss.", 0);
+      showNotice('Error: GitHub token not found, check livecodes settings. Click this message to dismiss.', 0, 'error');
       return;
     }
     try {
-      new Notice("Creating gist…", 5000);
+      showNotice('Creating gist…', 5000, 'loading');
       let prettyHtml = await prettifyHtml(html, htmlName);
       /**
        * https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
@@ -605,7 +595,7 @@
             }
           })
         } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+          showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
         }
       }
       try {
@@ -615,11 +605,11 @@
           console.log(i + ' - ' + url);
         })
       } catch (error) {
-        new Notice("❌ " + error + " Click this message to dismiss.", 0);
+        console.log("Error: " + error);
       }
-      new Notice('Gist created - URLs copied to your clipboard and logged to the developer console');
+      showNotice('Gist created - URLs copied to your clipboard and logged to the developer console', 4000, 'success');
     } catch (err) {
-      new Notice("❌ There was an error creating your gist, check your token and connection. Click this message to dismiss.", 0);
+      showNotice("There was an error creating your gist, check your token and connection.  Click this message to dismiss.", 0, 'error');
       throw err;
     }
 

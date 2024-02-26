@@ -10,6 +10,7 @@ import {
 import { livecodesStarters } from "../livecodes/starters";
 import { saveAsModal } from "./SaveAs";
 import { blankPlayground } from "../livecodes";
+import { showNotice } from '../utils/notice';
 
 export class StarterSelectModal extends FuzzySuggestModal<string> {
   plugin: LivecodesPlugin;
@@ -134,9 +135,9 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
                 await this.plugin.activatePlaygroundView();
               }
             );
-          new Notice("New playground saved as: " + this.plugin.settings.playgroundFolder+'/'+fName + ".json");
+          showNotice("New playground saved as: " + this.plugin.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
         } catch (error) {
-          new Notice("❌ " + this.plugin.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
+          showNotice(this.plugin.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0, 'error');
         }
       }
     );

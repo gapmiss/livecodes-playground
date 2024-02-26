@@ -64,7 +64,7 @@ or:
 - [ ] cursor position and Obsidian.md commands when inside the playground iframe
 - [ ] which button SDK updates effect undo/redo history stack?
 - [ ] tips to not accidentally close playground via keyboard or close button
-- [ ] nested selectors CSS support issue
+- [X] nested selectors CSS support issue
 
 ## Issues and bug reports
 

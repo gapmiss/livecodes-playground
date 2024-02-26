@@ -8,6 +8,7 @@ import {
   TFolder,
   Vault
 } from "obsidian";
+import { showNotice } from '../utils/notice';
 
 export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
   plugin: LivecodesPlugin;
@@ -27,13 +28,7 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
     const playgroundFolder = this.plugin.settings.playgroundFolder;
     const folder = this.vault.getAbstractFileByPath(playgroundFolder);
     if (!folder || !(folder instanceof TFolder)) {
-      new Notice(
-        createFragment((frag) => {
-          frag.appendText(" ❗ ERROR ❗\n'"+playgroundFolder+"'");
-          frag.appendText(" is not a valid folder in the plugin settings.");
-        }),
-        0
-      );
+      showNotice("Error: "+playgroundFolder+" is not a valid folder in the plugin settings. Click this message to dismiss.", 0, 'error');
       this.close();
       return [];
     }
@@ -56,7 +51,6 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
       await this.plugin.activatePlaygroundView();
       return Promise.resolve;
     } else {
-      new Notice("Invalid file path.")
       console.log(`Invalid file path: ${f.path}`);
       return Promise.reject;
     }

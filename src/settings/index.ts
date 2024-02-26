@@ -9,6 +9,7 @@ import { codemirrorLightThemes } from "../livecodes/themes/codemirrorLightThemes
 import { codejarDarkThemes } from "../livecodes/themes/codejarDarkThemes";
 import { codejarLightThemes } from "../livecodes/themes/codejarLightThemes";
 import { Boarding } from "boarding.js";
+import { showNotice } from '../utils/notice';
 
 export class LivecodesSettingsTab extends PluginSettingTab {
   plugin: LivecodesPlugin;
@@ -25,7 +26,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     let debounceNotice = debounce(
       () => {
-        new Notice("Trailing slash is required");
+        showNotice('Trailing slash is required', 2000, 'error');
       },
       1000
     );
@@ -745,7 +746,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setTooltip("Reload plugin")
           .onClick(async () => {
             await this.plugin.reload();
-            new Notice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`);
+            showNotice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`, 3000, 'success');
           });
         component.extraSettingsEl.classList.add("mod-warning");
       })

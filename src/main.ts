@@ -143,16 +143,16 @@ export default class LivecodesPlugin extends Plugin {
             await this.activatePlaygroundView();
           }
         } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+          showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
         }
       }
       else if (parameters.gistUrl) {
-        new Notice("Requesting gist from Github…", 5000);
+        showNotice('Requesting gist from Github…', 5000, 'loading');
         try {
           let requestResults = await requestUrl(parameters.gistUrl);
           await this.newLivecodesPlaygroundFromGist(JSON.stringify(requestResults.json));
         } catch (error) {
-          new Notice("❌ " + error + " Click this message to dismiss.", 0);
+          showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
         }
       }
     });
@@ -352,7 +352,7 @@ export default class LivecodesPlugin extends Plugin {
         );
       showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+res.title + ".json", 3000, 'success');
     } catch (error) {
-      new Notice("❌ " + this.settings.playgroundFolder+'/'+res.title + ".json - " + error + " Click this message to dismiss.", 0);
+      showNotice(this.settings.playgroundFolder+'/'+res.title + ".json - " + error + " Click this message to dismiss.", 0, 'error');
     }
   }
 
@@ -555,7 +555,7 @@ export default class LivecodesPlugin extends Plugin {
             );
           showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
         } catch (error) {
-          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
+          showNotice(this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0, 'error');
         }
       });
   };
@@ -584,7 +584,7 @@ export default class LivecodesPlugin extends Plugin {
             );
           showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
         } catch (error) {
-          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
+          showNotice(this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0, 'error');
         }
       });
 
@@ -695,7 +695,7 @@ export default class LivecodesPlugin extends Plugin {
             );
           showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
         } catch (error) {
-          new Notice("❌ " + this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0);
+          showNotice(this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0, 'error');
         }
         /**/
       });
@@ -749,7 +749,7 @@ export default class LivecodesPlugin extends Plugin {
     navigator.clipboard
       .writeText(text)
       .then(function () {
-        new Notice((topic !== undefined ? topic + " " : "") + "copied to clipboard", 2500);
+        showNotice((topic !== undefined ? topic + " " : "Text ") + "copied to clipboard", 2500, 'success');
       })
       .catch(function (error) {
         console.error('Failed to copy to clipboard: ', error)
@@ -775,7 +775,7 @@ export default class LivecodesPlugin extends Plugin {
 
   onClick(event: MouseEvent) {
     // event.preventDefault();
-    const target = event.target as Element;
+    const target = event.target as HTMLElement;
     const nodeType = target.localName;
     const menu = new Menu();
     // console.log(nodeType);

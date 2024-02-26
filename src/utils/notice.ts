@@ -25,6 +25,15 @@ export function showNotice(message: string, duration:number = 4000, type: string
 		setIcon(header, 'alert-triangle');
 	}
 
+	if (type === 'warning') {
+		const header = wrapper.createDiv({
+			attr: {
+				style: `color: var(--color-yellow);`,
+			},
+		});
+		setIcon(header, 'alert-triangle');
+	}
+
 	if (type === 'success') {
 		const header = wrapper.createDiv({
 			attr: {

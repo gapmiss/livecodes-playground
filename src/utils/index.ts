@@ -1,4 +1,5 @@
 import { normalizePath, Notice, App } from "obsidian";
+import { showNotice } from './notice';
 
 export function saveJson(
   app: App,
@@ -38,7 +39,7 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
   navigator.clipboard
     .writeText(text)
     .then(function () {
-      new Notice((topic !== undefined ? topic + " " : "") + "copied to clipboard", 2500);
+      showNotice((topic !== undefined ? topic + " " : "Text ") + "copied to clipboard", 2500, 'success');
     })
     .catch(function (error) {
       console.error('Failed to copy to clipboard: ', error)
