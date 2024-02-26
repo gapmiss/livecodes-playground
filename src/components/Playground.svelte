@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Notice, WorkspaceLeaf, setIcon } from "obsidian";
+  import { WorkspaceLeaf, setIcon } from "obsidian";
   import { createPlayground, EmbedOptions } from "livecodes";
   import { Boarding } from "boarding.js";
   import * as prettier from "prettier/standalone";

@@ -1,4 +1,4 @@
-import { App, Plugin, PluginManifest, DataAdapter, TFile, Notice, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem } from "obsidian";
+import { App, Plugin, PluginManifest, DataAdapter, TFile, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";

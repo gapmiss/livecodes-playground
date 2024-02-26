@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, debounce, Notice, DropdownComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting, debounce, setIcon, DropdownComponent } from 'obsidian';
 import { onboardingSteps, helpPopovers } from "./onboarding";
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
@@ -33,7 +33,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     let desc = document.createDocumentFragment();
     desc.append(
-      "⚠️ All settings changes are applied to future Livecodes playground views.",
+      "All settings changes are applied to future Livecodes playground views.",
       desc.createEl("br"),
       desc.createEl("br"),
       "Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options. See Livecodes  ",
@@ -365,7 +365,10 @@ export class LivecodesSettingsTab extends PluginSettingTab {
                 element: '.livecodes-settings-input-enableai',
                 popover: helpPopovers.enableAI
               }
-            )
+            );
+            if (activeDocument.querySelector('.alert-icon') !== null) {
+              setIcon(activeDocument.querySelector('.alert-icon')!, "alert-octagon");
+            }
           })
       });
 

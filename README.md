@@ -58,6 +58,7 @@ or:
 - [ ] test vault
 - [ ] create Livecodes embed snippet for including in blog post, etc.
 - [ ] create autowatch (debounce) delay setting
+- [ ] sync playground to note (same name)
 
 ## Tips
 

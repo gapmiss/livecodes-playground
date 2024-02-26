@@ -3,7 +3,6 @@ import {
   FileSystemAdapter,
   FuzzyMatch,
   FuzzySuggestModal,
-  Notice,
   TFile,
   TFolder,
   Vault

@@ -421,6 +421,18 @@ body:has(div#boarding-popover-item) .tooltip {
   }
 }
 
+span[class$="-icon"] {
+  display: inline-block;
+}
+span.info-icon {
+  color: var(--color-blue);
+}
+span.notice-icon {
+  color: var(--color-yellow);
+}
+span.alert-icon {
+  color: var(--color-red);
+}
 
 svg.indicator {
   fill: var(--interactive-accent);

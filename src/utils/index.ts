@@ -1,4 +1,4 @@
-import { normalizePath, Notice, App } from "obsidian";
+import { normalizePath, App } from "obsidian";
 import { showNotice } from './notice';
 
 export function saveJson(

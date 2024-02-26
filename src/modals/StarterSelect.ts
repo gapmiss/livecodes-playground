@@ -4,7 +4,6 @@ import {
   FuzzyMatch,
   FuzzySuggestModal,
   Vault,
-  Notice,
   TFile
 } from "obsidian";
 import { livecodesStarters } from "../livecodes/starters";
