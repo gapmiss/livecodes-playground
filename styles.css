@@ -421,8 +421,9 @@ body:has(div#boarding-popover-item) .tooltip {
   }
 }
 
-span[class$="-icon"] {
-  display: inline-block;
+p:has(span[class$="-icon"]) {
+  display: flex;
+  gap: .5em;
 }
 span.info-icon {
   color: var(--color-blue);
@@ -433,7 +434,9 @@ span.notice-icon {
 span.alert-icon {
   color: var(--color-red);
 }
-
+span.default-icon {
+  color: #000;
+}
 svg.indicator {
   fill: var(--interactive-accent);
 }

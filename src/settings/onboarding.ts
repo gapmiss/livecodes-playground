@@ -51,7 +51,7 @@ export const helpPopovers = {
   enableAI:
   {
     title: 'Enable AI',
-    description: '<p>LiveCodes supports AI-powered code completion, completely for <strong>free</strong> with <strong>no account or API token required</strong>, powered by <a href="https://codeium.com/" data-tooltip-position="top" aria-label="https://codeium.com/" target="_blank" rel="noopener" class="external-link">Codeium</a>, the ultrafast Copilot alternative.</p><p>The large generative machine learning model is capable of understanding the context of your code and comments in order to generate suggestions on what you might want to type next.</p><p>It has a wide range of language support.</p><p>Currently, only Monaco editor is supported. Wider editor support is planned.</p><p class="admonitionContent_S0QG"><p><span class="alert-icon" aria-label="Info"></span> Please note that when using Codeium AI assistant, your code is sent to their servers for code completion. However, your code is not used for training their model. Check Codeium <a href="https://codeium.com/faq#Will-Codeium-regurgitate-private-code%3F" data-tooltip-position="top" aria-label="https://codeium.com/faq#Will-Codeium-regurgitate-private-code%3F" target="_blank" rel="noopener" class="external-link">FAQ</a> and <a href="https://codeium.com/privacy-policy" data-tooltip-position="top" aria-label="https://codeium.com/privacy-policy" target="_blank" rel="noopener" class="external-link">privacy policy</a> for more details.</p>'
+    description: '<p>LiveCodes supports AI-powered code completion, completely for <strong>free</strong> with <strong>no account or API token required</strong>, powered by <a href="https://codeium.com/" data-tooltip-position="top" aria-label="https://codeium.com/" target="_blank" rel="noopener" class="external-link">Codeium</a>, the ultrafast Copilot alternative.</p><p>The large generative machine learning model is capable of understanding the context of your code and comments in order to generate suggestions on what you might want to type next.</p><p>It has a wide range of language support.</p><p>Currently, only Monaco editor is supported. Wider editor support is planned.</p><p class="admonitionContent_S0QG"><p><span class="alert-icon" aria-label="Info"></span><span>Please note that when using Codeium AI assistant, your code is sent to their servers for code completion. However, your code is not used for training their model. Check Codeium <a href="https://codeium.com/faq#Will-Codeium-regurgitate-private-code%3F" data-tooltip-position="top" aria-label="https://codeium.com/faq#Will-Codeium-regurgitate-private-code%3F" target="_blank" rel="noopener" class="external-link">FAQ</a> and <a href="https://codeium.com/privacy-policy" data-tooltip-position="top" aria-label="https://codeium.com/privacy-policy" target="_blank" rel="noopener" class="external-link">privacy policy</a> for more details.</span></p>'
   },
   sponsorship:
   {
@@ -126,7 +126,7 @@ export const buttonTour = [
     popover:
     {
       title: "Create note",
-      description: "<p>Create a markdown note with created date, playground link, and corresponding codeblocks from the playground editor.</p>",
+      description: "<p>Create a markdown note with title, description, tags, created date, playground link, external resources, head meta, HTML attributes, and corresponding codeblocks from the playground editor.</p>",
     }
   },
   {
@@ -134,7 +134,7 @@ export const buttonTour = [
     popover:
     {
       title: "Save as JSON",
-      description: "<p>Save playground as a new JSON file.</p><p><strong>⚠️ Note: The new playground will need to be opened in a new playground view.</strong></p>",
+      description: "<p>Save playground as a new JSON file.</p><p><span class=\"default-icon\"></span><span>The new playground will need to be opened in a new playground view.</span></p>",
     }
   },
   {
@@ -158,7 +158,7 @@ export const buttonTour = [
     popover:
     {
       title: "Copy share URL to clipboard",
-      description: '<p>The generated URL encodes the playground configuration in a base-64-encoded compressed query string. This step is generated locally without sending the code to any server. However, depending on the size of the playground, the URL can be very long.</p><p>If <strong>Short share URL</strong> is enabled in settings, a short share URL will be generated. This requires sending the playground configuration (<strong>including source code</strong>) to a server that saves the code and provides a short Id which can be used to retrieve the playground.</p><p>See <a href="https://livecodes.io/docs/features/share" data-tooltip-position="top" aria-label="https://livecodes.io/docs/features/share" target="_blank" rel="noopener" class="external-link">Livecodes documentation</a> page on sharing for further up-to-date details.</p>',
+      description: '<p>The generated URL encodes the playground configuration in a base-64-encoded compressed query string. This step is generated locally without sending the code to any server. However, depending on the size of the playground, the URL can be very long.</p><p>If <strong>Short share URL</strong> is enabled in settings, a short share URL will be generated.</p><p><span class="alert-icon" aria-label="Info"></span><span>This requires sending the playground configuration (<strong>including source code</strong>) to a server that saves the code and provides a short Id which can be used to retrieve the playground.</span></p><p>See <a href="https://livecodes.io/docs/features/share" data-tooltip-position="top" aria-label="https://livecodes.io/docs/features/share" target="_blank" rel="noopener" class="external-link">Livecodes documentation</a> page on sharing for further up-to-date details.</p>',
     }
   },
   {

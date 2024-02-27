@@ -105,8 +105,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setHeading()
       .setName("Plugin settings")
+      .setHeading()
 
     new Setting(containerEl)
       .setName('App URL')
@@ -242,8 +242,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setHeading()
       .setName("Sharing settings")
+      .setHeading()
 
     new Setting(containerEl)
       .setName('Short share URL')
@@ -373,8 +373,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setHeading()
       .setName("Editor settings")
+      .setHeading()
 
     new Setting(containerEl)
       .setName('Code editor')
@@ -738,8 +738,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setHeading()
       .setName("Reload plugin")
+      .setHeading()
 
     new Setting(containerEl)
       .setDesc(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + "): ⚠️ Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
@@ -758,8 +758,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setHeading()
       .setName("Support the developers")
+      .setHeading()
       .setClass("livecodes-sponsorship-heading")
       .addExtraButton((component) => {
         component

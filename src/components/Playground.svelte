@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { WorkspaceLeaf, setIcon } from "obsidian";
+  import { setIcon } from "obsidian";
   import { createPlayground, EmbedOptions } from "livecodes";
   import { Boarding } from "boarding.js";
   import * as prettier from "prettier/standalone";
@@ -36,7 +36,6 @@
   let openExternalResources: HTMLButtonElement;
   let openPlaygroundSettings: HTMLButtonElement;
   let buttonsWrapper: HTMLDivElement;
-  let leaf: WorkspaceLeaf;
 
   const options: EmbedOptions = {
     config: jsonTemplate!,
@@ -54,7 +53,7 @@
       semicolons: plugin.settings.semicolons,
       useTabs: plugin.settings.useTabs,
       tabSize: Number(plugin.settings.tabSize),
-      console: "open", // or full
+      console: "open",
       lineNumbers: plugin.settings.lineNumbers,
       wordWrap: plugin.settings.wordWrap,
       // @ts-ignore
@@ -177,19 +176,6 @@
       playground.watch('ready', () => {
         // Livecodes playground ready
         buttonsWrapper.setAttribute('style', '');
-        // prevent closing of Livecodes tabs?
-        // activeDocument.querySelectorAll('.mod-root div.workspace-tab-header')
-        //   .forEach((tab) => {
-        //     if (tab.getAttribute("data-type") === "Livecodes-view") {
-        //       let closeButton = tab.querySelector('.workspace-tab-header-inner-close-button');
-        //       if (closeButton?.getAttribute("aria-label") === "Close") {
-        //         closeButton.addEventListener("click", (evt) => {
-        //           evt.preventDefault();
-        //           console.log(evt.target);
-        //         })
-        //       }
-        //     }
-        //   });
       });
 
       setIcon(saveAsJSON, "file-json-2");
@@ -207,11 +193,7 @@
         if (fName?.length === 0) {
           return;
         }
-        let prettyCfg: string | undefined = JSON.stringify(
-          cfg,
-          null,
-          2
-        );
+        let prettyCfg: string | undefined = JSON.stringify(cfg, null, 2);
         try {
           await this.app.vault.create(
             plugin.settings.playgroundFolder + "/" + fName + ".json",
@@ -313,7 +295,6 @@
         try {
           let markDown:string = '';
           let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
-
           markDown += "---\n";
           markDown += "created: "+moment().format("YYYY-MM-DD")+"\n"
           if (cfg.title !== "") {
@@ -464,6 +445,16 @@
             {
             strictClickHandling: "block-all",
             opacity: 0.75,
+            onPopoverRender: (popoverElements) => {
+              setTimeout(() => {
+                if (activeDocument.querySelector('.default-icon') !== null) {
+                  setIcon(activeDocument.querySelector('.default-icon')!, "alert-triangle");
+                }
+                if (activeDocument.querySelector('.alert-icon') !== null) {
+                  setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
+                }
+              }, 0);
+            },
           });
           boarding.defineSteps(buttonTour);
           boarding.start();
