@@ -544,7 +544,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Dark Theme')
+      .setName('Dark theme')
       .setDesc('Enable dark theme as default')
       .addToggle(toggle =>
         toggle
@@ -556,7 +556,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName('Editor Font')
+      .setName('Editor font')
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
@@ -601,7 +601,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName('Editor Font Size')
+      .setName('Editor font-size')
       .addDropdown((dropdown) => {
         dropdown
           .addOptions({
