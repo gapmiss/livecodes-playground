@@ -447,6 +447,10 @@
             opacity: 0.75,
             onPopoverRender: (popoverElements) => {
               setTimeout(() => {
+                let stepsSpan = activeDocument.createElement("span");
+                stepsSpan.addClass("steps-progress");
+                stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
+                popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
                 if (activeDocument.querySelector('.default-icon') !== null) {
                   setIcon(activeDocument.querySelector('.default-icon')!, "alert-triangle");
                 }

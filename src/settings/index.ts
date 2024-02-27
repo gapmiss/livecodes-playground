@@ -91,6 +91,9 @@ export class LivecodesSettingsTab extends PluginSettingTab {
                   stepsSpan.addClass("steps-progress");
                   stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
                   popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
+                  if (activeDocument.querySelector('.alert-icon') !== null) {
+                    setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
+                  }
                 }, 0);
               },
               opacity: 0.75
@@ -265,7 +268,14 @@ export class LivecodesSettingsTab extends PluginSettingTab {
             component.disabled = true;
             const boarding = new Boarding({
               strictClickHandling: 'block-all',
-              opacity: 0.75
+              opacity: 0.75,
+              onPopoverRender: (popoverElements) => {
+                setTimeout(() => {
+                  if (activeDocument.querySelector('.alert-icon') !== null) {
+                    setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
+                  }
+                }, 0);
+              },
             });
             boarding.highlight(
               {
@@ -358,7 +368,14 @@ export class LivecodesSettingsTab extends PluginSettingTab {
             component.disabled = true;
             const boarding = new Boarding({
               strictClickHandling: 'block-all',
-              opacity: 0.75
+              opacity: 0.75,
+              onPopoverRender: (popoverElements) => {
+                setTimeout(() => {
+                  if (activeDocument.querySelector('.alert-icon') !== null) {
+                    setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
+                  }
+                }, 0);
+              },
             });
             boarding.highlight(
               {
@@ -366,9 +383,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
                 popover: helpPopovers.enableAI
               }
             );
-            if (activeDocument.querySelector('.alert-icon') !== null) {
-              setIcon(activeDocument.querySelector('.alert-icon')!, "alert-octagon");
-            }
           })
       });
 

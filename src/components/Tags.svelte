@@ -101,6 +101,7 @@
     width: 100%;
     min-width: 75px;
     max-width: 150px;
+    border: var(--input-border-width) solid var(--background-modifier-border);
   }
   .multi-select-container .tag-entry:focus {
     outline: 0;

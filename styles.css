@@ -102,7 +102,7 @@ button.share-gist-button:disabled {
 .onboarding-button {color: var(--interactive-accent)}
 div[class*="livecodes-settings-input"] .clickable-icon,
  .setting-item-heading-onboarding .clickable-icon {
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .boarding-popover-description code {
   color: var(--color-base-50);
