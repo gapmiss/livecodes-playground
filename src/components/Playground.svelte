@@ -251,7 +251,29 @@
                         markDown += "playground: \""+link+"\"\n";
                       }
                       markDown += "---\n\n";
-
+                      if (cfg.head !== "") {
+                        markDown += "## head\n\n```html\n"+cfg.head+"\n```\n\n";
+                      }
+                      if (cfg.htmlAttrs !== "") {
+                        markDown += "## htmlAttrs\n\n```html\n"+cfg.htmlAttrs+"\n```\n\n";
+                      }
+                      if (cfg.stylesheets !== "[]") {
+                        markDown += "## stylesheets\n\n";
+                        cfg.stylesheets.forEach((sheet:string) => {
+                          markDown += "- ["+sheet+"]("+sheet+")\n";
+                        });
+                        markDown += "\n\n";
+                      }
+                      if (cfg.scripts !== "[]") {
+                        markDown += "## scripts\n\n";
+                        cfg.scripts.forEach((script:string) => {
+                          markDown += "- ["+script+"]("+script+")\n";
+                        });
+                        markDown += "\n\n";
+                      }
+                      if (cfg.cssPreset !== "") {
+                        markDown += "## CSS preset(s)\n\n```text\n"+cfg.cssPreset+"\n```\n\n";
+                      }
                       if (cfg.markup.content !== "") {
                         markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
                       }
@@ -313,6 +335,29 @@
             markDown += "playground: \""+link+"\"\n";
           }
           markDown += "---\n\n";
+          if (cfg.head !== "") {
+            markDown += "## head\n\n```html\n"+cfg.head+"\n```\n\n";
+          }
+          if (cfg.htmlAttrs !== "") {
+            markDown += "## htmlAttrs\n\n```html\n"+cfg.htmlAttrs+"\n```\n\n";
+          }
+          if (cfg.stylesheets !== "[]") {
+            markDown += "## stylesheets\n\n";
+            cfg.stylesheets.forEach((sheet:string) => {
+              markDown += "- ["+sheet+"]("+sheet+")\n";
+            });
+            markDown += "\n\n";
+          }
+          if (cfg.scripts !== "[]") {
+            markDown += "## scripts\n\n";
+            cfg.scripts.forEach((script:string) => {
+              markDown += "- ["+script+"]("+script+")\n";
+            });
+            markDown += "\n\n";
+          }
+          if (cfg.cssPreset !== "") {
+            markDown += "## CSS preset(s)\n\n```text\n"+cfg.cssPreset+"\n```\n\n";
+          }
           if (cfg.markup.content !== "") {
             markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
           }
@@ -616,7 +661,6 @@
     bind:this={container}
     data-height={plugin.settings.dataHeight || "600"}
   />
-
   <div class="buttons-wrapper" style="display:none;" bind:this={buttonsWrapper}>
     <button
       aria-label="Watch for changes & SAVE"

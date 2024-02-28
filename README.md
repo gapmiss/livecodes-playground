@@ -54,11 +54,12 @@ or:
 
 ## 🚧 ROADMAP
 
-- [ ] style settings support
 - [ ] test vault
 - [ ] create Livecodes embed snippet for including in blog post, etc.
 - [ ] create autowatch (debounce) delay setting
 - [ ] sync playground to note (same name)
+= [ ] settings for default quick playground, choose default markup, style, script
+- [ ] templating for markdown note
 
 ## Tips
 
