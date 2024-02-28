@@ -1,5 +1,8 @@
 import {TFile} from 'obsidian';
 
+export const NOTE_MD_TEMPLATE: string = '---{# https://mozilla.github.io/nunjucks/templating.html #}\ncreated: {{date}}\n{% if title %}title: "{{title}}"{% endif %}\n{% if descProperty %}description: {{descProperty}}{% endif %}\n{% if tagsList %}tags: {{tagsList}}{% endif %}\n{% if obsidianUrl %}playground: {{obsidianUrl}}{% endif %}\n---\n{% if title %}## {{ title }}\n{% endif %}\n{% if descString %}{{ descString }}\n{% endif %}\n{% if tagsString %}{{ tagsString }}\n{% endif %}\n{% if head %}```html\n{{ head }}\n```\n{% endif %}\n{% if htmlAttrs %}```text\n{{ htmlAttrs }}\n```\n{% endif %}\n{% if stylesheetsList %}{{ stylesheetsList }}\n{% endif %}\n{% if scriptsList %}{{ scriptsList }}\n{% endif %}\n{% if cssPreset %}`{{ cssPreset }}`\n{% endif %}\n{% if markupLanguage %}```{{ markupLanguage }}\n{{ markupCode }}\n```\n{% endif %}\n{% if styleLanguage %}```{{ styleLanguage }}\n{{ styleCode }}\n```\n{% endif %}\n{% if scriptLanguage %}```{{ scriptLanguage }}\n{{ scriptCode }}\n```\n{% endif %}\n{# this is a nunjucks comment #}\n%% this is an Obsidian markdown comment %%';
+export const GIST_MD_TEMPLATE: string = '---{# https://mozilla.github.io/nunjucks/templating.html #}\ncreated: {{date}}\n{% if title %}title: "{{title}}"{% endif %}\n{% if descProperty %}description: {{descProperty}}{% endif %}\n{% if tagsList %}tags: {{tagsList}}{% endif %}\n{% if obsidianUrl %}playground: {{obsidianUrl}}{% endif %}\n---\n{% if title %}## {{ title }}\n{% endif %}\n{% if descString %}{{ descString }}\n{% endif %}\n{% if tagsString %}{{ tagsString }}\n{% endif %}\n{% if head %}```html\n{{ head }}\n```\n{% endif %}\n{% if htmlAttrs %}```text\n{{ htmlAttrs }}\n```\n{% endif %}\n{% if stylesheetsList %}{{ stylesheetsList }}\n{% endif %}\n{% if scriptsList %}{{ scriptsList }}\n{% endif %}\n{% if cssPreset %}`{{ cssPreset }}`\n{% endif %}\n{% if markupLanguage %}```{{ markupLanguage }}\n{{ markupCode }}\n```\n{% endif %}\n{% if styleLanguage %}```{{ styleLanguage }}\n{{ styleCode }}\n```\n{% endif %}\n{% if scriptLanguage %}```{{ scriptLanguage }}\n{{ scriptCode }}\n```\n{% endif %}\n{# this is a nunjucks comment #}\n%% this is an Obsidian markdown comment %%';
+
 export interface LivecodesSettings {
   playgroundFolder: string;
   notesFolder: string;
@@ -32,6 +35,11 @@ export interface LivecodesSettings {
   dataHeight: any;
   githubApiToken: string;
   githubGistPublic: boolean;
+  quickPlaygroundMarkup: string;
+  quickPlaygroundStyle: string;
+  quickPlaygroundScript: string;
+  noteMarkdownTemplate: string;
+  gistMarkdownTemplate: string;
 }
 
 export const DEFAULT_SETTINGS: LivecodesSettings = {
@@ -65,5 +73,10 @@ export const DEFAULT_SETTINGS: LivecodesSettings = {
   jsonTemplate: undefined,
   dataHeight: "600",
   githubApiToken: "",
-  githubGistPublic: false
+  githubGistPublic: false,
+  quickPlaygroundMarkup: 'html',
+  quickPlaygroundStyle: 'css',
+  quickPlaygroundScript: 'javascript',
+  noteMarkdownTemplate: NOTE_MD_TEMPLATE,
+  gistMarkdownTemplate: GIST_MD_TEMPLATE,
 };

@@ -1,12 +1,12 @@
 <script lang="ts">
   import { setIcon } from "obsidian";
   import { createPlayground, EmbedOptions } from "livecodes";
-  import { Boarding } from "boarding.js";
   import * as prettier from "prettier/standalone";
   import * as htmlPlugin from "prettier/plugins/html";
   import { onMount } from "svelte";
+  import { HelpModal } from '../modals/HelpModal';
   import { saveJson, downloadFile, copyStringToClipboard } from "../utils";
-  import { buttonTour } from "../settings/onboarding";
+  import { buttonTour, helpModals } from "../settings/help";
   import { saveAsModal } from "../modals/SaveAs";
   import { openShareGistModal } from "../modals/ShareGist";
   import { openExternalResourcesModal } from "../modals/ExternalResources";
@@ -14,6 +14,7 @@
   import moment from "moment";
   import { showNotice } from '../utils/notice';
   const { Octokit } = require("@octokit/rest");
+  let nunjucks = require('nunjucks');
 
   const app = this.app;
   const plugin = app.plugins.plugins["livecodes-playground"];
@@ -257,14 +258,14 @@
                       if (cfg.htmlAttrs !== "") {
                         markDown += "## htmlAttrs\n\n```html\n"+cfg.htmlAttrs+"\n```\n\n";
                       }
-                      if (cfg.stylesheets !== "[]") {
+                      if (cfg.stylesheets.length) {
                         markDown += "## stylesheets\n\n";
                         cfg.stylesheets.forEach((sheet:string) => {
                           markDown += "- ["+sheet+"]("+sheet+")\n";
                         });
                         markDown += "\n\n";
                       }
-                      if (cfg.scripts !== "[]") {
+                      if (cfg.scripts.length) {
                         markDown += "## scripts\n\n";
                         cfg.scripts.forEach((script:string) => {
                           markDown += "- ["+script+"]("+script+")\n";
@@ -317,56 +318,84 @@
         try {
           let markDown:string = '';
           let link:string = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
-          markDown += "---\n";
-          markDown += "created: "+moment().format("YYYY-MM-DD")+"\n"
-          if (cfg.title !== "") {
-            markDown += "title: "+cfg.title+"\n";
-          }
-          if (cfg.description !== "") {
-            markDown += "description: "+cfg.description+"\n";
-          }
+          let tagsListMD:string = '';
           if (cfg.tags.length) {
-            markDown += "tags: \n"
+            let i:number = 1;
             cfg.tags.forEach((tag:string) => {
-              markDown += "  - "+tag+"\n";
+              let lineBreak:string = (cfg.tags.length !== i) ? "\n" : '';
+              if (i === 1) {
+                tagsListMD += "\n  - " + tag + lineBreak;
+              } else {
+                tagsListMD += "  - " + tag + lineBreak;
+              }
+              i++;
             })
           }
-          if (link !== '') {
-            markDown += "playground: \""+link+"\"\n";
-          }
-          markDown += "---\n\n";
-          if (cfg.head !== "") {
-            markDown += "## head\n\n```html\n"+cfg.head+"\n```\n\n";
-          }
-          if (cfg.htmlAttrs !== "") {
-            markDown += "## htmlAttrs\n\n```html\n"+cfg.htmlAttrs+"\n```\n\n";
-          }
-          if (cfg.stylesheets !== "[]") {
-            markDown += "## stylesheets\n\n";
-            cfg.stylesheets.forEach((sheet:string) => {
-              markDown += "- ["+sheet+"]("+sheet+")\n";
+          let descriptionPropertyMD:string = '';
+          if (cfg.description !== '') {
+            descriptionPropertyMD += "|\n"
+            let descLines = cfg.description.split("\n");
+            let k:number = 1;
+            descLines.forEach((line:string) => {
+              let lineBreak:string = (descLines.length !== k) ? "\n" : '';
+              descriptionPropertyMD += "  " + line + lineBreak;
+              k++;
             });
-            markDown += "\n\n";
           }
-          if (cfg.scripts !== "[]") {
-            markDown += "## scripts\n\n";
-            cfg.scripts.forEach((script:string) => {
-              markDown += "- ["+script+"]("+script+")\n";
+          let tagsStringMD:string = '';
+          if (cfg.tags.length) {
+            cfg.tags.forEach((tag:string)=>{
+              tagsStringMD += "#"+tag+" "
             });
-            markDown += "\n\n";
           }
-          if (cfg.cssPreset !== "") {
-            markDown += "## CSS preset(s)\n\n```text\n"+cfg.cssPreset+"\n```\n\n";
+          let styleSheetListMD = '';
+          if (cfg.stylesheets.length) {
+            let l:number = 1;
+            cfg.stylesheets.forEach((stylesheet:string)=>{
+              let lineBreak:string = (cfg.stylesheets.length !== l) ? "\n" : '';
+              styleSheetListMD += "  - ["+stylesheet+"]("+stylesheet+")" + lineBreak;
+              l++;
+            });
           }
-          if (cfg.markup.content !== "") {
-            markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
+          let scriptsListMD = '';
+          if (cfg.scripts.length) {
+            let n:number = 1;
+            cfg.scripts.forEach((script:string)=>{
+              let lineBreak:string = (cfg.scripts.length !== n) ? "\n" : '';
+              scriptsListMD += "  - ["+script+"]("+script+")" + lineBreak;
+              n++;
+            });
           }
-          if (cfg.style.content !== "") {
-            markDown += "## "+cfg.style.language+"\n\n```"+cfg.style.language+"\n"+cfg.style.content+"\n```\n\n";
-          }
-          if (cfg.script.content !== "") {
-            markDown += "## "+cfg.script.language+"\n\n```"+cfg.script.language+"\n"+cfg.script.content+"\n```\n\n";
-          }
+          let code = await playground.getCode();
+          // https://mozilla.github.io/nunjucks/api.html
+          // https://momentjs.com/docs/?/displaying/format/#/displaying/format/
+          nunjucks.configure({ autoescape: false });
+          markDown = nunjucks.renderString(
+            plugin.settings.noteMarkdownTemplate,
+            {
+              date: moment().format("YYYY-MM-DD"), 
+              time: moment().format("HH:mm"), 
+              timeFull: moment().format("HH:mm:ss"), 
+              title: cfg.title, 
+              descProperty: descriptionPropertyMD, 
+              descString: cfg.description, 
+              tagsList: tagsListMD,
+              tagsString: tagsStringMD,
+              obsidianUrl: link,
+              head: cfg.head,
+              htmlAttrs: cfg.htmlAttrs,
+              stylesheetsList: styleSheetListMD,
+              scriptsList: scriptsListMD,
+              cssPreset: cfg.cssPreset,
+              markupLanguage: cfg.markup.language,
+              markupCode: cfg.markup.content,
+              styleLanguage: cfg.style.language,
+              styleCode: cfg.style.content,
+              scriptLanguage: cfg.script.language,
+              scriptCode: cfg.script.content,
+              htmlResults: await prettifyHtml("<!DOCTYPE html>\n" + code.result, 'code.html')
+            }
+          );
           try {
             await this.app.vault.create(
               plugin.settings.notesFolder + "/" + fName + ".md",
@@ -379,7 +408,7 @@
           showNotice("Note saved as: " + plugin.settings.notesFolder + "/" + fName + '.md', 3000, 'success');
           await this.app.workspace.openLinkText(fName, plugin.settings.notesFolder);
         } catch (error) {
-          console.log("Error: " + error);
+          console.error("Error: " + error);
         }
       });
 
@@ -486,27 +515,29 @@
       showHelp.addEventListener("click", async (e) => {
         e.preventDefault();
         try {
-          const boarding = new Boarding(
-            {
-            strictClickHandling: "block-all",
-            opacity: 0.75,
-            onPopoverRender: (popoverElements) => {
-              setTimeout(() => {
-                let stepsSpan = activeDocument.createElement("span");
-                stepsSpan.addClass("steps-progress");
-                stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
-                popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
-                if (activeDocument.querySelector('.default-icon') !== null) {
-                  setIcon(activeDocument.querySelector('.default-icon')!, "alert-triangle");
-                }
-                if (activeDocument.querySelector('.alert-icon') !== null) {
-                  setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
-                }
-              }, 0);
-            },
-          });
-          boarding.defineSteps(buttonTour);
-          boarding.start();
+          new HelpModal(this.app, buttonTour[0].popover.title as string, buttonTour[0].popover.description as string, '', false, true).open();
+          onWatch.addClass("button-highlight");
+          // const boarding = new Boarding(
+          //   {
+          //   strictClickHandling: "block-all",
+          //   opacity: 0.75,
+          //   onPopoverRender: (popoverElements) => {
+          //     setTimeout(() => {
+          //       let stepsSpan = activeDocument.createElement("span");
+          //       stepsSpan.addClass("steps-progress");
+          //       stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
+          //       popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
+          //       if (activeDocument.querySelector('.default-icon') !== null) {
+          //         setIcon(activeDocument.querySelector('.default-icon')!, "alert-triangle");
+          //       }
+          //       if (activeDocument.querySelector('.alert-icon') !== null) {
+          //         setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
+          //       }
+          //     }, 0);
+          //   },
+          // });
+          // boarding.defineSteps(buttonTour);
+          // boarding.start();
         } catch (error) {
           console.log(error.message || error);
         }
@@ -730,18 +761,3 @@
     />
   </div>
 </div>
-
-<style>
-  .buttons-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-block: 1em;
-    width: 100%;
-    flex-wrap: wrap;
-  }
-  .buttons-wrapper button {
-    margin-inline: 0.25em;
-    padding: .6em;
-  }
-</style>

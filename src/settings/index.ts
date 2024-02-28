@@ -1,5 +1,5 @@
-import { App, PluginSettingTab, Setting, debounce, setIcon, DropdownComponent } from 'obsidian';
-import { onboardingSteps, helpPopovers } from "./onboarding";
+import { App, PluginSettingTab, Setting, debounce, DropdownComponent } from 'obsidian';
+import { helpModals } from "./help";
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
 import { monacoDarkThemes } from "../livecodes/themes/monacoDarkThemes";
@@ -8,8 +8,10 @@ import { codemirrorDarkThemes } from "../livecodes/themes/codemirrorDarkThemes";
 import { codemirrorLightThemes } from "../livecodes/themes/codemirrorLightThemes";
 import { codejarDarkThemes } from "../livecodes/themes/codejarDarkThemes";
 import { codejarLightThemes } from "../livecodes/themes/codejarLightThemes";
-import { Boarding } from "boarding.js";
 import { showNotice } from '../utils/notice';
+import { codeLanguages } from "../livecodes";
+import { NOTE_MD_TEMPLATE, GIST_MD_TEMPLATE } from './default';
+import { HelpModal } from '../modals/HelpModal';
 
 export class LivecodesSettingsTab extends PluginSettingTab {
   plugin: LivecodesPlugin;
@@ -36,7 +38,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       "All settings changes are applied to future Livecodes playground views.",
       desc.createEl("br"),
       desc.createEl("br"),
-      "Need help or an introduction? Click the help button for a brief tour of Livecodes' settings options. See Livecodes  ",
+      "Need help or an introduction? See Livecodes  ",
       desc.createEl("a", {
         href: "https://livecodes.io/docs/getting-started/",
         text: "documentation",
@@ -55,53 +57,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setName(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + ")")
       .setDesc(desc)
       .setClass("setting-item-heading-onboarding")
-      .addExtraButton((component) => {
-        component
-          .setIcon("heart")
-          .setTooltip("Support the developers", { "placement": "left" })
-          .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75,
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-sponsorship',
-                popover: helpPopovers.sponsorship
-              }
-            );
-          });
-        component.extraSettingsEl.classList.add("mod-warning");
-      })
       .then(cb => {
         cb.settingEl.classList.add("setting-head");
-      })
-      .addExtraButton((component) => {
-        component
-          .setIcon("help-circle")
-          .setTooltip("Take a tour", { "placement": "left" })
-          .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              onPopoverRender: (popoverElements) => {
-                setTimeout(() => {
-                  let stepsSpan = activeDocument.createElement("span");
-                  stepsSpan.addClass("steps-progress");
-                  stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
-                  popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
-                  if (activeDocument.querySelector('.alert-icon') !== null) {
-                    setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
-                  }
-                }, 0);
-              },
-              opacity: 0.75
-            });
-            boarding.defineSteps(onboardingSteps);
-            boarding.start();
-          });
-        component.extraSettingsEl.classList.add("onboarding-button");
       })
       .then(cb => {
         cb.settingEl.classList.add("setting-head");
@@ -109,7 +66,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Plugin settings")
-      .setHeading()
+      .setHeading();
 
     new Setting(containerEl)
       .setName('App URL')
@@ -133,17 +90,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-appurl',
-                popover: helpPopovers.appUrl
-              }
-            )
+            new HelpModal(this.app, helpModals.appUrl.title as string, helpModals.appUrl.description as string, "", true).open();
           })
       });
 
@@ -166,17 +113,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-playgrounds',
-                popover: helpPopovers.playgroundFolder
-              }
-            )
+            new HelpModal(this.app, helpModals.playgroundFolder.title as string, helpModals.playgroundFolder.description as string).open();
           })
       });
 
@@ -197,17 +134,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-autowatch',
-                popover: helpPopovers.autoWatch
-              }
-            )
+            new HelpModal(this.app, helpModals.autoWatch.title as string, helpModals.autoWatch.description as string).open();
           })
       });
 
@@ -230,23 +157,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-notes',
-                popover: helpPopovers.notesFolder
-              }
-            )
+            new HelpModal(this.app, helpModals.notesFolder.title as string, helpModals.notesFolder.description as string).open();
           })
       });
 
     new Setting(containerEl)
       .setName("Sharing settings")
-      .setHeading()
+      .setHeading();
 
     new Setting(containerEl)
       .setName('Short share URL')
@@ -265,24 +182,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75,
-              onPopoverRender: (popoverElements) => {
-                setTimeout(() => {
-                  if (activeDocument.querySelector('.alert-icon') !== null) {
-                    setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
-                  }
-                }, 0);
-              },
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-shorturl',
-                popover: helpPopovers.shortUrl
-              }
-            )
+            new HelpModal(this.app, helpModals.shortUrl.title as string, helpModals.shortUrl.description as string, 'alert').open();
           })
       });
 
@@ -303,17 +203,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-githubtoken',
-                popover: helpPopovers.githubToken
-              }
-            )
+            new HelpModal(this.app, helpModals.githubToken.title as string, helpModals.githubToken.description as string).open();
           })
       });
 
@@ -334,17 +224,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-githubgistpublic',
-                popover: helpPopovers.githubGistPublic
-              }
-            )
+            new HelpModal(this.app, helpModals.githubGistPublic.title as string, helpModals.githubGistPublic.description as string).open();
           })
       });
 
@@ -365,30 +245,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75,
-              onPopoverRender: (popoverElements) => {
-                setTimeout(() => {
-                  if (activeDocument.querySelector('.alert-icon') !== null) {
-                    setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
-                  }
-                }, 0);
-              },
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-settings-input-enableai',
-                popover: helpPopovers.enableAI
-              }
-            );
+            new HelpModal(this.app, helpModals.enableAI.title as string, helpModals.enableAI.description as string, 'alert').open();
           })
       });
 
     new Setting(containerEl)
       .setName("Editor settings")
-      .setHeading()
+      .setHeading();
 
     new Setting(containerEl)
       .setName('Code editor')
@@ -412,17 +275,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              strictClickHandling: 'block-all',
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.dropdownEditor',
-                popover: helpPopovers.editor
-              }
-            )
+            new HelpModal(this.app, helpModals.editor.title as string, helpModals.editor.description as string).open();
           })
       });
 
@@ -752,24 +605,126 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Reload plugin")
       .setHeading()
+      .setName("Quick playground settings");
 
     new Setting(containerEl)
-      .setDesc(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + "): ⚠️ Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+      .setName('Markup')
+      .setDesc('Default markup language when using the "Quick playground" command')
+      .setClass("dropdown-markup-select")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codeLanguages().markup.forEach(({ name, title }) => {
+          dropdown
+          .addOption(name, title)
+        })
+        dropdown
+        .setValue(this.plugin.settings.quickPlaygroundMarkup)
+        .onChange(async (newValue) => {
+          this.plugin.settings.quickPlaygroundMarkup = newValue;
+          await this.plugin.saveSettings();
+        });
+      });
+
+    new Setting(containerEl)
+      .setName('Style')
+      .setDesc('Default style language when using the "Quick playground" command')
+      .setClass("dropdown-style-select")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codeLanguages().style.forEach(({ name, title, processor }) => {
+          if (!processor) {
+            dropdown
+            .addOption(name, title)
+          }
+        })
+        dropdown
+        .setValue(this.plugin.settings.quickPlaygroundStyle)
+        .onChange(async (newValue) => {
+          this.plugin.settings.quickPlaygroundStyle = newValue;
+          await this.plugin.saveSettings();
+        });
+      });
+
+    new Setting(containerEl)
+      .setName('Script')
+      .setDesc('Default script language when using the "Quick playground" command')
+      .setClass("dropdown-script-select")
+      .addDropdown((dropdown: DropdownComponent) => {
+        codeLanguages().script.forEach(({ name, title }) => {
+          dropdown
+          .addOption(name, title)
+        })
+        dropdown
+        .setValue(this.plugin.settings.quickPlaygroundScript)
+        .onChange(async (newValue) => {
+          this.plugin.settings.quickPlaygroundScript = newValue;
+          await this.plugin.saveSettings();
+        });
+      });
+
+
+    new Setting(containerEl)
+      .setHeading()
+      .setName("Markdown templates")
       .addExtraButton((component) => {
         component
-          .setIcon("refresh-cw")
-          .setTooltip("Reload plugin")
-          .onClick(async () => {
-            await this.plugin.reload();
-            showNotice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`, 3000, 'success');
-          });
-        component.extraSettingsEl.classList.add("mod-warning");
-      })
-      .then(cb => {
-        cb.settingEl.classList.add("setting-head");
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string).open();
+          })
       });
+
+    new Setting(containerEl).setName("Note")
+      .setClass("livecodes-note-template-setting")
+      .setDesc("Markdown template for creating notes in your vault")
+      .addExtraButton((component) => {
+        component
+          .setIcon("rotate-ccw")
+          .setTooltip("Restore default template", { "placement": "left" })
+          .onClick( async () => {
+            this.plugin.settings.noteMarkdownTemplate = NOTE_MD_TEMPLATE;
+            await this.plugin.saveSettings();
+            let textArea = activeDocument.querySelector('.livecodes-note-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
+            textArea!.value = NOTE_MD_TEMPLATE;
+            showNotice("Default template restored", 3000, 'success');
+          });
+      })
+      .addTextArea((text) => {
+        text
+          .setValue(this.plugin.settings.noteMarkdownTemplate)
+          .onChange(async (value) => {
+            this.plugin.settings.noteMarkdownTemplate = value;
+            await this.plugin.saveSettings();
+          })
+          // text.inputEl.setAttr("rows", 25);
+          // text.inputEl.setAttr("cols", 60);
+        }
+      );
+
+    new Setting(containerEl).setName("Gist")
+      .setClass("livecodes-gist-template-setting")
+      .setDesc("Markdown template for saving Github gists")
+      .addExtraButton((component) => {
+        component
+          .setIcon("rotate-ccw")
+          .setTooltip("Restore default template", { "placement": "left" })
+          .onClick( async () => {
+            this.plugin.settings.gistMarkdownTemplate = GIST_MD_TEMPLATE;
+            await this.plugin.saveSettings();
+            let textArea = activeDocument.querySelector('.livecodes-gist-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
+            textArea!.value = GIST_MD_TEMPLATE;
+            showNotice("Default template restored", 3000, 'success');
+          });
+      })
+      .addTextArea((text) => {
+        text
+          .setValue(this.plugin.settings.gistMarkdownTemplate)
+          .onChange(async (value) => {
+            this.plugin.settings.gistMarkdownTemplate = value;
+            await this.plugin.saveSettings();
+          })
+        }
+      );
 
     new Setting(containerEl)
       .setName("Support the developers")
@@ -777,19 +732,10 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setClass("livecodes-sponsorship-heading")
       .addExtraButton((component) => {
         component
-          .setIcon("help-circle")
-          .setTooltip("Help", { "placement": "left" })
+          .setIcon("heart")
+          .setTooltip("A message from the developers", { "placement": "left" })
           .onClick(() => {
-            component.disabled = true;
-            const boarding = new Boarding({
-              opacity: 0.75
-            });
-            boarding.highlight(
-              {
-                element: '.livecodes-sponsorship',
-                popover: helpPopovers.sponsorship
-              }
-            )
+            new HelpModal(this.app, helpModals.sponsorship.title as string, helpModals.sponsorship.description as string).open();
           })
       });
 
@@ -810,7 +756,29 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       ),
     );
 
-    const toggleChoices = async (choice: string): Promise<any> => {
+    new Setting(containerEl)
+      .setName("Reload plugin")
+      .setHeading()
+      .setClass("livecodes-reload-heading")
+
+    new Setting(containerEl)
+      .setDesc("Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+      .setClass("livecodes-reload-description")
+      .addExtraButton((component) => {
+        component
+          .setIcon("refresh-cw")
+          .setTooltip("Reload plugin")
+          .onClick(async () => {
+            await this.plugin.reload();
+            showNotice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`, 3000, 'success');
+          });
+        component.extraSettingsEl.classList.add("mod-warning");
+      })
+      .then(cb => {
+        cb.settingEl.classList.add("setting-head");
+      });
+
+      const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {
         case "monaco":
           let monacodd = [dropdownCodejarDark, dropdownCodejarLight, dropdownCodemirrorDark, dropdownCodemirrorLight];

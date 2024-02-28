@@ -57,16 +57,17 @@ or:
 - [ ] test vault
 - [ ] create Livecodes embed snippet for including in blog post, etc.
 - [ ] create autowatch (debounce) delay setting
-- [ ] sync playground to note (same name)
-= [ ] settings for default quick playground, choose default markup, style, script
-- [ ] templating for markdown note
+- [?] sync playground to note (same name)
+- [X] settings for default quick playground, choose default markup, style, script
+- [X] templating for markdown note
+- [ ] line-breaks in meta description (issue w/ Livecodes.io)
 
 ## Tips
 
 - [ ] cursor position and Obsidian.md commands when inside the playground iframe
 - [ ] which button SDK updates effect undo/redo history stack?
 - [ ] tips to not accidentally close playground via keyboard or close button
-- [X] nested selectors CSS support issue
+- [X] nested selectors CSS support issue (use scss)
 
 ## Issues and bug reports
 
@@ -79,6 +80,10 @@ Please submit issues, bug reports, feature requests, etc. to [gapmiss/livecodes
 3. `cd livecodes-playground`
 4. `npm install`
 5. `npm run dev`
+
+## Contributing
+
+Contributions are welcome! Please open an issue for discussion before submitting a pull request with your changes.
 
 ## Livecodes
 

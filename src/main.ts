@@ -8,7 +8,7 @@ import { saveAsModal } from "./modals/SaveAs";
 import { blankPlayground, codeBlockLanguages } from "./livecodes";
 import { Parameters } from "../@types/global";
 import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
-import { codeBlockPostProcessor } from './editor/codeblockProcessor';
+// import { codeBlockPostProcessor } from './editor/codeblockProcessor';
 import { showNotice } from './utils/notice';
 // @ts-ignore
 import { config } from 'livecodes';
@@ -513,9 +513,9 @@ export default class LivecodesPlugin extends Plugin {
           newPlayground.markup.content = '';
           newPlayground.style.content = '';
           newPlayground.script.content = '';
-          newPlayground.markup.language = '';
-          newPlayground.style.language = '';
-          newPlayground.script.language = '';
+          newPlayground.markup.language = this.settings.quickPlaygroundMarkup || '';
+          newPlayground.style.language = this.settings.quickPlaygroundStyle || '';
+          newPlayground.script.language = this.settings.quickPlaygroundScript || '';
           newPlayground.activeEditor = '';
           newPlayground.stylesheets = "[]";
           newPlayground.cssPreset = '';

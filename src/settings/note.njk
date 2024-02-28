@@ -1,0 +1,42 @@
+---{# https://mozilla.github.io/nunjucks/templating.html #}
+created: {{date}}
+{% if title %}title: "{{title}}"{% endif %}
+{% if descProperty %}description: {{descProperty}}{% endif %}
+{% if tagsList %}tags: {{tagsList}}{% endif %}
+{% if obsidianUrl %}playground: {{obsidianUrl}}{% endif %}
+---
+
+{% if title %}## {{ title }}
+{% endif %}
+{% if descString %}{{ descString }}
+{% endif %}
+{% if tagsString %}{{ tagsString }}
+{% endif %}
+{% if head %}```html
+{{ head }}
+```
+{% endif %}
+{% if htmlAttrs %}```text
+{{ htmlAttrs }}
+```
+{% endif %}
+{% if stylesheetsList %}{{ stylesheetsList }}
+{% endif %}
+{% if scriptsList %}{{ scriptsList }}
+{% endif %}
+{% if cssPreset %}`{{ cssPreset }}`
+{% endif %}
+{% if markupLanguage %}```{{ markupLanguage }}
+{{ markupCode }}
+```
+{% endif %}
+{% if styleLanguage %}```{{ styleLanguage }}
+{{ styleCode }}
+```
+{% endif %}
+{% if scriptLanguage %}```{{ scriptLanguage }}
+{{ scriptCode }}
+```
+{% endif %}
+{# this is a nunjucks comment #}
+%% this is an Obsidian markdown comment %%
