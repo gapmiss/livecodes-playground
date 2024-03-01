@@ -1,9 +1,9 @@
 {
 	"id": "livecodes-playground",
-	"name": "Livecodes",
+	"name": "Livecodes Playground",
 	"version": "0.9.1",
 	"minAppVersion": "1.5.0",
-	"description": "Livecodes code playground",
+	"description": "Client-side code editor playground - Powered by LiveCodes",
 	"author": "@gapmiss",
 	"authorUrl": "https://github.com/gapmiss",
 	"isDesktopOnly": false,

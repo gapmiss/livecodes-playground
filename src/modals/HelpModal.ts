@@ -31,16 +31,22 @@ export class HelpModal extends Modal {
     
     let { contentEl } = this;
     contentEl.empty();
+    
     contentEl.addClass("livecodes-help-modal");
+    
+    // Title and Message
     contentEl.createEl('h1', {text: this.title});
     const range = document.createRange();
     range.selectNodeContents(contentEl);
     const node = range.createContextualFragment(`${this.message}`);
     contentEl.append(node);
-    
+
+    // render icons
     if (activeDocument.querySelector('.alert-icon')) {
       setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
     }
+    
+    // setup click-2-copy
     if (this.clickToCopy) {
       let inputEl = activeDocument.querySelector('[class$=-copy]') as HTMLElement;
       let iconEl = contentEl.createSpan({cls: 'copy-icon', attr: {"aria-label":"Click to copy"}});
@@ -53,6 +59,8 @@ export class HelpModal extends Modal {
         });
       });
     }
+    
+    // render steps for playground help
     if (this.steps) {
       let toolButtons = activeDocument.querySelectorAll('[class$="-button clickable-icon"]');
       let button = activeDocument.querySelector('[data-step]');
@@ -108,16 +116,13 @@ export class HelpModal extends Modal {
           new HelpModal(this.app, buttonTour[dataStepNumber].popover.title as string, buttonTour[dataStepNumber].popover.description as string, '', false, true).open();
           toolButtons[dataStepNumber].addClass('button-highlight');
         });
-  
         newStep.appendChild(stepLink);
         stepsList.appendChild(newStep);
         i++;
       }
-  
       stepsDiv.appendChild(stepsList);
       let pagingSpan = activeDocument.querySelector('div.modal-content.livecodes-help-modal div:has(span) > span');
       pagingSpan?.replaceWith(stepsDiv);
-
     }
 
   }

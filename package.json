@@ -1,7 +1,7 @@
 {
 	"name": "livecodes-playgrounds",
 	"version": "0.9.1",
-	"description": "Livecodes code playground plugin for Obsidian.md",
+	"description": "Client-side code editor playground plugin for Obsidian.md - Powered by LiveCodes.io",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

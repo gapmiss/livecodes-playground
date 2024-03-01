@@ -38,17 +38,17 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       "All settings changes are applied to future Livecodes playground views.",
       desc.createEl("br"),
       desc.createEl("br"),
-      "Need help or an introduction? See Livecodes  ",
-      desc.createEl("a", {
-        href: "https://livecodes.io/docs/getting-started/",
-        text: "documentation",
-        attr: { "aria-label": "https://livecodes.io/docs/getting-started/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
-      }),
-      " and the plugin ",
+      "Need help or an introduction? See the plugin ",
       desc.createEl("a", {
         href: "https://github.com/gapmiss/livecodes-playground/",
         text: "README",
         attr: { "aria-label": "https://github.com/gapmiss/livecodes-playground/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
+      }),
+      " and LiveCodes.io  ",
+      desc.createEl("a", {
+        href: "https://livecodes.io/docs/getting-started/",
+        text: "documentation",
+        attr: { "aria-label": "https://livecodes.io/docs/getting-started/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
       }),
       " for additional help."
     );
