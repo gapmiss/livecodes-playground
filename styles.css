@@ -227,7 +227,6 @@ iframe.livecodes #external-resources-btn {
   stroke: var(--interactive-accent);
 }
 .button-highlight {
-  /* border: 1px dashed var(--interactive-accent); */
   box-shadow: 0 0 0 3px var(--interactive-accent);
 }
 div:has(> button[data-prev]) span {

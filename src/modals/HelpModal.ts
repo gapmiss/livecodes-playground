@@ -34,6 +34,7 @@ export class HelpModal extends Modal {
 		range.selectNodeContents(contentEl);
 		const node = range.createContextualFragment(`${this.message}`);
 		contentEl.append(node);
+		
 		// if (this.icon) {
 		if (activeDocument.querySelector('.alert-icon')) {
 			setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
@@ -71,6 +72,7 @@ export class HelpModal extends Modal {
 				});
 			});
 		}
+
   }
 
   onClose() {
