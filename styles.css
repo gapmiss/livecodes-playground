@@ -250,3 +250,45 @@ div:has(> button[data-prev]) {
   box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
   border-radius: var(--size-2-3);
 }
+/**
+ * 
+ */
+.steps-bullets {
+  text-align: center;
+  padding-block: .25em;
+}
+.steps-bullets ul {
+  box-sizing: content-box;
+  clear: both;
+  margin: 0 auto 0;
+  padding: 0;
+  display:inline-block
+}
+.steps-bullets ul li {
+  box-sizing: content-box;
+  list-style: none;
+  float: left;
+  margin:0 3px
+}
+.steps-bullets ul li a {
+  transition: width .1s ease-in;
+  box-sizing: content-box;
+  display: block;
+  width: 10px;
+  height: 10px;
+  background: #ccc;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.steps-bullets ul li a:focus, .steps-bullets ul li a:hover {
+  width: 20px;
+  background: #999;
+  text-decoration: none;
+  outline:0
+}
+.steps-bullets ul li a.active {
+  width: 20px !important;
+  background:#999;
+  cursor: default;
+}

@@ -1,5 +1,6 @@
 import { App, Notice, Modal, setIcon } from "obsidian";
 import { buttonTour, helpModals } from "../settings/help";
+
 export class HelpModal extends Modal {
 	title: string | undefined;
   message: string;
@@ -27,7 +28,9 @@ export class HelpModal extends Modal {
 		if (!this.message) {
 			this.close();
 		}
+		
     let { contentEl } = this;
+		contentEl.empty();
 		contentEl.addClass("livecodes-help-modal");
 		contentEl.createEl('h1', {text: this.title});
 		const range = document.createRange();
@@ -35,7 +38,6 @@ export class HelpModal extends Modal {
 		const node = range.createContextualFragment(`${this.message}`);
 		contentEl.append(node);
 		
-		// if (this.icon) {
 		if (activeDocument.querySelector('.alert-icon')) {
 			setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
 		}
@@ -71,6 +73,42 @@ export class HelpModal extends Modal {
 					toolButtons[dataPrev-1].addClass('button-highlight');
 				});
 			});
+
+			let stepsDiv: HTMLDivElement = activeDocument.createElement("div");
+			stepsDiv.addClass("steps-bullets");
+			let stepsList: HTMLElement = activeDocument.createElement("ul");
+			stepsList.setAttribute("role", "tablist");
+			let i:number = 0;
+			let dataStep:HTMLElement|null = activeDocument.querySelector('[data-step]');
+			let dataStepStr = dataStep!.getAttribute('data-step');
+			while (i <= 9) {
+				let newStep: HTMLElement = activeDocument.createElement("li");
+				newStep.setAttribute("role", "presentation")
+				let stepLink: HTMLElement = activeDocument.createElement("a");
+				stepLink.setAttribute("role", "button");
+				let dataStepNum:number = +dataStepStr!;
+				stepLink.setAttribute("aria-label", 'View');
+				stepLink.setAttribute("data-tooltip-position", 'top');
+				if (i === dataStepNum-1) {
+					stepLink.addClass("active");
+				}
+				stepLink.setAttribute("data-step-number", `${i}`);
+				stepLink.addEventListener("click", (evt) => {
+					let dataStepNumber = (evt.target as HTMLElement).getAttribute('data-step-number') as unknown as number;
+					this.close();
+					new HelpModal(this.app, buttonTour[dataStepNumber].popover.title as string, buttonTour[dataStepNumber].popover.description as string, '', false, true).open();
+					toolButtons[dataStepNumber].addClass('button-highlight');
+				});
+	
+				newStep.appendChild(stepLink);
+				stepsList.appendChild(newStep);
+				i++;
+			}
+	
+			stepsDiv.appendChild(stepsList);
+			let pagingSpan = activeDocument.querySelector('div.modal-content.livecodes-help-modal div:has(span) > span');
+			pagingSpan?.replaceWith(stepsDiv);
+
 		}
 
   }
