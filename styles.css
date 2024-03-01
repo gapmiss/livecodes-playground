@@ -27,6 +27,9 @@ body.theme-light {
 /**
  * playground modals
  */
+ .modal-content.livecodes-help-modal code {
+  font-size: var(--font-smaller)
+ }
  .livecodes-help-modal:not(:has(button[data-prev])) {
   padding: 1rem;
  }
@@ -186,6 +189,7 @@ button.share-gist-button:disabled {
   color: white
 }
 /* icons */
+td:has(span[class$="-icon"]),
 p:has(span[class$="-icon"]) {
   display: flex;
   gap: .5em;
@@ -293,4 +297,8 @@ div:has(> button[data-prev]) {
   width: 20px !important;
   background:#999;
   cursor: default;
+}
+
+table.templates-table td {
+  padding: .5em .25em;
 }

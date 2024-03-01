@@ -48,14 +48,17 @@ export class HelpModal extends Modal {
     
     // setup click-2-copy
     if (this.clickToCopy) {
-      let inputEl = activeDocument.querySelector('[class$=-copy]') as HTMLElement;
-      let iconEl = contentEl.createSpan({cls: 'copy-icon', attr: {"aria-label":"Click to copy"}});
-      setIcon(iconEl, "copy");
-      inputEl.insertAdjacentElement("beforebegin", iconEl);
-      [iconEl,inputEl].forEach((elt) => {
-        elt.addEventListener("click", () => {
-          this.copyStringToClipboard(inputEl?.textContent!);
-          new Notice(inputEl?.textContent! + ' copied', 3000);
+      let inputEl = contentEl.querySelectorAll('[class$=-copy]') as NodeListOf<HTMLElement>;
+      inputEl.forEach((el) => {
+        let iconEl = contentEl.createSpan({cls: 'copy-icon', attr: {"aria-label":"Click to copy"}});
+        setIcon(iconEl, "copy");
+        iconEl.setAttribute('data-tooltip-position', 'top');
+        (el as HTMLElement).insertAdjacentElement("beforebegin", iconEl);
+        [iconEl,(el as HTMLElement)].forEach((elt) => {
+          elt.addEventListener("click", () => {
+            this.copyStringToClipboard(el?.textContent!);
+            new Notice(el?.textContent! + ' copied', 3000);
+          });
         });
       });
     }

@@ -393,7 +393,8 @@
               styleCode: cfg.style.content,
               scriptLanguage: cfg.script.language,
               scriptCode: cfg.script.content,
-              htmlResults: await prettifyHtml("<!DOCTYPE html>\n" + code.result, 'code.html')
+              htmlResults: await prettifyHtml("<!DOCTYPE html>\n" + code.result, 'code.html'),
+              appUrl: cfg.appUrl
             }
           );
           try {

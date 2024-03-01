@@ -665,12 +665,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setHeading()
       .setName("Markdown templates")
+      .setDesc("Click the help icon for a list of available template variables (powered by Nunjucks)")
       .addExtraButton((component) => {
         component
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string).open();
+            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string, '', true).open();
           })
       });
 
@@ -680,13 +681,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .addExtraButton((component) => {
         component
           .setIcon("rotate-ccw")
-          .setTooltip("Restore default template", { "placement": "left" })
+          .setTooltip("Restore default note template", { "placement": "left" })
           .onClick( async () => {
             this.plugin.settings.noteMarkdownTemplate = NOTE_MD_TEMPLATE;
             await this.plugin.saveSettings();
             let textArea = activeDocument.querySelector('.livecodes-note-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
             textArea!.value = NOTE_MD_TEMPLATE;
-            showNotice("Default template restored", 3000, 'success');
+            showNotice("Default note template restored", 3000, 'success');
           });
       })
       .addTextArea((text) => {
@@ -707,13 +708,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .addExtraButton((component) => {
         component
           .setIcon("rotate-ccw")
-          .setTooltip("Restore default template", { "placement": "left" })
+          .setTooltip("Restore default gist template", { "placement": "left" })
           .onClick( async () => {
             this.plugin.settings.gistMarkdownTemplate = GIST_MD_TEMPLATE;
             await this.plugin.saveSettings();
             let textArea = activeDocument.querySelector('.livecodes-gist-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
             textArea!.value = GIST_MD_TEMPLATE;
-            showNotice("Default template restored", 3000, 'success');
+            showNotice("Default gist template restored", 3000, 'success');
           });
       })
       .addTextArea((text) => {
