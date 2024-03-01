@@ -72,7 +72,7 @@ export const buttonTour = [
     popover:
     {
       title: "Watch for changes",
-      description: "<p>Automatically watch for playground changes, then update the corresponding configuration file (JSON).</p><p>Default: <strong>enabled</strong></p><div><button data-prev='0' disabled=\"disabled\">←</button><span class=\"paging\">(1 of 10)</span><button data-step='1'>→</button></div>",
+      description: '<p>Automatically watch for playground changes, then update the corresponding configuration file (JSON).</p><p>Default: <strong>enabled</strong></p><div><button data-prev="0" disabled="disabled">←</button><span class="paging">(1 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="1">→</button></div>',
     }
   },
   {
@@ -80,7 +80,7 @@ export const buttonTour = [
     popover:
     {
       title: "Create note",
-      description: "<p>Create a markdown note with title, description, tags, created date, playground link, external resources, head meta, HTML attributes, and corresponding codeblocks from the playground editor.</p><div><button data-prev='1'>←</button><span class=\"paging\">(2 of 10)</span><button data-step='2'>→</button></div>",
+      description: '<p>Create a markdown note with title, description, tags, created date, playground link, external resources, head meta, HTML attributes, and corresponding codeblocks from the playground editor.</p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="1">←</button><span class="paging">(2 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="2">→</button></div>',
     }
   },
   {
@@ -88,7 +88,7 @@ export const buttonTour = [
     popover:
     {
       title: "Save as JSON",
-      description: "<p>Save playground as a new JSON file.</p><p><span class=\"default-icon\"></span><span>The new playground will need to be opened in a new playground view.</span></p><div><button data-prev='2'>←</button><span class=\"paging\">(3 of 10)</span><button data-step='3'>→</button></div>",
+      description: '<p>Save playground as a new JSON file.</p><p><span class="default-icon"></span><span>The new playground will need to be opened in a new playground view.</span></p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="2">←</button><span class="paging">(3 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="3">→</button></div>',
     }
   },
   {
@@ -96,7 +96,7 @@ export const buttonTour = [
     popover:
     {
       title: "Save as HTML",
-      description: "<p>Save playground results to HTML. A prompt will ask where to save the HTML file on your device.</p><div><button data-prev='3'>←</button><span class=\"paging\">(4 of 10)</span><button data-step='4'>→</button>",
+      description: '<p>Save playground results to HTML. A prompt will ask where to save the HTML file on your device.</p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="3">←</button><span class="paging">(4 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="4">→</button>',
     }
   },
   {
@@ -104,7 +104,7 @@ export const buttonTour = [
     popover:
     {
       title: "Copy HTML to clipboard",
-      description: "<p>Copy playground results HTML to the clipboard.</p><div><button data-prev='4'>←</button><span class=\"paging\">(5 of 10)</span><button data-step='5'>→</button>",
+      description: '<p>Copy playground results HTML to the clipboard.</p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="4">←</button><span class="paging">(5 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="5">→</button>',
     }
   },
   {
@@ -112,7 +112,7 @@ export const buttonTour = [
     popover:
     {
       title: "Copy share URL to clipboard",
-      description: '<p>The generated URL encodes the playground configuration in a base-64-encoded compressed query string. This step is generated locally without sending the code to any server. However, depending on the size of the playground, the URL can be very long.</p><p>If <strong>Short share URL</strong> is enabled in settings, a short share URL will be generated.</p><p><span class="alert-icon" aria-label="Info"></span><span>This requires sending the playground configuration (<strong>including source code</strong>) to a server that saves the code and provides a short Id which can be used to retrieve the playground.</span></p><p>See <a href="https://livecodes.io/docs/features/share" data-tooltip-position="top" aria-label="https://livecodes.io/docs/features/share" target="_blank" rel="noopener" class="external-link">Livecodes documentation</a> page on sharing for further up-to-date details.</p><div><button data-prev=\'5\'>←</button><span class="paging">(6 of 10)</span><button data-step=\'6\'>→</button>',
+      description: '<p>The generated URL encodes the playground configuration in a base-64-encoded compressed query string. This step is generated locally without sending the code to any server. However, depending on the size of the playground, the URL can be very long.</p><p>If <strong>Short share URL</strong> is enabled in settings, a short share URL will be generated.</p><p><span class="alert-icon" aria-label="Info"></span><span>This requires sending the playground configuration (<strong>including source code</strong>) to a server that saves the code and provides a short Id which can be used to retrieve the playground.</span></p><p>See <a href="https://livecodes.io/docs/features/share" data-tooltip-position="top" aria-label="https://livecodes.io/docs/features/share" target="_blank" rel="noopener" class="external-link">Livecodes documentation</a> page on sharing for further up-to-date details.</p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="5">←</button><span class="paging">(6 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="6">→</button>',
     }
   },
   {
@@ -120,7 +120,7 @@ export const buttonTour = [
     popover:
     {
       title: "Create Github gist",
-      description: '<p>Create a gist which optionally consists of a Livecodes.io playground link and 3 files.</p><ol><li>The HTML results (<code>.html</code>)</li><li>The playground configuration file (<code>.json</code>)</li><li>A markdown file (<code>.md</code>) with frontmatter (date created, obsidian playground URL) and fenced codeblocks (markup, style, script)</li></ol><p>3 URLs are copied to your clipboard and printed to the developer console.</p><ol><li>link to the gist</li><li>link to the Livecodes\' PUBLIC url which can be used to share your playground.</li><li>link to open the playground in Obsidian</li></ol><div><button data-prev=\'6\'>←</button><span class="paging">(7 of 10)</span><button data-step=\'7\'>→</button>',
+      description: '<p>Create a gist which optionally consists of a Livecodes.io playground link and 3 files.</p><ol><li>The HTML results (<code>.html</code>)</li><li>The playground configuration file (<code>.json</code>)</li><li>A markdown file (<code>.md</code>) with frontmatter (date created, obsidian playground URL) and fenced codeblocks (markup, style, script)</li></ol><p>3 URLs are copied to your clipboard and printed to the developer console.</p><ol><li>link to the gist</li><li>link to the Livecodes\' PUBLIC url which can be used to share your playground.</li><li>link to open the playground in Obsidian</li></ol><div><button data-tooltip-position="top" aria-label="Previous" data-prev="6">←</button><span class="paging">(7 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="7">→</button>',
     }
   },
   {
@@ -128,7 +128,7 @@ export const buttonTour = [
     popover:
     {
       title: "Set theme mode",
-      description: "<p>Sets the playground theme to light/dark mode.</p><div><button data-prev='7'>←</button><span class=\"paging\">(8 of 10)</span><button data-step='8'>→</button>",
+      description: '<p>Sets the playground theme to light/dark mode.</p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="7">←</button><span class="paging">(8 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="8">→</button>',
     }
   },
   {
@@ -136,7 +136,7 @@ export const buttonTour = [
     popover:
     {
       title: "External resources",
-      description: '<p>URLs to external CSS <strong>stylesheets</strong> and JS <strong>scripts</strong> can be added to the playground. URLs to stylesheets/scripts should be added each in a separate line. Stylesheets and scripts are loaded in the result page before editor codes. Thus, CSS properties defined in external stylesheets can be overriden in the style editor. Global javascript variables defined in external scripts are available to code in the script editor.</p><p>Choice of <strong>CSS presets</strong>, currently <a href="https://necolas.github.io/normalize.css/" data-tooltip-position="top" aria-label="https://necolas.github.io/normalize.css/" target="_blank" rel="noopener" class="external-link">Normalize.css</a> and <a href="https://meyerweb.com/eric/tools/css/reset/" data-tooltip-position="top" aria-label="https://meyerweb.com/eric/tools/css/reset/" target="_blank" rel="noopener" class="external-link">Reset CSS</a>.</p><div><button data-prev=\'8\'>←</button><span class="paging">(9 of 10)</span><button data-step=\'9\'>→</button>',
+      description: '<p>URLs to external CSS <strong>stylesheets</strong> and JS <strong>scripts</strong> can be added to the playground. URLs to stylesheets/scripts should be added each in a separate line. Stylesheets and scripts are loaded in the result page before editor codes. Thus, CSS properties defined in external stylesheets can be overriden in the style editor. Global javascript variables defined in external scripts are available to code in the script editor.</p><p>Choice of <strong>CSS presets</strong>, currently <a href="https://necolas.github.io/normalize.css/" data-tooltip-position="top" aria-label="https://necolas.github.io/normalize.css/" target="_blank" rel="noopener" class="external-link">Normalize.css</a> and <a href="https://meyerweb.com/eric/tools/css/reset/" data-tooltip-position="top" aria-label="https://meyerweb.com/eric/tools/css/reset/" target="_blank" rel="noopener" class="external-link">Reset CSS</a>.</p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="8">←</button><span class="paging">(9 of 10)</span><button data-tooltip-position="top" aria-label="Next" data-step="9">→</button>',
     }
   },
   {
@@ -144,7 +144,7 @@ export const buttonTour = [
     popover:
     {
       title: "Playground settings",
-      description: '<p>1. <strong>Title:</strong> used in result title tag and meta/title tag.</p><p>2. <strong>Description</strong>: used in result meta/description tag.</p><p>3. <strong>Tags</strong>: used when creating a playground note.</p><p>4. <strong>&lt;head&gt;:</strong> content added to the result &lt;head&gt; element. <p>Default:<br /><strong class="code">&lt;meta charset="UTF-8" /&gt;</strong><br /><strong class="code">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</strong><p>5. <strong>htmlAttrs:</strong> attributes added to the result pane <strong class="code">&lt;html&gt;</strong> element. It can be an object or a string.</p><p>Example:<br /><strong class="code">{ lang: "en", class: "dark" }</strong> or <strong class="code">lang="en" class="dark"</strong><br />becomes<br /><strong class="code">&lt;html lang="en" class="dark"&gt;</strong></p><p>Default: <strong class="code">lang="en" class=""</strong></p><div><button data-prev=\'9\'>←</button><span class="paging">(10 of 10)</span><button data-step=\'10\' disabled="disabled">→</button>',
+      description: '<p>1. <strong>Title:</strong> used in result title tag and meta/title tag.</p><p>2. <strong>Description</strong>: used in result meta/description tag.</p><p>3. <strong>Tags</strong>: used when creating a playground note.</p><p>4. <strong>&lt;head&gt;:</strong> content added to the result &lt;head&gt; element. <p>Default:<br /><strong class="code">&lt;meta charset="UTF-8" /&gt;</strong><br /><strong class="code">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</strong><p>5. <strong>htmlAttrs:</strong> attributes added to the result pane <strong class="code">&lt;html&gt;</strong> element. It can be an object or a string.</p><p>Example:<br /><strong class="code">{ lang: "en", class: "dark" }</strong> or <strong class="code">lang="en" class="dark"</strong><br />becomes<br /><strong class="code">&lt;html lang="en" class="dark"&gt;</strong></p><p>Default: <strong class="code">lang="en" class=""</strong></p><div><button data-tooltip-position="top" aria-label="Previous" data-prev="9">←</button><span class="paging">(10 of 10)</span><button data-step="10" disabled="disabled">→</button>',
     }
   },
 ]

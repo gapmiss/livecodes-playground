@@ -88,10 +88,11 @@ export class HelpModal extends Modal {
         stepLink.setAttribute("role", "button");
         stepLink.setAttribute("tabindex", "0");
         let dataStepNum:number = +dataStepStr!;
-        stepLink.setAttribute("aria-label", 'View');
+        stepLink.setAttribute("aria-label", buttonTour[i].popover.title);
         stepLink.setAttribute("data-tooltip-position", 'top');
         if (i === dataStepNum-1) {
           stepLink.addClass("active");
+          stepLink.setAttribute("aria-label", 'Current: ' + buttonTour[i].popover.title);
         }
         stepLink.setAttribute("data-step-number", `${i}`);
         stepLink.addEventListener("keydown", (evt) => {
