@@ -42,13 +42,13 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       desc.createEl("a", {
         href: "https://livecodes.io/docs/getting-started/",
         text: "documentation",
-        attr: { "aria-label": "https://livecodes.io/docs/getting-started/", "class": "external-link", "data-tooltip-position": "top" }
+        attr: { "aria-label": "https://livecodes.io/docs/getting-started/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
       }),
       " and the plugin ",
       desc.createEl("a", {
         href: "https://github.com/gapmiss/livecodes-playground/",
         text: "README",
-        attr: { "aria-label": "https://github.com/gapmiss/livecodes-playground/", "class": "external-link", "data-tooltip-position": "top" }
+        attr: { "aria-label": "https://github.com/gapmiss/livecodes-playground/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
       }),
       " for additional help."
     );
@@ -826,6 +826,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 const createDonateButton = (link: string, img: HTMLElement): HTMLElement => {
   const a = document.createElement('a');
   a.setAttribute('href', link);
+  a.setAttribute('tabindex', '0');
   a.setAttribute('aria-label', link);
   a.setAttribute("data-tooltip-position", "top");
   a.addClass('livecodes-sponsorship-button');
