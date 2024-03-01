@@ -86,6 +86,7 @@ export class HelpModal extends Modal {
 				newStep.setAttribute("role", "presentation")
 				let stepLink: HTMLElement = activeDocument.createElement("a");
 				stepLink.setAttribute("role", "button");
+				stepLink.setAttribute("tabindex", "0");
 				let dataStepNum:number = +dataStepStr!;
 				stepLink.setAttribute("aria-label", 'View');
 				stepLink.setAttribute("data-tooltip-position", 'top');
@@ -93,6 +94,13 @@ export class HelpModal extends Modal {
 					stepLink.addClass("active");
 				}
 				stepLink.setAttribute("data-step-number", `${i}`);
+				stepLink.addEventListener("keydown", (evt) => {
+					const keyDown = evt.key;
+					if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+							evt.preventDefault();
+							stepLink.click();
+					}
+				});
 				stepLink.addEventListener("click", (evt) => {
 					let dataStepNumber = (evt.target as HTMLElement).getAttribute('data-step-number') as unknown as number;
 					this.close();
