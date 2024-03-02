@@ -53,11 +53,19 @@ export class HelpModal extends Modal {
         let iconEl = contentEl.createSpan({cls: 'copy-icon', attr: {"aria-label":"Click to copy"}});
         setIcon(iconEl, "copy");
         iconEl.setAttribute('data-tooltip-position', 'top');
+        iconEl.setAttribute('tabindex', '0');
         (el as HTMLElement).insertAdjacentElement("beforebegin", iconEl);
         [iconEl,(el as HTMLElement)].forEach((elt) => {
           elt.addEventListener("click", () => {
             this.copyStringToClipboard(el?.textContent!);
             new Notice(el?.textContent! + ' copied', 3000);
+          });
+          elt.addEventListener('keydown', (evt) => {
+            const keyDown = evt.key;
+            if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+                evt.preventDefault();
+                elt.click();
+            }
           });
         });
       });

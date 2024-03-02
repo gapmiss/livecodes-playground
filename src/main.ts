@@ -70,6 +70,13 @@ export default class LivecodesPlugin extends Plugin {
       );
     }
 
+
+    window.addEventListener('resize', () => {
+      console.log('--------- on window resize ---------');
+      console.log(this);
+      return { }
+    })
+
     // this.registerMarkdownPostProcessor((el, ctx) => {
     //   codeBlockPostProcessor(el, ctx, this.app, this);
     // });
@@ -83,7 +90,7 @@ export default class LivecodesPlugin extends Plugin {
       new PlaygroundSelectModal(this).open();
     });
 
-    this.addRibbonIcon("code", "New livecodes playground", async () => {
+    this.addRibbonIcon("code", "Quick playground", async () => {
       await this.newLivecodesPlayground(false, null);
     });
 
@@ -245,6 +252,23 @@ export default class LivecodesPlugin extends Plugin {
     );
 
     this.addSettingTab(new LivecodesSettingsTab(this.app, this));
+
+    this.registerEvent(
+      this.app.workspace.on('resize', () => {
+        // this.handleResize();
+        console.log('%c --------- main workspace on resize ---------', 'color:var(--color-purple);');
+        console.log('%c PlaygroundView', 'color:var(--color-purple);');
+        console.log(this.app.workspace.getActiveViewOfType(PlaygroundView));
+        console.log('%c VIEW_TYPE_PLAYGROUND', 'color:var(--color-purple);');
+        console.log(this.app.workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND));
+        this.app.workspace.getLeavesOfType('markdown').forEach(leaf => {
+          console.log("%c --- refreshed panes ---", 'color:var(--color-purple);');
+          if (leaf.getViewState().state.mode.includes('preview'))
+            // leaf.view.previewMode.rerender(true);
+            console.log(leaf);
+        });
+      }),
+    );
 
     this.state = "loaded";
     console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );

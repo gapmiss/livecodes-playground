@@ -86,7 +86,7 @@ export class PlaygroundSettingsModal extends Modal {
     let noticeIcon = noticeDiv.createSpan({cls: "modal-button-notice-icon"});
     noticeIcon.setAttribute("aria-label", "Notice");
     let noticeText = noticeDiv.createSpan({cls: "modal-button-notice-text"});
-    noticeText.textContent = "Please note: Updating these settings will reset the playground editor and clipboard history.";
+    noticeText.textContent = "Updating these settings will reset the playground editor and clipboard history.";
     setIcon((noticeIcon), "alert-triangle");
     
     buttonDiv.appendChild(noticeDiv);

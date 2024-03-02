@@ -28,7 +28,7 @@
   let copyHTML: HTMLButtonElement;
   let downloadHTML: HTMLButtonElement;
   let createNote: HTMLButtonElement;
-  let saveAsJSON: HTMLButtonElement;
+  let saveAsNewPlayground: HTMLButtonElement;
   let copyShareUrl: HTMLButtonElement;
   let toggleTheme: HTMLButtonElement;
   let onWatch: HTMLButtonElement;
@@ -69,7 +69,7 @@
     createPlayground(container, options).then((p) => {
       playground = p;
 
-      setIcon(copyHTML, "clipboard");
+      setIcon(copyHTML, "copy");
       copyHTML.addEventListener("click", async (e) => {
         e.preventDefault();
         try {
@@ -80,7 +80,7 @@
         }
       });
 
-      setIcon(downloadHTML, "file-code-2");
+      setIcon(downloadHTML, "code-2");
       downloadHTML.addEventListener("click", async (e) => {
         e.preventDefault();
         showNotice('Preparing HTML…', 3000, 'loading');
@@ -113,25 +113,25 @@
                 showNotice('Changes saved', 2000, 'success');
               }
             );
-            setIcon(onWatch, "eye-off");
+            setIcon(onWatch, "eye");
             onWatch.setAttribute(
               "aria-label",
               "Stop watching for changes"
+            );
+            onWatch.setAttribute("style", "color:unset;");
+          } else {
+            watcher?.remove();
+            watcher = null;
+            setIcon(onWatch, "eye-off");
+            onWatch.setAttribute(
+              "aria-label",
+              "Start watching for changes"
             );
             onWatch.setAttribute(
               "style",
               "color:var(--text-error);"
             );
-          } else {
-            watcher?.remove();
-            watcher = null;
-            setIcon(onWatch, "eye");
-            onWatch.setAttribute(
-              "aria-label",
-              "Watch for changes and SAVE"
-            );
-            onWatch.setAttribute("style", "color:unset;");
-            showNotice('Stopped watching for changes', 2000, 'warning');
+            showNotice('Stopped watching for changes', 2000, 'error');
           }
         } catch (error) {
           console.log(error.message || error);
@@ -179,15 +179,15 @@
         buttonsWrapper.setAttribute('style', '');
       });
 
-      setIcon(saveAsJSON, "file-json-2");
-      saveAsJSON.addEventListener("click", async (e) => {
+      setIcon(saveAsNewPlayground, "file-code-2");
+      saveAsNewPlayground.addEventListener("click", async (e) => {
         e.preventDefault();
         const cfg = await playground.getConfig();
         let fName = await saveAsModal(
           this.app,
           "Livecodes",
-          "Save playground as:",
-          "",
+          "Save new playground as:",
+          playgroundPath.substring(playgroundPath.lastIndexOf("/") + 1, playgroundPath.length).replace(/\.json/, ""),
           "e.g. New Playground",
           false
         );
@@ -200,6 +200,14 @@
             plugin.settings.playgroundFolder + "/" + fName + ".json",
             await createText(prettyCfg)
           );
+          
+          const f = this.app.vault.getFileByPath(plugin.settings.playgroundFolder + "/" + fName + ".json");
+          if (f) {
+            plugin.settings.jsonTemplate = f;
+            await plugin.saveSettings();
+            await plugin.activatePlaygroundView();
+          }
+
           showNotice("Template saved as: " + plugin.settings.playgroundFolder + "/" + fName + ".json", 3000, 'success');
         } catch (error) {
           showNotice(plugin.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0, 'error');
@@ -300,7 +308,9 @@
         }
       });
 
-      setIcon(createNote, "file-plus-2");
+      // setIcon(createNote, "file-plus-2");
+      // setIcon(createNote, "square-pen");
+      setIcon(createNote, "lucide-edit");
       createNote.addEventListener("click", async (e) => {
         e.preventDefault();
         const cfg = await playground.getConfig();
@@ -490,14 +500,10 @@
 
       if (plugin.settings.autoWatch) {
         try {
-          setIcon(onWatch, "eye-off");
+          setIcon(onWatch, "eye");
           onWatch.setAttribute(
             "aria-label",
             "Stop watching for changes"
-          );
-          onWatch.setAttribute(
-            "style",
-            "color:var(--text-error);"
           );
           watcher = playground.watch(
             "code",
@@ -507,6 +513,23 @@
               showNotice('Changes saved', 2000, 'success');
             }
           );
+        } catch (error) {
+          console.log(error.message || error);
+        }
+      }
+      else {
+        try {
+          setIcon(onWatch, "eye-off");
+          onWatch.setAttribute(
+            "aria-label",
+            "Start watching for changes"
+          );
+          onWatch.setAttribute(
+            "style",
+            "color:var(--text-error);"
+          );
+          watcher?.remove();
+          watcher = null;
         } catch (error) {
           console.log(error.message || error);
         }
@@ -707,10 +730,10 @@
       class="create-note-button clickable-icon"
     />
     <button
-      aria-label="Save as JSON"
-      bind:this={saveAsJSON}
+      aria-label="Save as new playground"
+      bind:this={saveAsNewPlayground}
       data-tooltip-position="bottom"
-      class="save-json-button clickable-icon"
+      class="save-as-new-button clickable-icon"
     />
     <button
       aria-label="Save as HTML"

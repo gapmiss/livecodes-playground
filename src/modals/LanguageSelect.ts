@@ -6,7 +6,8 @@ import {
   Setting, 
   ButtonComponent,
   DropdownComponent,
-  App
+  App,
+  setIcon
 } from "obsidian";
 import { codeLanguages } from "../livecodes";
 
@@ -88,12 +89,47 @@ export class LanguageSelectModal extends Modal {
       });
     });
 
+    let isExpanded = false;
     new Setting(contentEl)
     .setName('CSS processing')
-    .setHeading();
+    .setHeading()
+    .addExtraButton((component) => {
+      component
+        .setIcon("chevron-right")
+        .setTooltip("Show processors", { "placement": "left" })
+        .onClick(() => {
+          let toggles = activeDocument.querySelectorAll('.processor-toggle');
+          if (!isExpanded) {
+            component.setIcon('chevron-down').setTooltip("Hide processors", { "placement": "left" })
+            isExpanded = true;
+            toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
+          }
+          else {
+            component.setIcon('chevron-right').setTooltip("Show processors", { "placement": "left" })
+            isExpanded = false;
+            toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+          }
+        });
+    }).then((c) => {
+      // is there a better way to do this?
+      c.components.forEach(element => {
+        // @ts-expect-error
+        element.extraSettingsEl.setAttribute('tabindex', '0'); 
+        // @ts-expect-error
+        element.extraSettingsEl.addEventListener('keydown', (evt) => {
+          const keyDown = evt.key;
+          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+              evt.preventDefault();
+              // @ts-expect-error
+              element.extraSettingsEl.click();
+          }
+        });
+      });
+    });
 
     new Setting(contentEl)
     .setName('Tailwind CSS')
+    .setClass("processor-toggle")
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.twcss)
@@ -104,6 +140,7 @@ export class LanguageSelectModal extends Modal {
     
     new Setting(contentEl)
     .setName('Windy CSS')
+    .setClass("processor-toggle")
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.windicss)
@@ -114,6 +151,7 @@ export class LanguageSelectModal extends Modal {
     
     new Setting(contentEl)
     .setName('Uno CSS')
+    .setClass("processor-toggle")
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.unocss)
@@ -124,6 +162,7 @@ export class LanguageSelectModal extends Modal {
     
     new Setting(contentEl)
     .setName('Lightning CSS')
+    .setClass("processor-toggle")
     .addToggle(toggle =>
       toggle
       .setValue(this.changes.lightningcss)

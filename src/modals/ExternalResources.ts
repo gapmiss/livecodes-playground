@@ -32,6 +32,7 @@ export class ExternalResourcesModal extends Modal {
 
     new Setting(this.contentEl)
       .setName('External stylesheets')
+      .setDesc('One URL per line')
       .setClass("stylesheets-setting")
       .addTextArea(text =>
         text
@@ -44,6 +45,7 @@ export class ExternalResourcesModal extends Modal {
 
     new Setting(this.contentEl)
       .setName('External scripts')
+      .setDesc('One URL per line')
       .setClass("scripts-setting")
       .addTextArea(text =>
         text
@@ -75,7 +77,7 @@ export class ExternalResourcesModal extends Modal {
     let noticeIcon = noticeDiv.createSpan({cls: "modal-button-notice-icon"});
     noticeIcon.setAttribute("aria-label", "Notice");
     let noticeText = noticeDiv.createSpan({cls: "modal-button-notice-text"});
-    noticeText.textContent = "Please note: Updating these settings will reset the playground editor and clipboard history.";
+    noticeText.textContent = "Updating these settings will reset the playground editor and clipboard history.";
     setIcon((noticeIcon), "alert-triangle");
     
     buttonDiv.appendChild(noticeDiv);

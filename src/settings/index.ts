@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, debounce, DropdownComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting, debounce, DropdownComponent, setIcon } from 'obsidian';
 import { helpModals } from "./help";
 import LivecodesPlugin from '../main';
 import { FolderSuggest } from "./FolderSuggester";
@@ -12,6 +12,7 @@ import { showNotice } from '../utils/notice';
 import { codeLanguages } from "../livecodes";
 import { NOTE_MD_TEMPLATE, GIST_MD_TEMPLATE } from './default';
 import { HelpModal } from '../modals/HelpModal';
+import { confirm } from "../modals/Confirm";
 
 export class LivecodesSettingsTab extends PluginSettingTab {
   plugin: LivecodesPlugin;
@@ -432,6 +433,11 @@ export class LivecodesSettingsTab extends PluginSettingTab {
             "Iosevka": "Iosevka",
             "JetBrains Mono": "JetBrains Mono",
             "Menlo": "Menlo",
+            "Monaspace Argon": "Monaspace Argon",
+            "Monaspace Krypton": "Monaspace Krypton",
+            "Monaspace Neon": "Monaspace Neon",
+            "Monaspace Radon": "Monaspace Radon",
+            "Monaspace Xenon": "Monaspace Xenon",
             "Monofur": "Monofur",
             "TypoPRO Monoid": "Monoid",
             "Noto Sans Mono": "Noto Sans Mono",
@@ -606,12 +612,42 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setHeading()
-      .setName("Quick playground settings");
+      .setName("Quick playground settings")
+      .setClass('livecodes-quick-playground-heading')
+      .addExtraButton((component) => {
+        let isExpanded = false;
+        component
+          .setIcon("chevron-right")
+          .setTooltip("Show processors", { "placement": "left" })
+          .onClick(() => {
+            let toggles = activeDocument.querySelectorAll('[class$="-quick-select"]');
+            if (!isExpanded) {
+              component.setIcon('chevron-down').setTooltip("Hide processors", { "placement": "left" })
+              isExpanded = true;
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
+            }
+            else {
+              component.setIcon('chevron-right').setTooltip("Show processors", { "placement": "left" })
+              isExpanded = false;
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+            }
+          });
+      }).then((c) => {
+        let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-quick-playground-heading .clickable-icon');
+        bttn!.setAttribute('tabindex', '0');
+        bttn!.addEventListener('keydown', (evt) => {
+          const keyDown = evt.key;
+          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+              evt.preventDefault();
+              bttn!.click();
+          }
+        });
+      });
 
     new Setting(containerEl)
       .setName('Markup')
       .setDesc('Default markup language when using the "Quick playground" command')
-      .setClass("dropdown-markup-select")
+      .setClass("dropdown-markup-quick-select")
       .addDropdown((dropdown: DropdownComponent) => {
         codeLanguages().markup.forEach(({ name, title }) => {
           dropdown
@@ -628,7 +664,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('Style')
       .setDesc('Default style language when using the "Quick playground" command')
-      .setClass("dropdown-style-select")
+      .setClass("dropdown-style-quick-select")
       .addDropdown((dropdown: DropdownComponent) => {
         codeLanguages().style.forEach(({ name, title, processor }) => {
           if (!processor) {
@@ -647,7 +683,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName('Script')
       .setDesc('Default script language when using the "Quick playground" command')
-      .setClass("dropdown-script-select")
+      .setClass("dropdown-script-quick-select")
       .addDropdown((dropdown: DropdownComponent) => {
         codeLanguages().script.forEach(({ name, title }) => {
           dropdown
@@ -665,14 +701,36 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     new Setting(containerEl)
       .setHeading()
       .setName("Markdown templates")
-      .setDesc("Click the help icon for a list of available template variables (powered by Nunjucks)")
+      .setClass('livecodes-templates-heading')
+      // .setDesc("Click the help icon for a list of available template variables (powered by Nunjucks)")
       .addExtraButton((component) => {
+        let isExpanded = false;
         component
-          .setIcon("help-circle")
-          .setTooltip("Help", { "placement": "left" })
+          .setIcon("chevron-right")
+          .setTooltip("Show processors", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string, '', true).open();
-          })
+            let toggles = activeDocument.querySelectorAll('[class$="-template-setting"]');
+            if (!isExpanded) {
+              component.setIcon('chevron-down').setTooltip("Hide processors", { "placement": "left" })
+              isExpanded = true;
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
+            }
+            else {
+              component.setIcon('chevron-right').setTooltip("Show processors", { "placement": "left" })
+              isExpanded = false;
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+            }
+          });
+      }).then(() => {
+        let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-templates-heading .clickable-icon');
+        bttn!.setAttribute('tabindex', '0');
+        bttn!.addEventListener('keydown', (evt) => {
+          const keyDown = evt.key;
+          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+              evt.preventDefault();
+              bttn!.click();
+          }
+        });
       });
 
     new Setting(containerEl).setName("Note")
@@ -680,14 +738,28 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setDesc("Markdown template for creating notes in your vault")
       .addExtraButton((component) => {
         component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string, '', true).open();
+          })
+      })
+      .addExtraButton((component) => {
+        component
           .setIcon("rotate-ccw")
           .setTooltip("Restore default note template", { "placement": "left" })
           .onClick( async () => {
-            this.plugin.settings.noteMarkdownTemplate = NOTE_MD_TEMPLATE;
-            await this.plugin.saveSettings();
-            let textArea = activeDocument.querySelector('.livecodes-note-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
-            textArea!.value = NOTE_MD_TEMPLATE;
-            showNotice("Default note template restored", 3000, 'success');
+            if (await confirm('Restore this template?', this.plugin.app)) {
+              try {
+                this.plugin.settings.noteMarkdownTemplate = NOTE_MD_TEMPLATE;
+                await this.plugin.saveSettings();
+                let textArea = activeDocument.querySelector('.livecodes-note-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
+                textArea!.value = NOTE_MD_TEMPLATE;
+                showNotice("Default note template restored", 3000, 'success');
+              } catch (error) {
+                console.error(error);
+              }
+            }
           });
       })
       .addTextArea((text) => {
@@ -707,14 +779,28 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setDesc("Markdown template for saving Github gists")
       .addExtraButton((component) => {
         component
+          .setIcon("help-circle")
+          .setTooltip("Help", { "placement": "left" })
+          .onClick(() => {
+            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string, '', true).open();
+          })
+      })
+      .addExtraButton((component) => {
+        component
           .setIcon("rotate-ccw")
           .setTooltip("Restore default gist template", { "placement": "left" })
           .onClick( async () => {
-            this.plugin.settings.gistMarkdownTemplate = GIST_MD_TEMPLATE;
-            await this.plugin.saveSettings();
-            let textArea = activeDocument.querySelector('.livecodes-gist-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
-            textArea!.value = GIST_MD_TEMPLATE;
-            showNotice("Default gist template restored", 3000, 'success');
+            if (await confirm('Restore this template?', this.plugin.app)) {
+              try {
+                this.plugin.settings.gistMarkdownTemplate = GIST_MD_TEMPLATE;
+                await this.plugin.saveSettings();
+                let textArea = activeDocument.querySelector('.livecodes-gist-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
+                textArea!.value = GIST_MD_TEMPLATE;
+                showNotice("Default gist template restored", 3000, 'success');
+              } catch (error) {
+                console.error(error);
+              }
+            }
           });
       })
       .addTextArea((text) => {
@@ -728,21 +814,121 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName("Reload plugin")
+      .setHeading()
+      .setClass("livecodes-reload-heading")
+      .addExtraButton((component) => {
+        let isExpanded = false;
+        component
+          .setIcon("chevron-right")
+          .setTooltip("Show", { "placement": "left" })
+          .onClick(() => {
+            let toggles = activeDocument.querySelectorAll('.livecodes-reload-description');
+            if (!isExpanded) {
+              component.setIcon('chevron-down').setTooltip("Hide", { "placement": "left" })
+              isExpanded = true;
+              activeDocument.querySelector('.livecodes-reload-heading')!.setAttribute('style','border-bottom: 1px solid var(--background-modifier-border);');
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
+            }
+            else {
+              component.setIcon('chevron-right').setTooltip("Show", { "placement": "left" })
+              isExpanded = false;
+              activeDocument.querySelector('.livecodes-reload-heading')!.setAttribute('style','border-bottom: 1px solid transparent');
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+            }
+          });
+      }).then(() => {
+        let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-reload-heading .clickable-icon');
+        bttn!.setAttribute('tabindex', '0');
+        bttn!.addEventListener('keydown', (evt) => {
+          const keyDown = evt.key;
+          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+              evt.preventDefault();
+              bttn!.click();
+          }
+        });
+      })
+
+    new Setting(containerEl)
+      .setDesc("Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
+      .setClass("livecodes-reload-description")
+      .addExtraButton((component) => {
+        component
+          .setIcon("refresh-cw")
+          .setTooltip("Reload plugin")
+          .onClick(async () => {
+            if (await confirm(`Reload plugin?`, this.plugin.app)) {
+              try {
+                await this.plugin.reload();
+                showNotice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`, 3000, 'success');
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          });
+        component.extraSettingsEl.classList.add("mod-warning");
+      })
+      .then(cb => {
+        cb.settingEl.classList.add("setting-head");
+      });
+
+    new Setting(containerEl)
       .setName("Support the developers")
       .setHeading()
       .setClass("livecodes-sponsorship-heading")
       .addExtraButton((component) => {
+        let isExpanded = false;
         component
-          .setIcon("heart")
-          .setTooltip("A message from the developers", { "placement": "left" })
+          .setIcon("chevron-right")
+          .setTooltip(helpModals.sponsorship.title, { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.sponsorship.title as string, helpModals.sponsorship.description as string).open();
-          })
+            let toggles = activeDocument.querySelectorAll('.livecodes-sponsorship');
+            if (!isExpanded) {
+              component.setIcon('chevron-down').setTooltip("Hide", { "placement": "left" })
+              isExpanded = true;
+              activeDocument.querySelector('.livecodes-sponsorship-heading')!.setAttribute('style','border-bottom: 1px solid var(--background-modifier-border);');
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:block;')});
+            }
+            else {
+              component.setIcon('chevron-right').setTooltip("Show", { "placement": "left" })
+              isExpanded = false;
+              activeDocument.querySelector('.livecodes-sponsorship-heading')!.setAttribute('style','border-bottom: 1px solid transparent;');
+              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+            }
+          });
+      }).then(() => {
+        let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-sponsorship-heading .clickable-icon');
+        bttn!.setAttribute('tabindex', '0');
+        bttn!.addEventListener('keydown', (evt) => {
+          const keyDown = evt.key;
+          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+              evt.preventDefault();
+              bttn!.click();
+          }
+        });
       });
 
     const sponsorEl = containerEl.createEl('div', {
       cls: 'livecodes-sponsorship',
     });
+
+    const descEl = sponsorEl.createEl('div');
+    const mssgEl = descEl.createDiv({
+      cls: 'sponsorship-message',
+      text: helpModals.sponsorship.description,
+    });
+    const textEl = descEl.createSpan({
+      text: 'Support the developers',
+    });
+    const iconEl = descEl.createSpan({
+      cls: 'heart-icon',
+    });
+    setIcon(iconEl,'heart');
+    
+    descEl.appendChild(iconEl);
+    descEl.appendChild(textEl);
+    sponsorEl.appendChild(descEl);
+    sponsorEl.appendChild(mssgEl);
     const parser = new DOMParser();
     sponsorEl.appendChild(
       createDonateButton(
@@ -757,27 +943,17 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       ),
     );
 
-    new Setting(containerEl)
-      .setName("Reload plugin")
-      .setHeading()
-      .setClass("livecodes-reload-heading")
 
-    new Setting(containerEl)
-      .setDesc("Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
-      .setClass("livecodes-reload-description")
-      .addExtraButton((component) => {
-        component
-          .setIcon("refresh-cw")
-          .setTooltip("Reload plugin")
-          .onClick(async () => {
-            await this.plugin.reload();
-            showNotice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`, 3000, 'success');
-          });
-        component.extraSettingsEl.classList.add("mod-warning");
-      })
-      .then(cb => {
-        cb.settingEl.classList.add("setting-head");
-      });
+
+
+
+
+
+
+
+
+
+
 
       const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {

@@ -142,7 +142,7 @@ button.share-gist-button:disabled {
   gap: .75em;
 }
 .livecodes-reload-heading {
-  border-bottom: 1px solid var(--background-modifier-border);
+  /* border-bottom: 1px solid var(--background-modifier-border); */
 }
 .livecodes-reload-description {
   background-color: var(--background-secondary);
@@ -151,11 +151,8 @@ button.share-gist-button:disabled {
   border-top: 0;
   margin-top: 1em;
 }
-.livecodes-sponsorship-heading svg {
-  color: var(--color-red);
-}
 .livecodes-sponsorship-heading {
-  border-bottom: 1px solid var(--background-modifier-border);
+  /* border-bottom: 1px solid var(--background-modifier-border); */
 }
 .livecodes-sponsorship {
   background-color: var(--background-secondary);
@@ -254,7 +251,7 @@ div:has(> button[data-prev]) {
 .setting-item-heading-onboarding a:focus,
 .modal-content.livecodes-help-modal a:focus {
   box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
-  border-radius: var(--size-2-3);
+  border-radius: var(--size-2-2);
 }
 /**
  * 
@@ -288,8 +285,8 @@ div:has(> button[data-prev]) {
   cursor: pointer;
 }
 .steps-bullets ul li a:focus, .steps-bullets ul li a:hover {
-  width: 20px;
-  background: #999;
+  /* width: 20px; */
+  background: var(--interactive-accent);
   text-decoration: none;
   outline:0
 }
@@ -301,4 +298,35 @@ div:has(> button[data-prev]) {
 
 table.templates-table td {
   padding: .5em .25em;
+}
+/* .livecodes-sponsorship, */
+.livecodes-sponsorship,
+[class$="-quick-select"],
+[class$="-template-setting"],
+.livecodes-reload-description,
+.processor-toggle {
+  display: none;
+}
+.clickable-icon.setting-editor-extra-setting-button:focus {
+  box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+}
+.copy-icon:focus {
+  box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+  border-radius: var(--size-2-2);
+}
+.livecodes-sponsorship > div svg {
+  width:28px;
+  height: 28px;
+  color:var(--color-red);
+}
+.livecodes-sponsorship > div {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  font-size: 1.25em;
+}
+.livecodes-sponsorship div.sponsorship-message {
+  font-size: unset;
+  max-width: 333px;
+  margin: .5em auto;
 }
