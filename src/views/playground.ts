@@ -83,7 +83,7 @@ export class PlaygroundView extends ItemView {
    * https://github.com/zsviczian/obsidian-excalidraw-plugin/blob/146d04ea6486df84897bb1dc1b525affd691f042/src/ExcalidrawView.ts#L1124
    */
   onResize() {
-    console.log('--------- playground view onResize ---------');
+    // console.log('--------- playground view onResize ---------');
   }
 
 

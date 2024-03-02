@@ -72,8 +72,8 @@ export default class LivecodesPlugin extends Plugin {
 
 
     window.addEventListener('resize', () => {
-      console.log('--------- on window resize ---------');
-      console.log(this);
+      // console.log('--------- on window resize ---------');
+      // console.log(this);
       return { }
     })
 
@@ -255,6 +255,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.registerEvent(
       this.app.workspace.on('resize', () => {
+        /*/
         // this.handleResize();
         console.log('%c --------- main workspace on resize ---------', 'color:var(--color-purple);');
         console.log('%c PlaygroundView', 'color:var(--color-purple);');
@@ -267,6 +268,7 @@ export default class LivecodesPlugin extends Plugin {
             // leaf.view.previewMode.rerender(true);
             console.log(leaf);
         });
+        /**/
       }),
     );
 

@@ -632,7 +632,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
               toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
             }
           });
-      }).then((c) => {
+      })
+      .then((c) => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-quick-playground-heading .clickable-icon');
         bttn!.setAttribute('tabindex', '0');
         bttn!.addEventListener('keydown', (evt) => {
@@ -721,7 +722,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
               toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
             }
           });
-      }).then(() => {
+      })
+      .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-templates-heading .clickable-icon');
         bttn!.setAttribute('tabindex', '0');
         bttn!.addEventListener('keydown', (evt) => {
@@ -837,7 +839,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
               toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
             }
           });
-      }).then(() => {
+      })
+      .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-reload-heading .clickable-icon');
         bttn!.setAttribute('tabindex', '0');
         bttn!.addEventListener('keydown', (evt) => {
@@ -896,7 +899,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
               toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
             }
           });
-      }).then(() => {
+      })
+      .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-sponsorship-heading .clickable-icon');
         bttn!.setAttribute('tabindex', '0');
         bttn!.addEventListener('keydown', (evt) => {
