@@ -541,27 +541,6 @@
         try {
           new HelpModal(this.app, buttonTour[0].popover.title as string, buttonTour[0].popover.description as string, '', false, true).open();
           onWatch.addClass("button-highlight");
-          // const boarding = new Boarding(
-          //   {
-          //   strictClickHandling: "block-all",
-          //   opacity: 0.75,
-          //   onPopoverRender: (popoverElements) => {
-          //     setTimeout(() => {
-          //       let stepsSpan = activeDocument.createElement("span");
-          //       stepsSpan.addClass("steps-progress");
-          //       stepsSpan.innerText = `(${boarding.currentStep + 1} of ${boarding.getSteps().length})`;
-          //       popoverElements.popoverCloseBtn.insertAdjacentElement("afterend", stepsSpan);
-          //       if (activeDocument.querySelector('.default-icon') !== null) {
-          //         setIcon(activeDocument.querySelector('.default-icon')!, "alert-triangle");
-          //       }
-          //       if (activeDocument.querySelector('.alert-icon') !== null) {
-          //         setIcon(activeDocument.querySelector('.alert-icon')!, "alert-triangle");
-          //       }
-          //     }, 0);
-          //   },
-          // });
-          // boarding.defineSteps(buttonTour);
-          // boarding.start();
         } catch (error) {
           console.log(error.message || error);
         }

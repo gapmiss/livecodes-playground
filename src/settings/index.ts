@@ -635,14 +635,16 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
       .then((c) => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-quick-playground-heading .clickable-icon');
-        bttn!.setAttribute('tabindex', '0');
-        bttn!.addEventListener('keydown', (evt) => {
-          const keyDown = evt.key;
-          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
-              evt.preventDefault();
-              bttn!.click();
-          }
-        });
+        if (bttn !== null) {
+          bttn!.setAttribute('tabindex', '0');
+          bttn!.addEventListener('keydown', (evt) => {
+            const keyDown = evt.key;
+            if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+                evt.preventDefault();
+                bttn!.click();
+            }
+          });
+        }
       });
 
     new Setting(containerEl)
@@ -725,14 +727,16 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
       .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-templates-heading .clickable-icon');
-        bttn!.setAttribute('tabindex', '0');
-        bttn!.addEventListener('keydown', (evt) => {
-          const keyDown = evt.key;
-          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
-              evt.preventDefault();
-              bttn!.click();
-          }
-        });
+        if (bttn !== null) {
+          bttn!.setAttribute('tabindex', '0');
+          bttn!.addEventListener('keydown', (evt) => {
+            const keyDown = evt.key;
+            if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+                evt.preventDefault();
+                bttn!.click();
+            }
+          });
+        }
       });
 
     new Setting(containerEl).setName("Note")
@@ -842,14 +846,16 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
       .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-reload-heading .clickable-icon');
-        bttn!.setAttribute('tabindex', '0');
-        bttn!.addEventListener('keydown', (evt) => {
-          const keyDown = evt.key;
-          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
-              evt.preventDefault();
-              bttn!.click();
-          }
-        });
+        if (bttn !== null) {
+          bttn!.setAttribute('tabindex', '0');
+          bttn!.addEventListener('keydown', (evt) => {
+            const keyDown = evt.key;
+            if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+                evt.preventDefault();
+                bttn!.click();
+            }
+          });
+        }
       })
 
     new Setting(containerEl)
@@ -902,14 +908,16 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       })
       .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-sponsorship-heading .clickable-icon');
-        bttn!.setAttribute('tabindex', '0');
-        bttn!.addEventListener('keydown', (evt) => {
-          const keyDown = evt.key;
-          if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
-              evt.preventDefault();
-              bttn!.click();
-          }
-        });
+        if (bttn !== null) {
+          bttn!.setAttribute('tabindex', '0');
+          bttn!.addEventListener('keydown', (evt) => {
+            const keyDown = evt.key;
+            if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
+                evt.preventDefault();
+                bttn!.click();
+            }
+          });
+        }
       });
 
     const sponsorEl = containerEl.createEl('div', {

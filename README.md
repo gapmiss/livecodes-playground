@@ -68,6 +68,7 @@ or:
 - [ ] which button SDK updates effect undo/redo history stack?
 - [ ] tips to not accidentally close playground via keyboard or close button
 - [X] nested selectors CSS support issue (use scss)
+- [ ] split-down and split-right issues
 
 ## Issues and bug reports
 

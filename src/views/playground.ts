@@ -1,4 +1,4 @@
-import { type App, ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile } from 'obsidian';
+import { type App, ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile, Menu, View } from 'obsidian';
 // @ts-ignore
 import { config } from 'livecodes';
 import LivecodesPlugin from '../main';
@@ -28,6 +28,9 @@ export class PlaygroundView extends ItemView {
   }
 
   getDisplayText() {
+    if (this.jsonTemplate === undefined) {
+      return 'NO TEMPLATE FOUND';
+    }
     let fileName = this.jsonTemplate?.path
       .substring(
         this.jsonTemplate?.path.lastIndexOf("/") + 1, 
@@ -51,20 +54,18 @@ export class PlaygroundView extends ItemView {
     if (this.contentEl) {
       this.contentEl.empty();
     }
-  
+    
     let foundTemplate: boolean = (this.jsonTemplate !== undefined);
-    
-    let playgroundPath = this.jsonTemplate?.path;
-    let tpl = await this.adapter.read(playgroundPath!);
-    let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
-    
-    if (foundTemplate) {
-      let playgroundPath = normalizePath((this.jsonTemplate!).path);
-      let tpl = await this.adapter.read(playgroundPath);
-      newTemplate = JSON.parse(tpl) as Partial<config>;
-      delete this.settings.jsonTemplate;
+    if (!foundTemplate) {
+      // TODO: how to prevent PlaygroundView from erroring when obsidian force reloads
+      return;
     }
-
+    
+    let playgroundPath: string;
+    let newTemplate: Partial<config>;
+    playgroundPath = normalizePath((this.jsonTemplate!).path);
+    let tpl = await this.adapter.read(playgroundPath);
+    newTemplate = JSON.parse(tpl) as Partial<config>;
     this.component = new Component({
       target: this.contentEl,
       props: {
@@ -86,5 +87,19 @@ export class PlaygroundView extends ItemView {
     // console.log('--------- playground view onResize ---------');
   }
 
+  onPaneMenu(menu: Menu, source: 'more-options' | 'tab-header' | string): void {
+    // menu.addItem((item) => {
+    //   item.setTitle('Do something');
+    //   item.setSection('action');
+    //   item.onClick(
+    //     async (e) => {
+    //       console.log(this);
+    //       console.log(e);
+    //     }
+    //   )
+    // });
+    menu.hide();
+    // super.onPaneMenu(menu, source);
+  }
 
 }

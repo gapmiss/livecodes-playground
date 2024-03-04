@@ -204,7 +204,7 @@ export default class LivecodesPlugin extends Plugin {
       this.app.workspace.on("file-menu", async (menu, file) => {
         const f = this.app.vault.getFolderByPath(file.path);
         if (f && f.children.length > 1 && f.children.length <= 3) {
-          const ALLOWED_EXTS = ["html","mdx","css","scss","js","jsx","ts","tsx","astro","svelte"];
+          const ALLOWED_EXTS = ["html","mdx","css","scss","sass","js","jsx","ts","tsx","astro","svelte"];
           let showMenu = false;
           f.children.forEach((f) => {
             let fileExt = f.name.split('.').pop();
@@ -231,7 +231,7 @@ export default class LivecodesPlugin extends Plugin {
       this.app.workspace.on("file-menu", async (menu, file) => {
         const f = this.app.vault.getFileByPath(file.path);
         if (f) {
-          const ALLOWED_EXTS = ["html","mdx","css","scss","js","jsx","ts","tsx","astro","svelte"];
+          const ALLOWED_EXTS = ["html","mdx","css","scss","sass","js","jsx","ts","tsx","astro","svelte"];
           let showMenu = false;
           let fileExt = f.name.split('.').pop();
           if (ALLOWED_EXTS.includes(fileExt as string)) {
@@ -253,9 +253,9 @@ export default class LivecodesPlugin extends Plugin {
 
     this.addSettingTab(new LivecodesSettingsTab(this.app, this));
 
+    /*/
     this.registerEvent(
       this.app.workspace.on('resize', () => {
-        /*/
         // this.handleResize();
         console.log('%c --------- main workspace on resize ---------', 'color:var(--color-purple);');
         console.log('%c PlaygroundView', 'color:var(--color-purple);');
@@ -268,9 +268,9 @@ export default class LivecodesPlugin extends Plugin {
             // leaf.view.previewMode.rerender(true);
             console.log(leaf);
         });
-        /**/
       }),
     );
+    /**/
 
     this.state = "loaded";
     console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
@@ -309,10 +309,12 @@ export default class LivecodesPlugin extends Plugin {
     await this.saveData(this.settings);
   }
 
+  /*/
   async onExternalSettingsChange(): Promise<void> {
-    // console.log('onExternalSettingsChange');
+    console.log('onExternalSettingsChange');
     await this.loadSettings();
   }
+  /**/
 
   async newLanguageSelectPlayground(res:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string}) {
     if (res.title?.length === 0) {
@@ -340,8 +342,11 @@ export default class LivecodesPlugin extends Plugin {
     }
     newPlayground.processors = processors as unknown as string;
     newPlayground.markup.language = res.markup;
+    newPlayground.markup.content = '';
     newPlayground.style.language = res.style;
+    newPlayground.style.content = '';
     newPlayground.script.language = res.script;
+    newPlayground.script.content = '';
 
     newPlayground.title = res.title;
     newPlayground.appUrl = this.settings.appUrl;
@@ -390,149 +395,77 @@ export default class LivecodesPlugin extends Plugin {
         }
         let newPlayground:Partial<config> = blankPlayground;
         if (fromMenu && file !== null && (file instanceof TFile || file instanceof TFolder)) {
-          let foundHtml: boolean = false;
-          let foundMdx: boolean = false;
-          let foundCss: boolean = false;
-          let foundScss: boolean = false;
-          let foundJavaScript: boolean = false;
-          let foundJsx: boolean = false;
-          let foundTsx: boolean = false;
-          let foundTypeScript: boolean = false;
-          let foundSvelte: boolean = false;
-          let foundAstro: boolean = false;
-          let foundFolderWithHtml: boolean = false;
-          let foundFolderWithMdx: boolean = false;
-          let foundFolderWithCss: boolean = false;
-          let foundFolderWithScss: boolean = false;
-          let foundFolderWithJavaScript: boolean = false;
-          let foundFolderWithJsx: boolean = false;
-          let foundFolderWithTsx: boolean = false;
-          let foundFolderWithTypeScript: boolean = false;
-          let foundFolderWithSvelte: boolean = false;
-          let foundFolderWithAstro: boolean = false;
+          let foundMarkup: boolean = false;
+          let foundStyle: boolean = false;
+          let foundScript: boolean = false;
+          let newMarkupFile: string = '';
+          let newMarkupExtension: string = '';
+          let newStyleFile: string = '';
+          let newStyleExtension: string = '';
+          let newScriptFile: string = '';
+          let newScriptExtension: string = '';
           if (file instanceof TFile) {
-            let fileExt = file.extension;
-            foundHtml = fileExt === 'html';
-            foundMdx = fileExt === 'mdx';
-            foundCss = fileExt === 'css';
-            foundScss = fileExt === 'scss';
-            foundJavaScript = fileExt === 'js';
-            foundJsx = fileExt === 'jsx';
-            foundTsx = fileExt === 'tsx';
-            foundTypeScript = fileExt === 'ts';
-            foundSvelte = fileExt === 'svelte';
-            foundAstro = fileExt === 'astro';
+            let fileExt:string = file.extension;
+            foundMarkup = fileExt === 'html' || fileExt === 'mdx' || fileExt === 'astro';
+            foundStyle = fileExt === 'css' || fileExt === 'scss' || fileExt === 'sass';
+            foundScript = fileExt === 'js' || fileExt === 'jsx' || fileExt === 'tsx' || fileExt === 'ts' || fileExt === 'svelte';
+            if (fileExt === 'html' || fileExt === 'mdx' || fileExt === 'astro') {
+              newMarkupExtension = fileExt;
+            }
+            else if (fileExt === 'css' || fileExt === 'scss' || fileExt === 'sass') {
+              newStyleExtension = fileExt;
+            }
+            else if (fileExt === 'js' || fileExt === 'jsx' || fileExt === 'tsx' || fileExt === 'ts' || fileExt === 'svelte') {
+              newScriptExtension = fileExt;
+            }
           } else if (file instanceof TFolder) {
-            foundFolderWithHtml = await this.adapter.exists(file.path+"/markup.html");
-            foundFolderWithMdx = await this.adapter.exists(file.path+"/markup.mdx");
-            foundFolderWithCss = await this.adapter.exists(file.path+"/style.css");
-            foundFolderWithScss = await this.adapter.exists(file.path+"/style.scss");
-            foundFolderWithJavaScript = await this.adapter.exists(file.path+"/script.js");
-            foundFolderWithJsx = await this.adapter.exists(file.path+"/script.jsx");
-            foundFolderWithTsx = await this.adapter.exists(file.path+"/script.tsx");
-            foundFolderWithTypeScript = await this.adapter.exists(file.path+"/script.ts");
-            foundFolderWithSvelte = await this.adapter.exists(file.path+"/script.svelte");
-            foundFolderWithAstro = await this.adapter.exists(file.path+"/markup.astro");
+            file.children.forEach((f:TFile) => {
+              if (f.extension === 'html' || f.extension === 'mdx' || f.extension === 'astro') {
+                newMarkupFile = normalizePath(f.path);
+                newMarkupExtension = f.extension;
+                foundMarkup = true;
+              }
+              if (f.extension === 'css' || f.extension === 'scss' || f.extension === 'sass') {
+                newStyleFile = normalizePath(f.path);
+                newStyleExtension = f.extension;
+                foundStyle = true;
+              }
+              if (
+                f.extension === 'js' ||
+                f.extension === 'jsx' ||
+                f.extension === 'tsx' ||
+                f.extension === 'ts' ||
+                f.extension === 'svelte'
+              ) {
+                newScriptFile = normalizePath(f.path);
+                newScriptExtension = f.extension;
+                foundScript = true;
+              }
+            });
           }
-          if (foundHtml || foundFolderWithHtml) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/markup.html") : this.app.vault.getAbstractFileByPath(file.path);
+          newPlayground.markup.language = 'html';
+          newPlayground.markup.content = '';
+          newPlayground.style.language = 'css';
+          newPlayground.style.content = '';
+          newPlayground.script.language = 'javascript';
+          newPlayground.script.content = '';
+          if (foundMarkup) {
+            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(newMarkupFile) : this.app.vault.getAbstractFileByPath(file.path);
             let code = await this.app.vault.read(f as TFile)
             newPlayground.markup.content = code;
-            newPlayground.markup.language = "html";
-            if (foundHtml) {
-              newPlayground.style.language = "css";
-              newPlayground.script.language = "javascript";
-            }
+            newPlayground.markup.language = newMarkupExtension;
           }
-          if (foundMdx || foundFolderWithMdx) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/markup.mdx") : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
-            newPlayground.markup.content = code;
-            newPlayground.markup.language = "mdx";
-            if (foundMdx) {
-              newPlayground.style.language = "css";
-              newPlayground.script.language = "jsx";
-            }
-          }
-          if (foundAstro || foundFolderWithAstro) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/markup.astro") : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
-            newPlayground.markup.content = code;
-            newPlayground.markup.language = "astro";
-            if (foundAstro) {
-              newPlayground.style.language = "css";
-              newPlayground.script.language = "javascript";
-            }
-          }
-          if (foundCss || foundFolderWithCss) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/style.css") : this.app.vault.getAbstractFileByPath(file.path);
+          if (foundStyle) {
+            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(newStyleFile) : this.app.vault.getAbstractFileByPath(file.path);
             let code = await this.app.vault.read(f as TFile)
             newPlayground.style.content = code;
-            newPlayground.style.language = "css";
-            if (foundCss) {
-              newPlayground.markup.language = "html";
-              newPlayground.script.language = "javascript";
-            }
+            newPlayground.style.language = newStyleExtension;
           }
-          if (foundScss || foundFolderWithScss) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/style.scss") : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
-            newPlayground.style.content = code;
-            newPlayground.style.language = "scss";
-            if (foundScss) {
-              newPlayground.markup.language = "html";
-              newPlayground.script.language = "javascript";
-            }
-          }
-          if (foundJavaScript || foundFolderWithJavaScript) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.js") : this.app.vault.getAbstractFileByPath(file.path);
+          if (foundScript) {
+            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(newScriptFile) : this.app.vault.getAbstractFileByPath(file.path);
             let code = await this.app.vault.read(f as TFile)
             newPlayground.script.content = code;
-            newPlayground.script.language = "javascript";
-            if (foundJavaScript) {
-              newPlayground.markup.language = "html";
-              newPlayground.style.language = "css";
-            }
-          }
-          if (foundJsx || foundFolderWithJsx) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.jsx") : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
-            newPlayground.script.content = code;
-            newPlayground.script.language = "jsx";
-            if (foundJsx) {
-              newPlayground.markup.language = "html";
-              newPlayground.style.language = "css";
-            }
-          }
-          if (foundTsx || foundFolderWithTsx) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.tsx") : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
-            newPlayground.script.content = code;
-            newPlayground.script.language = "tsx";
-            if (foundTsx) {
-              newPlayground.markup.language = "html";
-              newPlayground.style.language = "css";
-            }
-          }
-          if (foundTypeScript || foundFolderWithTypeScript) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.ts") : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
-            newPlayground.script.content = code;
-            newPlayground.script.language = "typescript";
-            if (foundTypeScript) {
-              newPlayground.markup.language = "html";
-              newPlayground.style.language = "css";
-            }
-          }
-          if (foundSvelte || foundFolderWithSvelte) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(file.path+"/script.svelte") : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
-            newPlayground.script.content = code;
-            newPlayground.script.language = "svelte";
-            if (foundSvelte) {
-              newPlayground.markup.language = "html";
-              newPlayground.style.language = "css";
-            }
+            newPlayground.script.language = newScriptExtension;
           }
         }
         else {
@@ -565,6 +498,7 @@ export default class LivecodesPlugin extends Plugin {
         newPlayground.enableAI = this.settings.enableAI;
         newPlayground.autoupdate = this.settings.autoUpdate;
         newPlayground.delay = this.settings.delay;
+
         let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
         try {
           await this.app.vault
@@ -830,7 +764,7 @@ export default class LivecodesPlugin extends Plugin {
           })
       );
     }
-    
+
     let offset = 0;
     menu.showAtPosition({
       x: event.pageX + offset,
