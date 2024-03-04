@@ -455,7 +455,6 @@
             )
             .then(
               async (setting) => {
-                console.log(setting);
                 let newConfig = JSON.parse(setting as unknown as string);
                 await playground.setConfig({
                   stylesheets: newConfig.stylesheets,
