@@ -415,7 +415,7 @@
           try {
             await this.app.vault.create(
               plugin.settings.notesFolder + "/" + fName + ".md",
-              await createText(await prettifyMarkdown(markDown, fName + ".md")) // await createText(markDown),
+              await createText(await prettifyMarkdown(markDown.replace(/\n{2,}/g, '\n'), fName + ".md")) // await createText(markDown),
             );
           } catch (error) {
             showNotice(plugin.settings.notesFolder+'/'+fName + ".md - " + error + " Click this message to dismiss.", 0, 'error');
