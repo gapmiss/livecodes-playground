@@ -362,18 +362,22 @@
           if (cfg.stylesheets.length) {
             let l:number = 1;
             cfg.stylesheets.forEach((stylesheet:string)=>{
-              let lineBreak:string = (cfg.stylesheets.length !== l) ? "\n" : '';
-              styleSheetListMD += "  - ["+stylesheet+"]("+stylesheet+")" + lineBreak;
-              l++;
+              if (stylesheet !== '') {
+                let lineBreak:string = (cfg.stylesheets.length !== l) ? "\n" : '';
+                styleSheetListMD += "  - ["+stylesheet+"]("+stylesheet+")" + lineBreak;
+                l++;                
+              }
             });
           }
           let scriptsListMD = '';
           if (cfg.scripts.length) {
             let n:number = 1;
             cfg.scripts.forEach((script:string)=>{
-              let lineBreak:string = (cfg.scripts.length !== n) ? "\n" : '';
-              scriptsListMD += "  - ["+script+"]("+script+")" + lineBreak;
-              n++;
+              if (script !== '') {
+                let lineBreak:string = (cfg.scripts.length !== n) ? "\n" : '';
+                scriptsListMD += "  - ["+script+"]("+script+")" + lineBreak;
+                n++;
+              }
             });
           }
           let code = await playground.getCode();
@@ -451,6 +455,7 @@
             )
             .then(
               async (setting) => {
+                console.log(setting);
                 let newConfig = JSON.parse(setting as unknown as string);
                 await playground.setConfig({
                   stylesheets: newConfig.stylesheets,

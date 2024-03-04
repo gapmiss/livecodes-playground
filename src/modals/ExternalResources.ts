@@ -39,7 +39,7 @@ export class ExternalResourcesModal extends Modal {
         .setValue(this.changes.stylesheets.join("\n"))
         .setPlaceholder("https://")
         .onChange(async newStylesheetsSetting => {
-          this.changes.stylesheets = newStylesheetsSetting.split("\n");
+          this.changes.stylesheets = newStylesheetsSetting.trim().split("\n");
         })
       );
 
@@ -52,7 +52,7 @@ export class ExternalResourcesModal extends Modal {
         .setValue(this.changes.scripts.join("\n"))
         .setPlaceholder("https://")
         .onChange(async newScriptsSetting => {
-          this.changes.scripts = newScriptsSetting.split("\n");
+          this.changes.scripts = newScriptsSetting.trim().split("\n");
         })
       );
 

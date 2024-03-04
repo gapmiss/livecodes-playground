@@ -37,7 +37,7 @@ export class PlaygroundSettingsModal extends Modal {
         text
         .setValue(this.changes.title)
         .onChange(async newTitleSetting => {
-          this.changes.title = newTitleSetting;
+          this.changes.title = newTitleSetting.trim();
         })
       );
 
@@ -48,7 +48,7 @@ export class PlaygroundSettingsModal extends Modal {
         text
         .setValue(this.changes.description)
         .onChange(async newDescriptionSetting => {
-          this.changes.description = newDescriptionSetting;
+          this.changes.description = newDescriptionSetting.trim();
         })
       );
 
@@ -65,7 +65,7 @@ export class PlaygroundSettingsModal extends Modal {
         text
         .setValue(this.changes.head)
         .onChange(async newHeadSetting => {
-          this.changes.head = newHeadSetting;
+          this.changes.head = newHeadSetting.trim();
         })
       );
 
@@ -77,7 +77,7 @@ export class PlaygroundSettingsModal extends Modal {
         text
         .setValue(this.changes.htmlAttrs)
         .onChange(async newHtmlAttrsSetting => {
-          this.changes.htmlAttrs = newHtmlAttrsSetting;
+          this.changes.htmlAttrs = newHtmlAttrsSetting.trim();
         })
       ); 
     
