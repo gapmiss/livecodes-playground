@@ -8,36 +8,49 @@ created: {{date}}
 
 {% if title %}## {{ title }}
 {% endif %}
+
 {% if descString %}{{ descString }}
 {% endif %}
+
 {% if tagsString %}{{ tagsString }}
 {% endif %}
+
 {% if head %}```html
 {{ head }}
 ```
 {% endif %}
+
 {% if htmlAttrs %}```text
 {{ htmlAttrs }}
 ```
 {% endif %}
+
 {% if stylesheetsList %}{{ stylesheetsList }}
 {% endif %}
+
 {% if scriptsList %}{{ scriptsList }}
 {% endif %}
+
 {% if cssPreset %}`{{ cssPreset }}`
 {% endif %}
-{% if markupLanguage %}```{{ markupLanguage }}
+
+{% if markupCode %}```{{ markupLanguage }}
 {{ markupCode }}
 ```
 {% endif %}
-{% if styleLanguage %}```{{ styleLanguage }}
+
+{% if styleCode %}```{{ styleLanguage }}
 {{ styleCode }}
 ```
 {% endif %}
-{% if scriptLanguage %}```{{ scriptLanguage }}
+
+{% if scriptCode %}```{{ scriptLanguage }}
 {{ scriptCode }}
 ```
 {% endif %}
+
 {# this is a nunjucks comment #}
+
 {# https://mozilla.github.io/nunjucks/templating.html #}
+
 %% this is an Obsidian markdown comment %%

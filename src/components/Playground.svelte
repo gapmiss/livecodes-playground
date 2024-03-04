@@ -3,10 +3,11 @@
   import { createPlayground, EmbedOptions } from "livecodes";
   import * as prettier from "prettier/standalone";
   import * as htmlPlugin from "prettier/plugins/html";
+  import * as markdownPlugin from "prettier/plugins/markdown";
   import { onMount } from "svelte";
   import { HelpModal } from '../modals/HelpModal';
   import { saveJson, downloadFile, copyStringToClipboard } from "../utils";
-  import { buttonTour, helpModals } from "../settings/help";
+  import { buttonTour } from "../settings/help";
   import { saveAsModal } from "../modals/SaveAs";
   import { openShareGistModal } from "../modals/ShareGist";
   import { openExternalResourcesModal } from "../modals/ExternalResources";
@@ -414,7 +415,7 @@
           try {
             await this.app.vault.create(
               plugin.settings.notesFolder + "/" + fName + ".md",
-              await createText(markDown)
+              await createText(await prettifyMarkdown(markDown, fName + ".md")) // await createText(markDown),
             );
           } catch (error) {
             showNotice(plugin.settings.notesFolder+'/'+fName + ".md - " + error + " Click this message to dismiss.", 0, 'error');
@@ -562,6 +563,25 @@
   ): Promise<string> => {
     return fileContent?.trim() as string;
   };
+
+  async function prettifyMarkdown(src: string, fileName: string): Promise<string> {
+    try {
+      return await prettier.format(src, {
+        filepath: fileName,
+        proseWrap: "preserve",
+        embeddedLanguageFormatting: "off",
+        plugins: [
+          markdownPlugin
+        ]
+      })
+      .then((pretty) => {
+        return Promise.resolve(pretty);
+      });      
+    } catch (error) {
+      showNotice('Prettify error: ' + error + " Click this message to dismiss.", 0, 'error');
+      return Promise.resolve(src);
+    }
+  }
 
   async function prettifyHtml(src: string, fileName: string): Promise<string> {
     /**
