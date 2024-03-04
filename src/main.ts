@@ -5,7 +5,7 @@ import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
 import { StarterSelectModal } from "./modals/StarterSelect";
 import { LanguageSelectModal } from "./modals/LanguageSelect";
 import { saveAsModal } from "./modals/SaveAs";
-import { blankPlayground, codeBlockLanguages } from "./livecodes";
+import { blankPlayground, codeBlockLanguages, ALLOWED_LANGS, ALLOWED_EXTS } from "./livecodes";
 import { Parameters } from "../@types/global";
 import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
 // import { codeBlockPostProcessor } from './editor/codeblockProcessor';
@@ -204,7 +204,6 @@ export default class LivecodesPlugin extends Plugin {
       this.app.workspace.on("file-menu", async (menu, file) => {
         const f = this.app.vault.getFolderByPath(file.path);
         if (f && f.children.length > 1 && f.children.length <= 3) {
-          const ALLOWED_EXTS = ["html","mdx","css","scss","sass","js","jsx","ts","tsx","astro","svelte"];
           let showMenu = false;
           f.children.forEach((f) => {
             let fileExt = f.name.split('.').pop();
@@ -231,7 +230,6 @@ export default class LivecodesPlugin extends Plugin {
       this.app.workspace.on("file-menu", async (menu, file) => {
         const f = this.app.vault.getFileByPath(file.path);
         if (f) {
-          const ALLOWED_EXTS = ["html","mdx","css","scss","sass","js","jsx","ts","tsx","astro","svelte"];
           let showMenu = false;
           let fileExt = f.name.split('.').pop();
           if (ALLOWED_EXTS.includes(fileExt as string)) {
@@ -407,12 +405,12 @@ export default class LivecodesPlugin extends Plugin {
           if (file instanceof TFile) {
             let fileExt:string = file.extension;
             foundMarkup = fileExt === 'html' || fileExt === 'mdx' || fileExt === 'astro';
-            foundStyle = fileExt === 'css' || fileExt === 'scss' || fileExt === 'sass';
+            foundStyle = fileExt === 'css' || fileExt === 'scss';
             foundScript = fileExt === 'js' || fileExt === 'jsx' || fileExt === 'tsx' || fileExt === 'ts' || fileExt === 'svelte';
             if (fileExt === 'html' || fileExt === 'mdx' || fileExt === 'astro') {
               newMarkupExtension = fileExt;
             }
-            else if (fileExt === 'css' || fileExt === 'scss' || fileExt === 'sass') {
+            else if (fileExt === 'css' || fileExt === 'scss') {
               newStyleExtension = fileExt;
             }
             else if (fileExt === 'js' || fileExt === 'jsx' || fileExt === 'tsx' || fileExt === 'ts' || fileExt === 'svelte') {
@@ -425,7 +423,7 @@ export default class LivecodesPlugin extends Plugin {
                 newMarkupExtension = f.extension;
                 foundMarkup = true;
               }
-              if (f.extension === 'css' || f.extension === 'scss' || f.extension === 'sass') {
+              if (f.extension === 'css' || f.extension === 'scss') {
                 newStyleFile = normalizePath(f.path);
                 newStyleExtension = f.extension;
                 foundStyle = true;
@@ -741,28 +739,31 @@ export default class LivecodesPlugin extends Plugin {
     // console.log(nodeType);
     // console.log(target.parentElement?.tagName);
     if (nodeType === 'code' && target.parentElement?.tagName.toLowerCase() === 'pre' || nodeType === 'pre') {
-      menu.addItem((item: MenuItem) =>
-        item
-          .setIcon("code")
-          .setTitle("Open in Livecodes")
-          .onClick(async (ele) => {
-            let code:string = '';
-            if (nodeType === 'code') {
-              code = target.textContent!;
-            } else {
-              code = target.firstChild?.textContent!;
-            }
-            let lang = 'text';
-            const LANG_REGEX = /^language-/;
-            target.classList.forEach((val, key) => {
-              if (LANG_REGEX.test(val)) {
-                lang = val.replace(`language-`, '');
-                return;
+      let lang = 'text';
+      const LANG_REGEX = /^language-/;
+      target.classList.forEach((val, key) => {
+        if (LANG_REGEX.test(val)) {
+          lang = val.replace(`language-`, '');
+          return;
+        }
+      });
+      
+      if (ALLOWED_LANGS.includes(lang)) {
+        menu.addItem((item: MenuItem) =>
+          item
+            .setIcon("code")
+            .setTitle("Open in Livecodes")
+            .onClick(async (ele) => {
+              let code:string = '';
+              if (nodeType === 'code') {
+                code = target.textContent!;
+              } else {
+                code = target.firstChild?.textContent!;
               }
-            });
-            await this.newLivecodesPlaygroundFromCodeblock(lang, code);
-          })
-      );
+              await this.newLivecodesPlaygroundFromCodeblock(lang, code);
+            })
+        );
+      }
     }
 
     let offset = 0;

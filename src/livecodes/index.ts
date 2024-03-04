@@ -1,3 +1,6 @@
+export const ALLOWED_LANGS = ["html","mdx","css","scss","javascript","jsx","typescript","tsx","astro","svelte"];
+export const ALLOWED_EXTS = ["html","mdx","css","scss","js","jsx","ts","tsx","astro","svelte"];
+
 export function codeLanguages() {
   const lists = {
     markup: [
@@ -24,7 +27,6 @@ export function codeLanguages() {
     style: [
       { name: 'css', title: 'CSS' },
       { name: 'less', title: 'Less' },
-      { name: 'sass', title: 'Sass' },
       { name: 'scss', title: 'SCSS' },
       { name: 'stylis', title: 'Stylis' },
       { name: 'stylus', title: 'Stylus' },
@@ -93,19 +95,20 @@ export function codeBlockLanguages() {
   const lists = {
     markup: [
       { name: 'asciidoc', title: 'AsciiDoc' },
+      { name: 'astro', title: 'Astro' },
       { name: 'ejs', title: 'EJS' },
       { name: 'haml', title: 'Haml' },
       { name: 'handlebars', title: 'Handlebars' },
       { name: 'html', title: 'HTML' },
       { name: 'liquid', title: 'Liquid' },
       { name: 'markdown', title: 'Markdown' },
+      { name: 'mdx', title: 'MDX' },
       { name: 'pug', title: 'Pug' },
       { name: 'twig', title: 'Twig' },
     ],
     style: [
       { name: 'css', title: 'CSS' },
       { name: 'less', title: 'Less' },
-      { name: 'sass', title: 'Sass' },
       { name: 'scss', title: 'SCSS' },
       { name: 'stylus', title: 'Stylus' },
     ],
@@ -130,6 +133,7 @@ export function codeBlockLanguages() {
       { name: 'scheme', title: 'Scheme' },
       { name: 'solid', title: 'Solid' },
       { name: 'sql', title: 'SQL' },
+      { name: 'svelte', title: 'Svelte' },
       { name: 'tcl', title: 'Tcl' },
       { name: 'tsx', title: 'TSX' },
       { name: 'typescript', title: 'Typescript' },
