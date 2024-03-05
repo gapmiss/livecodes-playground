@@ -1,8 +1,10 @@
 # Livecodes playground
 
-<img src="https://livecodes.io/docs/img/livecodes-logo.svg" style="width:200px; margin: 0 auto;">
+<div style="display: grid; place-items: center; margin-block: 1rem;">
+	<img src="https://livecodes.io/docs/img/livecodes-logo.svg" style="width:200px; margin: 0 auto;">
+</div>
 
-[Livecodes](https://livecodes.io/docs/overview) playground plugin for [Obsidian.md](https://obsidian.md)
+[Livecodes](https://livecodes.io/docs/overview) playground, an open-source client-side code editor plugin for [Obsidian.md](https://obsidian.md) - powered by [Livecodes.io](https://livecodes.io).
 
 Read about [why Livecodes](https://livecodes.io/docs/why), it's [features](https://livecodes.io/docs/features/) and [how to self-host](https://livecodes.io/docs/features/self-hosting)
 
@@ -13,7 +15,7 @@ Read about [why Livecodes](https://livecodes.io/docs/why), it's [features](https
 
 ### Community plugins
 
-1. ~~Community Plugins > Browse~~ Plugin is currenlty awaiting approval.
+1. ~~Community Plugins > Browse~~ Plugin is currently awaiting approval.
 2. Search for "livecodes"
 
 ### via BRAT (Beta Reviewer's Auto-update Tool)
@@ -41,6 +43,38 @@ or:
 
 ## Usage
 
+### Initial setup
+
+1. create a folder inside your vault for storing playground configuration files (`*.JSON`)
+	- default: `playgrounds`
+2. create a folder inside your vault for storing playground markdown notes (`*.MD`)
+	- default: `playgrounds/notes`
+
+### New playground
+
+New playgrounds can be created in a number of ways.
+
+ - `New playground` - (*command*) opens a modal prompt for the playground name, markup language, style language, CSS processors, and script language.
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.41.54.png" alt="screenshot of codeblock context menu" /></p></details>
+
+ - `Quick playground` - (*command*) and *ribbon menu* <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7852ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> open a prompt for the playground name. The default markup, style, & script languages can be configured in the settings.
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.43.59.png" alt="screenshot of codeblock context menu" /></p></details>
+
+ - `codeblock` - (*context menu*) via right-click (`ctrl`+`click`) in supported fenced code blocks. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `jsx`, `typescript`, `tsx`, `astro`, `svelte`.
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.01.55.png" alt="screenshot of codeblock context menu" /></p></details>
+
+- `file` - (*context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`.
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.35.49.png" alt="screenshot of file context menu" /></p></details>
+
+- `folder` - (*context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`. To activate the menu, the folder must have 1-3 files with the supported extensions. e.g. (`index.html`, `style.css`, `main.js`)
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.33.31.png" alt="screenshot of file context menu" /></p></details>
+
+- Obsidian `URI` - <a href="obsidian://playground?vault=Playground&gistUrl=https%3A%2F%2Fgist.githubusercontent.com%2Fgapmiss%2Ff558657bcde37c677724004c36ed8dcd%2Fraw%2Ff8a7173bbd17d0886534c2f2017385a5fb3cff48%2FJavascript_starter.json">open in Obsidian</a> e.g. `obsidian://playground?vault=Playground&gistUrl=https%3A%2F%2Fgist.githubusercontent.com%2Fgapmiss%2Ff558657bcde37c677724004c36ed8dcd%2Fraw%2Ff8a7173bbd17d0886534c2f2017385a5fb3cff48%2FJavascript_starter.json`
+
+<!-- export const ALLOWED_EXTS = ["html","mdx","css","scss","js","jsx","ts","tsx","astro","svelte"];
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7852ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-code-2"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m5 12-3 3 3 3"/><path d="m9 18 3-3-3-3"/></svg>
+
 ### commands
 
 - Open Livecodes playground
@@ -52,19 +86,6 @@ or:
 - `playgroundPath` - e.g. obsidian://playground?vault=VAULTNAME&playgroundPath=path/to/playground.json
 - `gistURL` - e.g. obsidian://playground?vault=VAULTNAME&gistUrl=https%3A%2F%2Fgist.githubusercontent.com … playground.json
 
-## 🚧 ROADMAP
-
-- [ ] test vault
-- [ ] create Livecodes embed snippet for including in blog post, etc.
-- [?] sync playground to note (same name)
-
-## Tips
-
-- [ ] cursor position and Obsidian.md commands when inside the playground iframe
-- [ ] which button SDK updates effect undo/redo history stack?
-- [ ] tips to not accidentally close playground via keyboard or close button
-- [ ] nested selectors CSS support issue (use scss)
-- [ ] split-down and split-right issues
 
 ## Issues and bug reports
 
@@ -107,3 +128,5 @@ Livecodes is licensed under the [MIT License](https://github.com/live-codes/live
 > LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 > OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 > SOFTWARE.
+
+ -->
