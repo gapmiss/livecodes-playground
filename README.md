@@ -1,8 +1,10 @@
 # Livecodes playground
 
-<div>
+![screenshot of Livecode Playground editor](./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-17.20.49.png)
+
+<!-- <div>
 	<img src="https://livecodes.io/docs/img/livecodes-logo.svg" style="width:200px; margin: 0 auto;">
-</div>
+</div> -->
 
 Livecodes playground, an open-source client-side code editor plugin for [Obsidian.md](https://obsidian.md) - powered by [Livecodes.io](https://livecodes.io/docs/overview).
 
@@ -86,6 +88,9 @@ Playgrounds can be opened via:
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p>Open <strong>Settings</strong> &gt; <strong>File and links</strong> and enable <strong>Detect all file extensions</strong></p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-14.34.51.png" alt="screenshot of settings" /></p><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-17.10.19.png" alt="screenshot of file context menu" /></p></details>
 
 
+- Obsidian `URI` - Create a new playground via importing of a raw JSON configuration file, easily hosted as a Github gist. The Obsidian URL expects 2 parameters, `vault` and `playgroundPath` formatted as `obsidian://playground?vault=VAULTNAME&playgroundPath=VAULT_PATH_TO_JSON` The `playgroundPath` needs to be URI encoded (see: [Obsidian Help](https://help.obsidian.md/Extending+Obsidian/Obsidian+URI))
+
+	e.g. `obsidian://playground?vault=VAULTNAME&playgroundPath=path/to/playground.json`
 
 <!-- 
 
@@ -93,17 +98,7 @@ Playgrounds can be opened via:
 
 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7852ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-code-2"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m5 12-3 3 3 3"/><path d="m9 18 3-3-3-3"/></svg>
 
-### commands
-
-- Open Livecodes playground
-- Open Livecodes starter
-- New Livecodes playground
-
-### obsidian:// URL protocols
-
-- `playgroundPath` - e.g. obsidian://playground?vault=VAULTNAME&playgroundPath=path/to/playground.json
-- `gistURL` - e.g. obsidian://playground?vault=VAULTNAME&gistUrl=https%3A%2F%2Fgist.githubusercontent.com … playground.json
-
+ -->
 
 ## Issues and bug reports
 
@@ -146,5 +141,3 @@ Livecodes is licensed under the [MIT License](https://github.com/live-codes/live
 > LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 > OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 > SOFTWARE.
-
- -->
