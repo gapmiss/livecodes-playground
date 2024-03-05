@@ -71,10 +71,7 @@ New playgrounds can be created in a number of ways.
 - `folder` - (*context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`. To activate the menu, the folder must have 1-3 files with the supported extensions. e.g. (`index.html`, `style.css`, `main.js`)
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p>Open <strong>Settings</strong> &gt; <strong>File and links</strong> and enable <strong>Detect all file extensions</strong></p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-14.34.51.png" alt="screenshot of settings" /></p><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.33.31.png" alt="screenshot of file context menu" /></p></details>
 
-- Obsidian `URI` - Create a new playground via importing of a raw JSON configuration file, easily hosted as a Github gist. The Obsidian URL expects 2 parameters, `vault` and `gistUrl` formatted as `obsidian://playground?vault=VAULTNAME&gistUrl=RAW_JSON_URL`
-
-> [!IMPORTANT]
-> The `gistUrl` needs to be URI encoded (see: [Obsidian Help](https://help.obsidian.md/Extending+Obsidian/Obsidian+URI))
+- Obsidian `URI` - Create a new playground via importing of a raw JSON configuration file, easily hosted as a Github gist. The Obsidian URL expects 2 parameters, `vault` and `gistUrl` formatted as `obsidian://playground?vault=VAULTNAME&gistUrl=RAW_JSON_URL` The `gistUrl` needs to be URI encoded (see: [Obsidian Help](https://help.obsidian.md/Extending+Obsidian/Obsidian+URI))
 
 	e.g. `obsidian://playground?vault=Playground&gistUrl=https%3A%2F%2Fgist.githubusercontent.com%2Fgapmiss%2Ff558657bcde37c677724004c36ed8dcd%2Fraw%2Ff8a7173bbd17d0886534c2f2017385a5fb3cff48%2FJavascript_starter.json`
 
