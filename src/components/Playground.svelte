@@ -243,61 +243,97 @@
                       link = "obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath);
                     }
                     if (gistSetting.includeMarkdownFile) {
-                      markDown += "---\n";
-                      markDown += "created: "+moment().format("YYYY-MM-DD")+"\n"
-                      if (cfg.title !== "") {
-                        markDown += "title: "+cfg.title+"\n";
-                      }
-                      if (cfg.description !== "") {
-                        markDown += "description: "+cfg.description+"\n";
-                      }
+                      let tagsListMD:string = '';
                       if (cfg.tags.length) {
-                        markDown += "tags: \n"
+                        let i:number = 1;
                         cfg.tags.forEach((tag:string) => {
-                          markDown += "  - "+tag+"\n";
+                          let lineBreak:string = (cfg.tags.length !== i) ? "\n" : '';
+                          if (i === 1) {
+                            tagsListMD += "\n  - " + tag + lineBreak;
+                          } else {
+                            tagsListMD += "  - " + tag + lineBreak;
+                          }
+                          i++;
                         })
                       }
-                      if (link !== '') {
-                        markDown += "playground: \""+link+"\"\n";
+                      let descriptionPropertyMD:string = '';
+                      if (cfg.description !== '') {
+                        descriptionPropertyMD += "|\n"
+                        let descLines = cfg.description.split("\n");
+                        let k:number = 1;
+                        descLines.forEach((line:string) => {
+                          let lineBreak:string = (descLines.length !== k) ? "\n" : '';
+                          descriptionPropertyMD += "  " + line + lineBreak;
+                          k++;
+                        });
                       }
-                      markDown += "---\n\n";
-                      if (cfg.head !== "") {
-                        markDown += "## head\n\n```html\n"+cfg.head+"\n```\n\n";
+                      let tagsStringMD:string = '';
+                      if (cfg.tags.length) {
+                        cfg.tags.forEach((tag:string)=>{
+                          tagsStringMD += "#"+tag+" "
+                        });
                       }
-                      if (cfg.htmlAttrs !== "") {
-                        markDown += "## htmlAttrs\n\n```html\n"+cfg.htmlAttrs+"\n```\n\n";
-                      }
+                      let styleSheetListMD = '';
                       if (cfg.stylesheets.length) {
-                        markDown += "## stylesheets\n\n";
-                        cfg.stylesheets.forEach((sheet:string) => {
-                          markDown += "- ["+sheet+"]("+sheet+")\n";
+                        let l:number = 1;
+                        cfg.stylesheets.forEach((stylesheet:string)=>{
+                          if (stylesheet !== '') {
+                            let lineBreak:string = (cfg.stylesheets.length !== l) ? "\n" : '';
+                            styleSheetListMD += "  - ["+stylesheet+"]("+stylesheet+")" + lineBreak;
+                            l++;                
+                          }
                         });
-                        markDown += "\n\n";
                       }
+                      let scriptsListMD = '';
                       if (cfg.scripts.length) {
-                        markDown += "## scripts\n\n";
-                        cfg.scripts.forEach((script:string) => {
-                          markDown += "- ["+script+"]("+script+")\n";
+                        let n:number = 1;
+                        cfg.scripts.forEach((script:string)=>{
+                          if (script !== '') {
+                            let lineBreak:string = (cfg.scripts.length !== n) ? "\n" : '';
+                            scriptsListMD += "  - ["+script+"]("+script+")" + lineBreak;
+                            n++;
+                          }
                         });
-                        markDown += "\n\n";
                       }
-                      if (cfg.cssPreset !== "") {
-                        markDown += "## CSS preset(s)\n\n```text\n"+cfg.cssPreset+"\n```\n\n";
-                      }
-                      if (cfg.markup.content !== "") {
-                        markDown += "## "+cfg.markup.language+"\n\n```"+cfg.markup.language+"\n"+cfg.markup.content+"\n```\n\n";
-                      }
-                      if (cfg.style.content !== "") {
-                        markDown += "## "+cfg.style.language+"\n\n```"+cfg.style.language+"\n"+cfg.style.content+"\n```\n\n";
-                      }
-                      if (cfg.script.content !== "") {
-                        markDown += "## "+cfg.script.language+"\n\n```"+cfg.script.language+"\n"+cfg.script.content+"\n```\n\n";
-                      }
+                      let code = await playground.getCode();
+                      // https://mozilla.github.io/nunjucks/api.html
+                      // https://momentjs.com/docs/?/displaying/format/#/displaying/format/
+                      nunjucks.configure({ autoescape: false });
+                      markDown = nunjucks.renderString(
+                        plugin.settings.noteMarkdownTemplate,
+                        {
+                          date: moment().format("YYYY-MM-DD"), 
+                          time: moment().format("HH:mm"), 
+                          timeFull: moment().format("HH:mm:ss"), 
+                          title: cfg.title, 
+                          descProperty: descriptionPropertyMD, 
+                          descString: cfg.description, 
+                          tagsList: tagsListMD,
+                          tagsString: tagsStringMD,
+                          obsidianUrl: link,
+                          head: cfg.head,
+                          htmlAttrs: cfg.htmlAttrs,
+                          stylesheetsList: styleSheetListMD,
+                          scriptsList: scriptsListMD,
+                          cssPreset: cfg.cssPreset,
+                          markupLanguage: cfg.markup.language,
+                          markupCode: cfg.markup.content,
+                          styleLanguage: cfg.style.language,
+                          styleCode: cfg.style.content,
+                          scriptLanguage: cfg.script.language,
+                          scriptCode: cfg.script.content,
+                          htmlResults: await prettifyHtml("<!DOCTYPE html>\n" + code.result, 'code.html'),
+                          appUrl: cfg.appUrl
+                        }
+                      );
                     }
-                    const code = await playground.getCode();
-
-                    await saveAsGist(gistSetting, cfg.title + '.md', markDown, cfg.title + '.html', code.result, cfg.title + '.json', JSON.stringify(cfg, null, 2) );
-
+                    try {
+                      const code = await playground.getCode();
+                      await saveAsGist(gistSetting, cfg.title + '.md', markDown, cfg.title + '.html', code.result, cfg.title + '.json', JSON.stringify(cfg, null, 2) );
+                    } catch (error) {
+                      showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
+                      return;
+                    }
                   } catch (error) {
                     showNotice('Error: ' + error + " Click this message to dismiss.", 0, 'error');
                   }
