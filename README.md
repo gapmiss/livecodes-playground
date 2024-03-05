@@ -64,20 +64,20 @@ New playgrounds can be created via:
 
 - `Open starter playground` (*command*) opens a suggestion prompt with a list of simple starter playgrounds. These starter include `_hyperscript`, `Alpine.js`, `Angular`, `Arrow.JS`, `Astro`, `Bootstrap 5`, `Bulma (CSS)`, `C++`, `HTMX`, `Javascript`, `jQuery`, `Lemonade.JS`, `Lit`, `Lua`, `Lua (wasm)`, `Markdown`, `MDX`, `modulo.js`, `Open-props (CSS)`, `Perl`, `PHP`, `PHP (wasm)`, `Python`, `Python (wasm)`, `React`, `React Native`, `Reef.js`, `Riot.js`, `Ruby`, `SCSS`, `Solid.js`, `Stellar`, `Stencil.js`, `Svelte`, `Tailwind CSS`, `Typescript`, `VanJS`, `Vue 2`, `Vue 3 SFC`
 
-- `codeblock` - (*context menu*) via right-click (`ctrl`+`click`) in supported fenced code blocks. Reading mode ONLY. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `jsx`, `typescript`, `tsx`, `astro`, `svelte`.
+- `Open in Livecodes` - (*codeblock context menu*) via right-click (`ctrl`+`click`) in supported fenced code blocks. Reading mode ONLY. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `jsx`, `typescript`, `tsx`, `astro`, `svelte`.
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.01.55.png" alt="screenshot of codeblock context menu" /></p></details>
 
-- `file` - (*context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`.
+- `Open in Livecodes` - (*file context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`.
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.35.49.png" alt="screenshot of file context menu" /></p></details>
 
-- `folder` - (*context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`. To activate the menu, the folder must have 1-3 files with the supported extensions. e.g. (`index.html`, `style.css`, `main.js`)
+- `Open in Livecodes` - (*folder context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`. To activate the menu, the folder must have 1-3 files with the supported extensions. e.g. (`index.html`, `style.css`, `main.js`)
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.33.31.png" alt="screenshot of file context menu" /></p></details>
 
 - Obsidian `URI` - Create a new playground via importing of a raw JSON configuration file, easily hosted as a Github gist. The Obsidian URL expects 2 parameters, `vault` and `gistUrl` formatted as `obsidian://playground?vault=VAULTNAME&gistUrl=RAW_JSON_URL` The `gistUrl` needs to be URI encoded (see: [Obsidian Help](https://help.obsidian.md/Extending+Obsidian/Obsidian+URI))
 
 	e.g. `obsidian://playground?vault=Playground&gistUrl=https%3A%2F%2Fgist.githubusercontent.com%2Fgapmiss%2Ff558657bcde37c677724004c36ed8dcd%2Fraw%2Ff8a7173bbd17d0886534c2f2017385a5fb3cff48%2FJavascript_starter.json`
 
-### Open 
+### Open playground
 
 Playgrounds can be opened via:
 
@@ -92,7 +92,7 @@ Playgrounds can be opened via:
 	e.g. `obsidian://playground?vault=VAULTNAME&playgroundPath=path/to/playground.json`
 
 > [!IMPORTANT]
-> The above context menu options are only available when all file extensions are detected by Obsidian. Open **Settings** &gt; **File and links** and enable **Detect all file extensions** ![screenshot of settings](./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-14.34.51.png)
+> The above context menu options are only available when all file extensions are detected by Obsidian. Open `Settings` &gt; `File and links` and enable `Detect all file extensions` ![screenshot of settings](./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-14.34.51.png)
 
 
 <!-- 
