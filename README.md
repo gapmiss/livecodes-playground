@@ -1,6 +1,6 @@
 # Livecodes playground
 
-<div style="display: grid; place-items: center; margin-block: 1rem;">
+<div style="display: grid; place-items: center; margin-block: 1rem; width: 100%;">
 	<img src="https://livecodes.io/docs/img/livecodes-logo.svg" style="width:200px; margin: 0 auto;">
 </div>
 
