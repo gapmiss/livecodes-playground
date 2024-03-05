@@ -52,7 +52,7 @@ or:
 
 ### New playground
 
-New playgrounds can be created in a number of ways.
+New playgrounds can be created via:
 
 - `New playground` - (*command*) opens a prompt for the playground name, markup language, style language, CSS processors, and script language.
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.41.54.png" alt="screenshot of codeblock context menu" /></p></details>
@@ -74,6 +74,17 @@ New playgrounds can be created in a number of ways.
 - Obsidian `URI` - Create a new playground via importing of a raw JSON configuration file, easily hosted as a Github gist. The Obsidian URL expects 2 parameters, `vault` and `gistUrl` formatted as `obsidian://playground?vault=VAULTNAME&gistUrl=RAW_JSON_URL` The `gistUrl` needs to be URI encoded (see: [Obsidian Help](https://help.obsidian.md/Extending+Obsidian/Obsidian+URI))
 
 	e.g. `obsidian://playground?vault=Playground&gistUrl=https%3A%2F%2Fgist.githubusercontent.com%2Fgapmiss%2Ff558657bcde37c677724004c36ed8dcd%2Fraw%2Ff8a7173bbd17d0886534c2f2017385a5fb3cff48%2FJavascript_starter.json`
+
+### Open 
+
+Playgrounds can be opened via:
+
+- `Open playground` - (*command*) and (*ribbon menu*) opens a playground fuzzy search prompt.
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-17.02.09.png" alt="screenshot of codeblock context menu" /></p></details>
+
+- `Open playground` - (*context menu*) via right-click (`ctrl`+`click`) for playground config files (`*.JSON`).
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p>Open <strong>Settings</strong> &gt; <strong>File and links</strong> and enable <strong>Detect all file extensions</strong></p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-14.34.51.png" alt="screenshot of settings" /></p><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-17.10.19.png" alt="screenshot of file context menu" /></p></details>
+
 
 
 <!-- 
