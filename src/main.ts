@@ -70,7 +70,6 @@ export default class LivecodesPlugin extends Plugin {
       );
     }
 
-
     window.addEventListener('resize', () => {
       // console.log('--------- on window resize ---------');
       // console.log(this);
