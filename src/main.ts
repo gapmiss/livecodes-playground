@@ -1,4 +1,4 @@
-import { App, Plugin, PluginManifest, DataAdapter, TFile, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem } from "obsidian";
+import { App, Plugin, PluginManifest, DataAdapter, TAbstractFile, TFile, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem, Editor, MarkdownView } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
@@ -58,7 +58,6 @@ export default class LivecodesPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
 
-
     if (Platform.isDesktop) {
       this.register(
         this.onElement(
@@ -69,16 +68,6 @@ export default class LivecodesPlugin extends Plugin {
         )
       );
     }
-
-    window.addEventListener('resize', () => {
-      // console.log('--------- on window resize ---------');
-      // console.log(this);
-      return { }
-    })
-
-    // this.registerMarkdownPostProcessor((el, ctx) => {
-    //   codeBlockPostProcessor(el, ctx, this.app, this);
-    // });
 
     this.registerView(
       VIEW_TYPE_PLAYGROUND,
@@ -135,6 +124,21 @@ export default class LivecodesPlugin extends Plugin {
       name: "Quick playground",
       callback: async () => {
         await this.newLivecodesPlayground(false, null);
+      }
+    });
+
+    this.addCommand({
+      id: "open-codeblocks-in-livecodes",
+      name: "Open codeblocks in Livecodes",
+      editorCheckCallback: (checking, editor, view) => {
+        let res = this.processOpenCodeblocksCommand( editor );
+        if (res) {
+          if (!checking) {
+            this.newLivecodesPlaygroundFromCodeblocks();
+          }
+          return true;
+        }
+        return false;
       }
     });
 
@@ -227,7 +231,7 @@ export default class LivecodesPlugin extends Plugin {
 
     this.registerEvent(
       this.app.workspace.on("file-menu", async (menu, file) => {
-        const f = this.app.vault.getFileByPath(file.path);
+        const f:TFile|null = this.app.vault.getFileByPath(file.path);
         if (f) {
           let showMenu = false;
           let fileExt = f.name.split('.').pop();
@@ -238,9 +242,11 @@ export default class LivecodesPlugin extends Plugin {
             menu.addItem( (item) => {
               item
                 .setTitle("Open in Livecodes")
+                .setSection('livecodes')
                 .setIcon("file-code-2")
                 .onClick(async () => {
                   await this.newLivecodesPlayground(true, f);
+                  return;
                 });
             });
           }
@@ -269,6 +275,16 @@ export default class LivecodesPlugin extends Plugin {
     );
     /**/
 
+    // window.addEventListener('resize', () => {
+    //   console.log('--------- on window resize ---------');
+    //   console.log(this);
+    //   return { }
+    // })
+
+    // this.registerMarkdownPostProcessor((el, ctx) => {
+    //   codeBlockPostProcessor(el, ctx, this.app, this);
+    // });
+
     this.state = "loaded";
     console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
   }
@@ -281,6 +297,21 @@ export default class LivecodesPlugin extends Plugin {
       }
     });
     console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
+  }
+
+  private processOpenCodeblocksCommand(
+		editor: Editor
+	): boolean {
+    const PATTERN = /^([A-Za-z \t]*)```([A-Za-z]*)?\n([\s\S]*?)```([A-Za-z \t]*)*$/gm;
+    let markdown = editor.getValue();
+    let matches;
+    do {
+      matches = PATTERN.exec(markdown);
+      if (matches && [...ALLOWED_LANGS,...['js','ts']].includes(matches![2])) {
+          return true;
+      }
+    } while (matches);
+    return false;
   }
 
   async activatePlaygroundView() {
@@ -658,6 +689,91 @@ export default class LivecodesPlugin extends Plugin {
       });
   };
 
+  async newLivecodesPlaygroundFromCodeblocks() {
+    let view = this.app.workspace.getActiveViewOfType(MarkdownView);
+    if (view?.file) {
+      let fCache = this.app.metadataCache.getFileCache(view.file);
+      let cnf:Partial<config> = {markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''},};
+      let cacheRead = await this.app.vault.cachedRead(view?.file);
+      let codeSections = fCache?.sections?.filter( (section) => section.type === "code" ) || [];
+      for (let section of codeSections) {
+        let start = section.position.start.offset;
+        let end = section.position.end.offset;
+        let extracted = cacheRead.substring(start, end);
+        let rows = extracted.split("\n").filter((row) => row.length > 0);
+        let codeLanguage:string = rows[0].replace("```", "");
+        let code = extracted.replace(/^(.*)\n/,'').replace(/\n.*$/,'').trim();
+        if (codeLanguage === 'html' || codeLanguage === 'mdx' || codeLanguage === 'astro') {
+          cnf.markup.content = code;
+          cnf.markup.language = codeLanguage;
+          cnf.activeEditor = 'markup';
+        }
+        if (codeLanguage === 'css' || codeLanguage === 'scss') {
+          cnf.style.content = code;
+          cnf.style.language = codeLanguage;
+        }
+        if (codeLanguage === 'javascript' || codeLanguage === 'js' || codeLanguage === 'jsx' || codeLanguage === 'tsx' || codeLanguage === 'ts' || codeLanguage === 'typescript' || codeLanguage === 'svelte') {
+          cnf.script.content = code;
+          if (codeLanguage === 'js' || codeLanguage === 'ts') {
+            cnf.script.language = codeLanguage === 'js' ? 'javascript' : 'typescript';
+          }
+          else {
+            cnf.script.language = codeLanguage;
+          }
+        }
+      }
+
+      let codeSource = fCache?.frontmatter?.source || null;
+
+      await saveAsModal(this.app, "New livecodes playground", "Save as:", view.file.name.replace(".md", ""), "e.g. New Playground", false)
+      .then(async (fName:string) => {
+        if (fName?.length === 0) {
+          return;
+        }
+        let newPlayground:Partial<config> = {...blankPlayground, ...cnf};
+        if (codeSource) {
+          newPlayground.description = 'Source: ' + codeSource;
+        }
+        newPlayground.title = fName;
+        newPlayground.appUrl = this.settings.appUrl;
+        newPlayground.fontFamily = this.settings.fontFamily;
+        newPlayground.fontSize = this.settings.fontSize;
+        newPlayground.editor = this.settings.editor;
+        newPlayground.editorTheme = this.settings.editorTheme;
+        newPlayground.lineNumbers = this.settings.lineNumbers;
+        newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+        newPlayground.useTabs = this.settings.useTabs;
+        newPlayground.tabSize = this.settings.tabSize;
+        newPlayground.closeBrackets = this.settings.closeBrackets;
+        newPlayground.semicolons = this.settings.semicolons;
+        newPlayground.singleQuote = this.settings.singleQuote;
+        newPlayground.trailingComma = this.settings.trailingComma;
+        newPlayground.wordWrap = this.settings.wordWrap;
+        newPlayground.enableAI = this.settings.enableAI;
+        newPlayground.autoupdate = this.settings.autoUpdate;
+        newPlayground.delay = this.settings.delay;
+        let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
+        try {
+          await this.app.vault
+            .create(
+              this.settings.playgroundFolder+'/'+fName + ".json",
+              await this.createText(
+                prettyCfg
+              )
+            ).then(async (f:TFile) => {
+                this.settings.jsonTemplate = f;
+                await this.saveSettings();
+                await this.activatePlaygroundView();
+              }
+            );
+          showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+fName + ".json", 3000, 'success');
+        } catch (error) {
+          showNotice(this.settings.playgroundFolder+'/'+fName + ".json - " + error + " Click this message to dismiss.", 0, 'error');
+        }
+      });
+    }
+  };
+
   /**
    * https://github.com/eoureo/obsidian-runjs/blob/master/src/main.ts#L1394
    */
@@ -731,12 +847,9 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   onClick(event: MouseEvent) {
-    // event.preventDefault();
     const target = event.target as HTMLElement;
     const nodeType = target.localName;
     const menu = new Menu();
-    // console.log(nodeType);
-    // console.log(target.parentElement?.tagName);
     if (nodeType === 'code' && target.parentElement?.tagName.toLowerCase() === 'pre' || nodeType === 'pre') {
       let lang = 'text';
       const LANG_REGEX = /^language-/;
