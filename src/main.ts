@@ -5,6 +5,7 @@ import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
 import { StarterSelectModal } from "./modals/StarterSelect";
 import { LanguageSelectModal } from "./modals/LanguageSelect";
 import { saveAsModal } from "./modals/SaveAs";
+import { codepenUrlModal } from "./modals/codepenUrl";
 import { blankPlayground, codeBlockLanguages, ALLOWED_LANGS, ALLOWED_EXTS } from "./livecodes";
 import { Parameters } from "../@types/global";
 import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
@@ -12,7 +13,7 @@ import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
 import { showNotice } from './utils/notice';
 // @ts-ignore
 import { config } from 'livecodes';
-
+import * as cheerio from 'cheerio';
 interface Listener {
   (this: Document, ev: Event): any;
 }
@@ -139,6 +140,134 @@ export default class LivecodesPlugin extends Plugin {
           return true;
         }
         return false;
+      }
+    });
+
+    this.addCommand({
+      id: "open-livecodes-playground-from-codepen",
+      name: "New playground from Codepen",
+      callback: async () => {
+        try {
+          await codepenUrlModal(this.app, "Codepen URL", "", "", "e.g. https://codepen.io/chriscoyier/pen/DELgOJ", false)
+            .then(async (cpUrl:string) => {
+              if (cpUrl?.length === 0) {
+                return;
+              }
+              showNotice(`Fetching pen from ${cpUrl}`, 10000, 'loading');
+              // TODO: validate URL
+              let fetchedPen = await requestUrl(cpUrl).then(
+                async (f) => {
+                  let htmlContent = f.text;
+                  let cnf:Partial<config> = {title: '', markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''}};
+                  try {
+                    const $ = cheerio.load(htmlContent);
+                    let content: string = '';
+                    $('textarea[id="init-data"]').each((i, el) => {
+                      content = $(el).text()?.trim();
+                    });
+                    if (content === '') {
+                      showNotice("Error importing codepen: content not found." + " Click this message to dismiss.", 0, 'error');
+                      return;
+                    }
+                    const penJson = JSON.parse(content);
+                    // console.log('penJson');
+                    console.log(penJson);
+                    let itemJson = JSON.parse(penJson.__item);
+                    // console.log('itemJson');
+                    console.log(itemJson);
+                    cnf.title = (itemJson.title !== '') ? itemJson.title : 'Untitled';
+                    cnf.description = (itemJson.description !== '') ? itemJson.description : '';
+                    cnf.tags = (itemJson.tags.length) ? itemJson.tags : [];
+                    if (itemJson.css_pre_processor === "scss") {
+                      cnf.style.language = 'scss';
+                    }
+                    else {
+                      cnf.style.language = 'css'
+                    }
+                    cnf.style.content = itemJson.css;
+                    cnf.markup.language = 'html';
+                    cnf.markup.content = "<!-- source: "+cpUrl+" -->\n\n" + itemJson.html;
+                    cnf.script.language = 'javascript';
+                    if (itemJson.js_library !== '') {
+                      switch (itemJson.js_library) {
+                        case "jquery":
+                          cnf.head = blankPlayground.head + '\n<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>';
+                          break;
+                      
+                        default:
+                          break;
+                      }
+                    }
+                    if (itemJson.js_pre_processor !== '') {
+                      switch (itemJson.js_pre_processor) {
+                        case "coffeescript":
+                          cnf.script.language = itemJson.js_pre_processor;
+                          break;
+                      
+                        default:
+                          break;
+                      }
+                    }
+                    cnf.script.content = itemJson.js;
+                    if (itemJson.html_pre_processor === "pug") {
+                      switch (itemJson.html_pre_processor) {
+                        case "pug":
+                          cnf.markup.language = itemJson.html_pre_processor;
+                          break;
+                      
+                        default:
+                          break;
+                      }
+                    }
+                    cnf.script.content = itemJson.js;
+                    let newPlayground:Partial<config> = {...blankPlayground, ...cnf};
+                    newPlayground.appUrl = this.settings.appUrl;
+                    newPlayground.fontFamily = this.settings.fontFamily;
+                    newPlayground.fontSize = this.settings.fontSize;
+                    newPlayground.editor = this.settings.editor;
+                    newPlayground.editorTheme = this.settings.editorTheme;
+                    newPlayground.lineNumbers = this.settings.lineNumbers;
+                    newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+                    newPlayground.useTabs = this.settings.useTabs;
+                    newPlayground.tabSize = this.settings.tabSize;
+                    newPlayground.closeBrackets = this.settings.closeBrackets;
+                    newPlayground.semicolons = this.settings.semicolons;
+                    newPlayground.singleQuote = this.settings.singleQuote;
+                    newPlayground.trailingComma = this.settings.trailingComma;
+                    newPlayground.wordWrap = this.settings.wordWrap;
+                    newPlayground.enableAI = this.settings.enableAI;
+                    newPlayground.autoupdate = this.settings.autoUpdate;
+                    newPlayground.delay = this.settings.delay;
+                
+                    let prettyCfg: string | undefined = JSON.stringify(newPlayground, null, 2);
+                    try {
+                      await this.app.vault
+                        .create(
+                          this.settings.playgroundFolder+'/'+cnf.title + ".json",
+                          await this.createText(
+                            prettyCfg
+                          )
+                        ).then(async (f:TFile) => {
+                            this.settings.jsonTemplate = f;
+                            await this.saveSettings();
+                            await this.activatePlaygroundView(true);
+                          }
+                        );
+                      showNotice("New playground saved as: " + this.settings.playgroundFolder+'/'+cnf.title + ".json", 3000, 'success');
+                    } catch (error) {
+                      showNotice(this.settings.playgroundFolder+'/'+cnf.title + ".json - " + error + " Click this message to dismiss.", 0, 'error');
+                    }
+                    // console.log(cnf);
+                  } catch (error) {
+                    throw error;
+                  }
+                }
+              );
+            });
+        } catch (error) {
+          showNotice(error + " Click this message to dismiss.", 0, 'error');
+          console.log(error);
+        }
       }
     });
 
@@ -314,8 +443,10 @@ export default class LivecodesPlugin extends Plugin {
     return false;
   }
 
-  async activatePlaygroundView() {
-    showNotice("Loading playground…", 5000, 'loading');
+  async activatePlaygroundView(skipNotice: boolean = false) {
+    if (!skipNotice) {
+      showNotice("Loading playground…", 5000, 'loading');
+    }
 
     await this.app.workspace.getLeaf(true).setViewState({
       type: VIEW_TYPE_PLAYGROUND,

@@ -25,6 +25,7 @@
 		"@octokit/rest": "^20.0.2",
 		"@popperjs/core": "^2.11.8",
 		"@tsconfig/svelte": "^5.0.2",
+		"cheerio": "^1.0.0-rc.12",
 		"esbuild-svelte": "^0.8.0",
 		"livecodes": "^0.4.0",
 		"nunjucks": "^3.2.4",
