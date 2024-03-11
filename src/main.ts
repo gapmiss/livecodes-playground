@@ -161,8 +161,8 @@ export default class LivecodesPlugin extends Plugin {
               await requestUrl(cpUrl).then(
                 async (f) => {
                   let htmlContent = f.text;
-                  console.log('htmlContent');
-                  console.log(htmlContent);
+                  // console.log('htmlContent');
+                  // console.log(htmlContent);
                   let cnf:Partial<config> = {title: '', markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''}};
                   try {
                     // https://cheerio.js.org/docs/basics/loading
@@ -178,11 +178,11 @@ export default class LivecodesPlugin extends Plugin {
                       return;
                     }
                     let penJson = JSON.parse(content);
-                    console.log('penJson');
-                    console.log(penJson);
+                    // console.log('penJson');
+                    // console.log(penJson);
                     let itemJson = JSON.parse(penJson.__item);
-                    console.log('itemJson');
-                    console.log(itemJson);
+                    // console.log('itemJson');
+                    // console.log(itemJson);
                     await saveAsModal(this.app, "New livecodes playground", "Save as:", (itemJson.title !== '') ? itemJson.title : 'Untitled', "e.g. New Playground", false)
                       .then(async (fName:string) => {
                         if (fName?.length === 0) {
