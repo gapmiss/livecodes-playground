@@ -192,7 +192,7 @@ export const blankPlayground = {
   processors: '[]',
   customSettings: '{}',
   editor: "monaco",
-  fontFamily: "Iosevka",
+  fontFamily: "Default",
   fontSize: 12,
   useTabs: false,
   tabSize: 2,
@@ -205,5 +205,5 @@ export const blankPlayground = {
   trailingComma: true,
   emmet: true,
   editorTheme: "[]",
-  version: "24"
+  version: "26"
 };

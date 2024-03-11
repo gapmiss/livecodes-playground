@@ -45,3 +45,21 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
       console.error('Failed to copy to clipboard: ', error)
     })
 }
+
+/**
+ * https://github.com/NomarCub/obsidian-copy-url-in-preview/blob/main/src/helpers.ts#L78
+ */
+export interface Listener {
+  (this: Document, ev: Event): any;
+}
+
+export function onElement(
+  el: Document,
+  event: keyof HTMLElementEventMap,
+  selector: string,
+  listener: Listener,
+  options?: { capture?: boolean }
+) {
+  el.on(event, selector, listener, options);
+  return () => el.off(event, selector, listener, options);
+}

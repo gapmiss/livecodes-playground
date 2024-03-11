@@ -10,13 +10,11 @@ import { blankPlayground, codeBlockLanguages, ALLOWED_LANGS, ALLOWED_EXTS } from
 import { Parameters } from "../@types/global";
 import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
 // import { codeBlockPostProcessor } from './editor/codeblockProcessor';
+import { onElement } from './utils';
 import { showNotice } from './utils/notice';
 // @ts-ignore
 import { config } from 'livecodes';
 import * as cheerio from 'cheerio';
-interface Listener {
-  (this: Document, ev: Event): any;
-}
 
 export default class LivecodesPlugin extends Plugin {
   settings!: LivecodesSettings;
@@ -61,11 +59,11 @@ export default class LivecodesPlugin extends Plugin {
 
     if (Platform.isDesktop) {
       this.register(
-        this.onElement(
+        onElement(
           document,
           "contextmenu" as keyof HTMLElementEventMap,
           "div",
-          this.onClick.bind(this)
+          this.onClickCodeblock.bind(this)
         )
       );
     }
@@ -132,7 +130,7 @@ export default class LivecodesPlugin extends Plugin {
       id: "open-codeblocks-in-livecodes",
       name: "Open codeblocks in Livecodes",
       editorCheckCallback: (checking, editor, view) => {
-        let res = this.processOpenCodeblocksCommand( editor );
+        let res = this.checkForCodeblocks( editor );
         if (res) {
           if (!checking) {
             this.newLivecodesPlaygroundFromCodeblocks();
@@ -155,14 +153,15 @@ export default class LivecodesPlugin extends Plugin {
               }
               let regex = /https:\/\/codepen\.io\/[a-zA-Z0-9_\-]{1,50}\/pen\/[a-zA-z0-9]{1,50}/g;
               if (!regex.test(cpUrl)) {
-                showNotice('Error: Unable to confirm codepen.io URL. Click this message to dismiss', 0, 'error');
+                showNotice('Error: Unable to validate as codepen.io URL. Click this message to dismiss', 0, 'error');
                 return;
               }
               showNotice(`Fetching pen from ${cpUrl}`, 10000, 'loading');
-              // TODO: validate URL
               await requestUrl(cpUrl).then(
                 async (f) => {
                   let htmlContent = f.text;
+                  console.log('htmlContent');
+                  console.log(htmlContent);
                   let cnf:Partial<config> = {title: '', markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''}};
                   try {
                     // https://cheerio.js.org/docs/basics/loading
@@ -177,12 +176,12 @@ export default class LivecodesPlugin extends Plugin {
                       showNotice("Error importing codepen: content not found." + " Click this message to dismiss.", 0, 'error');
                       return;
                     }
-                    const penJson = JSON.parse(content);
-                    // console.log('penJson');
-                    // console.log(penJson);
+                    let penJson = JSON.parse(content);
+                    console.log('penJson');
+                    console.log(penJson);
                     let itemJson = JSON.parse(penJson.__item);
-                    // console.log('itemJson');
-                    // console.log(itemJson);
+                    console.log('itemJson');
+                    console.log(itemJson);
                     
                     await saveAsModal(this.app, "New livecodes playground", "Save as:", (itemJson.title !== '') ? itemJson.title : 'Untitled', "e.g. New Playground", false)
                       .then(async (fName:string) => {
@@ -445,7 +444,7 @@ export default class LivecodesPlugin extends Plugin {
     console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
   }
 
-  private processOpenCodeblocksCommand(
+  private checkForCodeblocks(
 		editor: Editor
 	): boolean {
     const PATTERN = /^([A-Za-z \t]*)```([A-Za-z]*)?\n([\s\S]*?)```([A-Za-z \t]*)*$/gm;
@@ -983,47 +982,36 @@ export default class LivecodesPlugin extends Plugin {
       return fileContent?.trim() as string;
   }
 
-  onElement(
-    el: Document,
-    event: keyof HTMLElementEventMap,
-    selector: string,
-    listener: Listener,
-    options?: { capture?: boolean }
-  ) {
-    el.on(event, selector, listener, options);
-    return () => el.off(event, selector, listener, options);
-  }
-
-  onClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    const nodeType = target.localName;
-    const menu = new Menu();
-    if (nodeType === 'code' && target.parentElement?.tagName.toLowerCase() === 'pre' || nodeType === 'pre') {
-      let lang = 'text';
-      const LANG_REGEX = /^language-/;
-      target.classList.forEach((val, key) => {
-        if (LANG_REGEX.test(val)) {
-          lang = val.replace(`language-`, '');
-          return;
-        }
-      });
-      
-      if (ALLOWED_LANGS.includes(lang)) {
-        menu.addItem((item: MenuItem) =>
-          item
-            .setIcon("code")
-            .setTitle("Open in Livecodes")
-            .onClick(async (ele) => {
-              let code:string = '';
-              if (nodeType === 'code') {
-                code = target.textContent!;
-              } else {
-                code = target.firstChild?.textContent!;
-              }
-              await this.newLivecodesPlaygroundFromCodeblock(lang, code);
-            })
-        );
+  onClickCodeblock(event: MouseEvent) {
+    let target = event.target as HTMLElement;
+    let nodeType = target.localName;
+    if (nodeType !== 'code' && !(target.parentElement instanceof HTMLPreElement)) { 
+      return;
+    }
+    let lang = 'text';
+    let LANG_REGEX = /^language-/;
+    target.classList.forEach((val, key) => {
+      if (LANG_REGEX.test(val)) {
+        lang = val.replace(`language-`, '');
+        return;
       }
+    });
+    let menu = new Menu();
+    if (ALLOWED_LANGS.includes(lang)) {
+      menu.addItem((item: MenuItem) =>
+        item
+          .setIcon("code")
+          .setTitle("Open in Livecodes")
+          .onClick(async (ele) => {
+            let code:string = '';
+            if (nodeType === 'code') {
+              code = target.textContent!;
+            } else {
+              code = target.firstChild?.textContent!;
+            }
+            await this.newLivecodesPlaygroundFromCodeblock(lang, code);
+          })
+      );
     }
 
     let offset = 0;
