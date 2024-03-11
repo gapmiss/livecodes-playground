@@ -17,6 +17,7 @@ import { config } from 'livecodes';
 import * as cheerio from 'cheerio';
 
 export default class LivecodesPlugin extends Plugin {
+
   settings!: LivecodesSettings;
   manifest: PluginManifest;
   plugin: LivecodesPlugin;
@@ -153,7 +154,7 @@ export default class LivecodesPlugin extends Plugin {
               }
               let regex = /https:\/\/codepen\.io\/[a-zA-Z0-9_\-]{1,50}\/pen\/[a-zA-z0-9]{1,50}/g;
               if (!regex.test(cpUrl)) {
-                showNotice('Error: Unable to validate as codepen.io URL. Click this message to dismiss', 0, 'error');
+                showNotice('Error: Unable to validate as codepen.io URL. See the developer console for error details. Click this message to dismiss', 0, 'error');
                 return;
               }
               showNotice(`Fetching pen from ${cpUrl}`, 10000, 'loading');
@@ -182,57 +183,90 @@ export default class LivecodesPlugin extends Plugin {
                     let itemJson = JSON.parse(penJson.__item);
                     console.log('itemJson');
                     console.log(itemJson);
-                    
                     await saveAsModal(this.app, "New livecodes playground", "Save as:", (itemJson.title !== '') ? itemJson.title : 'Untitled', "e.g. New Playground", false)
                       .then(async (fName:string) => {
                         if (fName?.length === 0) {
                           return;
                         }
+
                         cnf.title = fName;
                         cnf.description = (itemJson.description !== '') ? itemJson.description : '';
                         cnf.tags = (itemJson.tags.length) ? itemJson.tags : [];
-                        if (itemJson.css_pre_processor === "scss") {
-                          cnf.style.language = 'scss';
+
+                        let extStylesheets:any[] = [];
+                        let extScripts:any[] = [];
+                        if (itemJson.resources.length) {
+                          itemJson.resources.forEach((resource: any) => {
+                            if (resource.resource_type === 'css') {
+                              extStylesheets = [...extStylesheets, resource.url];
+                            }
+                            if (resource.resource_type === 'js') {
+                              extScripts = [...extScripts, resource.url];
+                            }
+                          });
+                          if (extStylesheets.length) {
+                            cnf.stylesheets = extStylesheets;
+                          }
+                          if (extScripts.length) {
+                            cnf.scripts = extScripts;
+                          }
+                        }
+
+                        // style lang
+                        if ( itemJson.css_pre_processor !== '' && ['scss', 'less', 'stylus'].contains(itemJson.css_pre_processor) ) {
+                          cnf.style.language = itemJson.css_pre_processor;
                         }
                         else {
                           cnf.style.language = 'css'
                         }
+                        if (itemJson.css_starter !== '') {
+                          switch (itemJson.css_starter) {
+                            case "reset":
+                              cnf.cssPreset = 'reset-css';
+                              break;
+                            case "normalize":
+                              cnf.cssPreset = 'normalize.css';
+                              break;
+                          }
+                        }
                         cnf.style.content = itemJson.css;
-                        cnf.markup.language = 'html';
-                        cnf.markup.content = "<!-- source: "+cpUrl+" -->\n\n" + itemJson.html;
-                        cnf.script.language = 'javascript';
+
+                        // js library
                         if (itemJson.js_library !== '') {
                           switch (itemJson.js_library) {
                             case "jquery":
                               cnf.head = blankPlayground.head + '\n<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>';
                               break;
-                          
-                            default:
-                              break;
                           }
                         }
-                        if (itemJson.js_pre_processor !== '') {
-                          switch (itemJson.js_pre_processor) {
-                            case "coffeescript":
-                              cnf.script.language = itemJson.js_pre_processor;
-                              break;
-                          
-                            default:
-                              break;
-                          }
+
+                        // script lang
+                        if (itemJson.js_pre_processor !== '' && ['coffeescript', 'typescript', 'livescript', 'babel'].contains(itemJson.js_pre_processor)) {
+                          cnf.script.language = itemJson.js_pre_processor;
+                        } else {
+                          cnf.script.language = 'javascript';
                         }
                         cnf.script.content = itemJson.js;
-                        if (itemJson.html_pre_processor === "pug") {
-                          switch (itemJson.html_pre_processor) {
-                            case "pug":
-                              cnf.markup.language = itemJson.html_pre_processor;
-                              break;
-                          
-                            default:
-                              break;
+
+                        // markup lang
+                        if (itemJson.html_pre_processor !== '' && ['pug', 'markdown'].contains(itemJson.html_pre_processor)) {
+                          cnf.markup.language = itemJson.html_pre_processor;
+                        } else {
+                          cnf.markup.language = 'html';
+                        }
+                        cnf.markup.content = "<!-- source: "+cpUrl+" -->\n\n" + itemJson.html;
+
+                        if (itemJson.head !== '') {
+                          if (cnf.head !== undefined) {
+                            cnf.head = cnf.head + '\n' + itemJson.head;
+                          } else {
+                            cnf.head =  blankPlayground.head + '\n' + itemJson.head;
                           }
                         }
-                        cnf.script.content = itemJson.js;
+                        if (itemJson.html_classes !== '') {
+                          cnf.htmlAttrs = `lang="en" class="${itemJson.html_classes}"`
+                        }
+
                         let newPlayground:Partial<config> = {...blankPlayground, ...cnf};
                         newPlayground.appUrl = this.settings.appUrl;
                         newPlayground.fontFamily = this.settings.fontFamily;
@@ -445,8 +479,8 @@ export default class LivecodesPlugin extends Plugin {
   }
 
   private checkForCodeblocks(
-		editor: Editor
-	): boolean {
+    editor: Editor
+  ): boolean {
     const PATTERN = /^([A-Za-z \t]*)```([A-Za-z]*)?\n([\s\S]*?)```([A-Za-z \t]*)*$/gm;
     let markdown = editor.getValue();
     let matches;
@@ -985,7 +1019,7 @@ export default class LivecodesPlugin extends Plugin {
   onClickCodeblock(event: MouseEvent) {
     let target = event.target as HTMLElement;
     let nodeType = target.localName;
-    if (nodeType !== 'code' && !(target.parentElement instanceof HTMLPreElement)) { 
+    if (nodeType !== 'code' && !(target.parentElement instanceof HTMLPreElement)) {
       return;
     }
     let lang = 'text';
