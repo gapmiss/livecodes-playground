@@ -69,7 +69,7 @@ New playgrounds can be created via:
 	<details style="margin-block: 1em;"><summary>Screenshots</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-12-08.19.31.png" alt="screenshot of new playground from codepen command" /></p><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-12-08.19.46.png" alt="screenshot of prompt for codepen URL" /></p></details>
 
 - `Open codeblocks in Livecodes` (*command*) Live-preview and Source mode. The command parses the markdown note for codeblocks and will attempt to create a new playground with 1-3 codeblocks (markup, style, script) based on the codeblock's language. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `js`, `jsx`, `typescript`, `ts`, `tsx`, `astro`, `svelte`.
-	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-12-08.02.24.png" alt="screenshot of open codeblocks in livecodes command" /></p></details>
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-12-08.54.16.png" alt="screenshot of open codeblocks in livecodes command" /></p></details>
 
 - `Open in Livecodes` - (*codeblock context menu*) via right-click (`ctrl`+`click`) in supported fenced code blocks. Reading mode ONLY. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `js`, `jsx`, `typescript`, `ts`, `tsx`, `astro`, `svelte`.
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.01.55.png" alt="screenshot of open codeblocks in livecodes context menu" /></p></details>
