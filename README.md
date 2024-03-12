@@ -17,8 +17,9 @@ Read about [why Livecodes](https://livecodes.io/docs/why), it's [features](https
 
 ### Community plugins
 
-1. ~~Community Plugins > Browse~~ Plugin is currently awaiting approval.
-2. Search for "livecodes"
+1. [Obsidian.md/plugins](https://obsidian.md/plugins?id=livecodes-playground) or
+2. Open *Settings* > *Community Plugins* > *Browse*
+3. Search for "livecodes"
 
 ### via BRAT (Beta Reviewer's Auto-update Tool)
 
@@ -57,15 +58,21 @@ or:
 New playgrounds can be created via:
 
 - `New playground` - (*command*) opens a prompt for the playground name, markup language, style language, CSS processors, and script language.
-	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.41.54.png" alt="screenshot of codeblock context menu" /></p></details>
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.41.54.png" alt="screenshot of new playground modal" /></p></details>
 
 - `Quick playground` - (*command*) and (*ribbon menu*) open a prompt for the playground name. The default markup, style, & script languages can be configured in the settings.
-	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.43.59.png" alt="screenshot of codeblock context menu" /></p></details>
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.43.59.png" alt="screenshot of quick playground modal" /></p></details>
 
 - `Open starter playground` (*command*) opens a suggestion prompt with a list of simple starter playgrounds. These starter include `_hyperscript`, `Alpine.js`, `Angular`, `Arrow.JS`, `Astro`, `Bootstrap 5`, `Bulma (CSS)`, `C++`, `HTMX`, `Javascript`, `jQuery`, `Lemonade.JS`, `Lit`, `Lua`, `Lua (wasm)`, `Markdown`, `MDX`, `modulo.js`, `Open-props (CSS)`, `Perl`, `PHP`, `PHP (wasm)`, `Python`, `Python (wasm)`, `React`, `React Native`, `Reef.js`, `Riot.js`, `Ruby`, `SCSS`, `Solid.js`, `Stellar`, `Stencil.js`, `Svelte`, `Tailwind CSS`, `Typescript`, `VanJS`, `Vue 2`, `Vue 3 SFC`
 
-- `Open in Livecodes` - (*codeblock context menu*) via right-click (`ctrl`+`click`) in supported fenced code blocks. Reading mode ONLY. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `jsx`, `typescript`, `tsx`, `astro`, `svelte`.
-	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.01.55.png" alt="screenshot of codeblock context menu" /></p></details>
+- `New playground from Codepen` (*command*) opens a prompt for a Codepen URL and attempts to import the pen and create a new playground. Please note: this command is experimental and is dependent on Codepen's source code for presenting pens. If Codepen's changes their HTML code, the command could stop working
+	<details style="margin-block: 1em;"><summary>Screenshots</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-12-08.19.31.png" alt="screenshot of new playground from codepen command" /></p><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-12-08.19.46.png" alt="screenshot of prompt for codepen URL" /></p></details>
+
+- `Open codeblocks in Livecodes` (*command*) Live-preview and Source mode. The command parses the markdown note for codeblocks and will attempt to create a new playground with 1-3 codeblocks (markup, style, script) based on the codeblock's language. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `js`, `jsx`, `typescript`, `ts`, `tsx`, `astro`, `svelte`.
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-12-08.02.24.png" alt="screenshot of open codeblocks in livecodes command" /></p></details>
+
+- `Open in Livecodes` - (*codeblock context menu*) via right-click (`ctrl`+`click`) in supported fenced code blocks. Reading mode ONLY. Supported languages include `html`, `mdx`, `css`, `scss`, `javascript`, `js`, `jsx`, `typescript`, `ts`, `tsx`, `astro`, `svelte`.
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.01.55.png" alt="screenshot of open codeblocks in livecodes context menu" /></p></details>
 
 - `Open in Livecodes` - (*file context menu*) via right-click (`ctrl`+`click`) for supported file extensions. Supported extensions include `html`, `mdx`, `css`, `scss`, `js`, `jsx`, `ts`, `tsx`, `astro`, `svelte`.
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-12.35.49.png" alt="screenshot of file context menu" /></p></details>
@@ -82,7 +89,7 @@ New playgrounds can be created via:
 Playgrounds can be opened via:
 
 - `Open playground` - (*command*) and (*ribbon menu*) opens a playground fuzzy search prompt.
-	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-17.02.09.png" alt="screenshot of codeblock context menu" /></p></details>
+	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-17.02.09.png" alt="screenshot of livecodes playground fuzzy search prompt" /></p></details>
 
 - `Open playground` - (*context menu*) via right-click (`ctrl`+`click`) for playground config files (`*.JSON`).
 	<details style="margin-block: 1em;"><summary>Screenshot</summary><p><img src="./resources/LIVECODES-Obsidian-v1.5.8-2024-03-05-17.10.19.png" alt="screenshot of file context menu" /></p></details>
