@@ -300,7 +300,7 @@
                       // https://momentjs.com/docs/?/displaying/format/#/displaying/format/
                       nunjucks.configure({ autoescape: false });
                       markDown = nunjucks.renderString(
-                        plugin.settings.noteMarkdownTemplate,
+                        plugin.settings.gistMarkdownTemplate,
                         {
                           date: moment().format("YYYY-MM-DD"), 
                           time: moment().format("HH:mm"), 
