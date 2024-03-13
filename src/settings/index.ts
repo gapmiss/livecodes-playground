@@ -955,19 +955,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       ),
     );
 
-
-
-
-
-
-
-
-
-
-
-
-
-      const toggleChoices = async (choice: string): Promise<any> => {
+    const toggleChoices = async (choice: string): Promise<any> => {
       switch (choice) {
         case "monaco":
           let monacodd = [dropdownCodejarDark, dropdownCodejarLight, dropdownCodemirrorDark, dropdownCodemirrorLight];

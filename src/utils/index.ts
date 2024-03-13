@@ -24,12 +24,13 @@ async function savePlaygroundToFile(
 }
 
 export async function downloadFile(data: BlobPart, fileName: string, type="text/plain") {
-  let a = activeDocument.createEl("a", {cls: 'download-file-link'});
-  activeDocument.body.appendChild(a);
+  let a = activeDocument.createElement("a");
   a.href = window.URL.createObjectURL(
     new Blob([data], { type })
   );
+  a.setAttribute("class", 'download-file-link');
   a.setAttribute("download", fileName);
+  activeDocument.body.appendChild(a);
   a.click();
   window.URL.revokeObjectURL(a.href);
   activeDocument.body.removeChild(a);
