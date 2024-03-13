@@ -1,6 +1,5 @@
 import LivecodesPlugin from "../main";
 import {
-  FileSystemAdapter,
   FuzzyMatch,
   FuzzySuggestModal,
   TFile,
@@ -12,13 +11,11 @@ import { showNotice } from '../utils/notice';
 export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
   plugin: LivecodesPlugin;
   vault: Vault;
-  adapter: FileSystemAdapter;
 
   constructor(plugin: LivecodesPlugin) {
     super(plugin.app);
     this.plugin = plugin;
     this.vault = plugin.app.vault;
-    this.adapter = plugin.app.vault.adapter as FileSystemAdapter;
     this.containerEl.addClass("playground-select-modal");
     this.setPlaceholder("Select a playground or type to search");
   }
@@ -35,7 +32,7 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
   }
 
   getItemText(item: TFile): string {
-    var regex = new RegExp(this.plugin.settings.playgroundFolder+"\/", "g");
+    let regex = new RegExp(this.plugin.settings.playgroundFolder+"\/", "g");
     return item.path.replace(regex, "").replace(".json", "");
   }
 

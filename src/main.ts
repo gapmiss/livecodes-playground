@@ -1,4 +1,4 @@
-import { App, Plugin, PluginManifest, DataAdapter, TAbstractFile, TFile, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem, Editor, MarkdownView, moment } from "obsidian";
+import { App, Plugin, PluginManifest, TFile, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem, Editor, MarkdownView, moment } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
@@ -21,7 +21,6 @@ export default class LivecodesPlugin extends Plugin {
   settings!: LivecodesSettings;
   manifest: PluginManifest;
   plugin: LivecodesPlugin;
-  public adapter: DataAdapter = this.app.vault.adapter;
   state: string = 'initial';
   params: any;
   fontFamily: any;
@@ -658,21 +657,22 @@ export default class LivecodesPlugin extends Plugin {
           newPlayground.style.content = '';
           newPlayground.script.language = 'javascript';
           newPlayground.script.content = '';
+
           if (foundMarkup) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(newMarkupFile) : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
+            let f: TFile = file instanceof TFolder ? this.app.vault.getFileByPath(newMarkupFile)! : this.app.vault.getFileByPath(file.path)!;
+            let code = await this.app.vault.read(f)
             newPlayground.markup.content = code;
             newPlayground.markup.language = newMarkupExtension;
           }
           if (foundStyle) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(newStyleFile) : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
+            let f: TFile = file instanceof TFolder ? this.app.vault.getFileByPath(newStyleFile)! : this.app.vault.getFileByPath(file.path)!;
+            let code = await this.app.vault.read(f)
             newPlayground.style.content = code;
             newPlayground.style.language = newStyleExtension;
           }
           if (foundScript) {
-            let f = file instanceof TFolder ? this.app.vault.getAbstractFileByPath(newScriptFile) : this.app.vault.getAbstractFileByPath(file.path);
-            let code = await this.app.vault.read(f as TFile)
+            let f: TFile = file instanceof TFolder ? this.app.vault.getFileByPath(newScriptFile)! : this.app.vault.getFileByPath(file.path)!;
+            let code = await this.app.vault.read(f)
             newPlayground.script.content = code;
             newPlayground.script.language = newScriptExtension;
           }

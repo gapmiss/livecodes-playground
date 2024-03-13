@@ -1,4 +1,4 @@
-import { type App, ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile, Menu, View } from 'obsidian';
+import { type App, ItemView, WorkspaceLeaf, normalizePath, TFile, Menu } from 'obsidian';
 // @ts-ignore
 import { config } from 'livecodes';
 import LivecodesPlugin from '../main';
@@ -10,7 +10,6 @@ export class PlaygroundView extends ItemView {
   plugin: LivecodesPlugin;
   component: Component;
   jsonTemplate: TFile | undefined;
-  adapter: FileSystemAdapter;
 
   constructor(
     app: App,
@@ -20,7 +19,6 @@ export class PlaygroundView extends ItemView {
   ) {
     super(leaf);
     this.jsonTemplate = jsonTemplate;
-    this.adapter = this.app.vault.adapter as FileSystemAdapter;
   }
 
   getViewType() {
@@ -57,15 +55,13 @@ export class PlaygroundView extends ItemView {
     
     let foundTemplate: boolean = (this.jsonTemplate !== undefined);
     if (!foundTemplate) {
-      // TODO: how to prevent PlaygroundView from erroring when obsidian force reloads
       return;
     }
     
-    let playgroundPath: string;
-    let newTemplate: Partial<config>;
-    playgroundPath = normalizePath((this.jsonTemplate!).path);
-    let tpl = await this.adapter.read(playgroundPath);
-    newTemplate = JSON.parse(tpl) as Partial<config>;
+    let playgroundPath: string = normalizePath((this.jsonTemplate!).path);
+    let fPath: TFile = this.app.vault.getFileByPath(playgroundPath)!;
+    let tpl: string = await this.app.vault.read(fPath);
+    let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
     this.component = new Component({
       target: this.contentEl,
       props: {

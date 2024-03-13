@@ -1,6 +1,5 @@
 import LivecodesPlugin from "../main";
 import {
-  FileSystemAdapter,
   FuzzyMatch,
   FuzzySuggestModal,
   Vault,
@@ -14,7 +13,6 @@ import { showNotice } from '../utils/notice';
 export class StarterSelectModal extends FuzzySuggestModal<string> {
   plugin: LivecodesPlugin;
   vault: Vault;
-  adapter: FileSystemAdapter;
   name: string;
   activeEditor: string;
   head: string;
@@ -30,7 +28,6 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
     super(plugin.app);
     this.plugin = plugin;
     this.vault = plugin.app.vault;
-    this.adapter = plugin.app.vault.adapter as FileSystemAdapter;
     this.containerEl.addClass("starter-select-modal");
     this.setPlaceholder("Select a starter or type to search");
   }

@@ -24,6 +24,9 @@ body.theme-light {
   margin-bottom: 1em;
   border-radius: var(--livecodes-wrapper-border-radius);
 }
+.download-file-link {
+  display: none;
+}
 /**
  * playground modals
  */

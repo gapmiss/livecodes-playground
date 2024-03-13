@@ -1,13 +1,11 @@
 import LivecodesPlugin from "../main";
 import {
-  FileSystemAdapter,
   Modal,
   Vault,
   Setting, 
   ButtonComponent,
   DropdownComponent,
-  App,
-  setIcon
+  App
 } from "obsidian";
 import { codeLanguages } from "../livecodes";
 
@@ -17,7 +15,6 @@ export class LanguageSelectModal extends Modal {
   app: App;
   plugin: LivecodesPlugin;
   vault: Vault;
-  adapter: FileSystemAdapter;
   title: string | null;
   changes: {title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string};
   callback: LanguageSelectCallback;
@@ -33,7 +30,6 @@ export class LanguageSelectModal extends Modal {
     this.app = app;
     this.plugin = plugin;
     this.vault = this.app.vault;
-    this.adapter = this.app.vault.adapter as FileSystemAdapter;
     this.containerEl.addClass("language-select-modal");
     this.title = title;
     this.changes = changes;

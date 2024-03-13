@@ -1,4 +1,4 @@
-import { normalizePath, App } from "obsidian";
+import { normalizePath, App, TFile } from "obsidian";
 import { showNotice } from './notice';
 
 export function saveJson(
@@ -14,13 +14,17 @@ async function savePlaygroundToFile(
   path: string,
   content: string
 ) {
-  const filePath = normalizePath(path);
-  await app.vault.adapter.write(filePath, content);
+  let filePath = normalizePath(path);
+  let fPath: TFile = this.app.vault.getFileByPath(filePath)!;
+  try {
+    await app.vault.modify(fPath, content);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function downloadFile(data: BlobPart, fileName: string, type="text/plain") {
-  const a = activeDocument.createElement("a");
-  a.style.display = "none";
+  let a = activeDocument.createEl("a", {cls: 'download-file-link'});
   activeDocument.body.appendChild(a);
   a.href = window.URL.createObjectURL(
     new Blob([data], { type })
