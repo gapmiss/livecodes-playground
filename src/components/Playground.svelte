@@ -173,11 +173,13 @@
 
       // playground.watch('load', () => {
       //   // Livecodes playground loaded
+      //   console.log('PLAYGROUND LOADED…………');
       // });
 
       playground.watch('ready', () => {
         // Livecodes playground ready
         buttonsWrapper.setAttribute('style', '');
+        // console.log('PLAYGROUND READY…………');
       });
 
       setIcon(saveAsNewPlayground, "file-code-2");

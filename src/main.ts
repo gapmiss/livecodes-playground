@@ -529,6 +529,14 @@ export default class LivecodesPlugin extends Plugin {
       return;
     }
     let newPlayground:Partial<config> = blankPlayground;
+
+    newPlayground.markup.language = res.markup;
+    newPlayground.markup.content = '';
+    newPlayground.style.language = res.style;
+    newPlayground.style.content = '';
+    newPlayground.script.language = res.script;
+    newPlayground.script.content = '';
+
     let processors = [];
 
     if (res.twcss) {
@@ -549,12 +557,6 @@ export default class LivecodesPlugin extends Plugin {
       processors.push("windicss");
     }
     newPlayground.processors = processors as unknown as string;
-    newPlayground.markup.language = res.markup;
-    newPlayground.markup.content = '';
-    newPlayground.style.language = res.style;
-    newPlayground.style.content = '';
-    newPlayground.script.language = res.script;
-    newPlayground.script.content = '';
 
     newPlayground.title = res.title;
     newPlayground.appUrl = this.settings.appUrl;
