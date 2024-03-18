@@ -1,5 +1,6 @@
 import { App, Notice, Modal, setIcon } from "obsidian";
 import { buttonTour, helpModals } from "../settings/help";
+import { copyStringToClipboard } from "../utils";
 
 export class HelpModal extends Modal {
   title: string | undefined;
@@ -56,9 +57,8 @@ export class HelpModal extends Modal {
         iconEl.setAttribute('tabindex', '0');
         (el as HTMLElement).insertAdjacentElement("beforebegin", iconEl);
         [iconEl,(el as HTMLElement)].forEach((elt) => {
-          elt.addEventListener("click", () => {
-            this.copyStringToClipboard(el?.textContent!);
-            new Notice(el?.textContent! + ' copied', 3000);
+          elt.addEventListener("click", async () => {
+            await copyStringToClipboard(el?.textContent!, el?.textContent!);
           });
           elt.addEventListener('keydown', (evt) => {
             const keyDown = evt.key;

@@ -1,32 +1,38 @@
-// from: Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
-import { TAbstractFile, TFolder } from "obsidian";
-import { TextInputSuggest } from "./suggest";
+// Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
+import { AbstractInputSuggest, App, TAbstractFile, TFolder } from "obsidian";
 
-export class FolderSuggest extends TextInputSuggest<TFolder> {
-  getSuggestions(inputStr: string): TFolder[] {
-    const abstractFiles = app.vault.getAllLoadedFiles();
-    const folders: TFolder[] = [];
-    const lowerCaseInputStr = inputStr.toLowerCase();
+export class FolderSuggest extends AbstractInputSuggest<TFolder> {
 
-    abstractFiles.forEach((folder: TAbstractFile) => {
-      if (
-        folder instanceof TFolder &&
-        folder.path.toLowerCase().contains(lowerCaseInputStr)
-      ) {
-        folders.push(folder);
-      }
-    });
+    constructor(
+        public inputEl: HTMLInputElement,
+        public app: App,
+    ) {
+        super(app, inputEl);
+    }
+    getSuggestions(inputStr: string): TFolder[] {
+        const abstractFiles = this.app.vault.getAllLoadedFiles();
+        const lowerCaseInputStr = inputStr.toLowerCase();
 
-    return folders;
-  }
+        const folders: TFolder[] = abstractFiles.reduce((acc, folder: TAbstractFile) => {
+            if (
+                folder instanceof TFolder &&
+                folder.path.toLowerCase().contains(lowerCaseInputStr)
+            ) {
+                acc.push(folder)
+            }
+            return acc
+        }, [] as TFolder[]);
 
-  renderSuggestion(file: TFolder, el: HTMLElement): void {
-    el.setText(file.path);
-  }
+        return folders;
+    }
 
-  selectSuggestion(file: TFolder): void {
-    this.inputEl.value = file.path;
-    this.inputEl.trigger("input");
-    this.close();
-  }
+    renderSuggestion(file: TFolder, el: HTMLElement): void {
+        el.setText(file.path);
+    }
+
+    selectSuggestion(file: TFolder): void {
+        this.inputEl.value = file.path;
+        this.inputEl.trigger("input");
+        this.close();
+    }
 }

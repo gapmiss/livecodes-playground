@@ -36,16 +36,22 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     let desc = document.createDocumentFragment();
     desc.append(
-      "All settings changes are applied to future Livecodes playground views.",
+      "All changes are applied to future Livecodes playground views.",
       desc.createEl("br"),
       desc.createEl("br"),
-      "Need help or an introduction? See the plugin ",
+      "Need help or an introduction? Visit the plugin ",
       desc.createEl("a", {
         href: "https://github.com/gapmiss/livecodes-playground/",
         text: "README",
         attr: { "aria-label": "https://github.com/gapmiss/livecodes-playground/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
       }),
-      " and LiveCodes.io  ",
+      " and ",
+      desc.createEl("a", {
+        href: "https://gapmiss.github.io/livecodes-playground-docs/",
+        text: "documentation",
+        attr: { "aria-label": "https://gapmiss.github.io/livecodes-playground-docs/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
+      }),
+      " and LiveCodes.io ",
       desc.createEl("a", {
         href: "https://livecodes.io/docs/getting-started/",
         text: "documentation",
@@ -55,7 +61,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
     );
 
     new Setting(containerEl)
-      .setName(this.plugin.manifest.name + " (v" + this.plugin.manifest.version + ")")
       .setDesc(desc)
       .setClass("setting-item-heading-onboarding")
       .then(cb => {
@@ -64,10 +69,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .then(cb => {
         cb.settingEl.classList.add("setting-head");
       });
-
-    new Setting(containerEl)
-      .setName("Plugin settings")
-      .setHeading();
 
     new Setting(containerEl)
       .setName('App URL')
@@ -100,7 +101,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setDesc('Vault folder for saving playground JSON files')
       .setClass("livecodes-settings-input-playgrounds")
       .addSearch((cb) => {
-        new FolderSuggest(cb.inputEl);
+        new FolderSuggest(cb.inputEl, this.app);
         cb
           .setPlaceholder("e.g. playgrounds")
           .setValue(this.plugin.settings.playgroundFolder)
@@ -144,7 +145,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setDesc('Vault folder for saving playground notes')
       .setClass("livecodes-settings-input-notes")
       .addSearch((cb) => {
-        new FolderSuggest(cb.inputEl);
+        new FolderSuggest(cb.inputEl, this.app);
         cb
           .setPlaceholder("e.g. playgrounds/notes")
           .setValue(this.plugin.settings.notesFolder)
@@ -163,7 +164,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("Sharing settings")
+      .setName("Sharing")
       .setHeading();
 
     new Setting(containerEl)
@@ -251,7 +252,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("Editor settings")
+      .setName("Editor")
       .setHeading();
 
     new Setting(containerEl)
@@ -612,7 +613,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setHeading()
-      .setName("Quick playground settings")
+      .setName("Quick playground")
       .setClass('livecodes-quick-playground-heading')
       .addExtraButton((component) => {
         let isExpanded = false;
@@ -818,68 +819,6 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           })
         }
       );
-
-    new Setting(containerEl)
-      .setName("Reload plugin")
-      .setHeading()
-      .setClass("livecodes-reload-heading")
-      .addExtraButton((component) => {
-        let isExpanded = false;
-        component
-          .setIcon("chevron-right")
-          .setTooltip("Show", { "placement": "left" })
-          .onClick(() => {
-            let toggles = activeDocument.querySelectorAll('.livecodes-reload-description');
-            if (!isExpanded) {
-              component.setIcon('chevron-down').setTooltip("Hide", { "placement": "left" })
-              isExpanded = true;
-              activeDocument.querySelector('.livecodes-reload-heading')!.setAttribute('style','border-bottom: 1px solid var(--background-modifier-border);');
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
-            }
-            else {
-              component.setIcon('chevron-right').setTooltip("Show", { "placement": "left" })
-              isExpanded = false;
-              activeDocument.querySelector('.livecodes-reload-heading')!.setAttribute('style','border-bottom: 1px solid transparent');
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
-            }
-          });
-      })
-      .then(() => {
-        let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-reload-heading .clickable-icon');
-        if (bttn !== null) {
-          bttn!.setAttribute('tabindex', '0');
-          bttn!.addEventListener('keydown', (evt) => {
-            const keyDown = evt.key;
-            if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
-                evt.preventDefault();
-                bttn!.click();
-            }
-          });
-        }
-      })
-
-    new Setting(containerEl)
-      .setDesc("Clicking the red \"reload\" icon will reload the Livecodes plugin and close all current playgrounds.")
-      .setClass("livecodes-reload-description")
-      .addExtraButton((component) => {
-        component
-          .setIcon("refresh-cw")
-          .setTooltip("Reload plugin")
-          .onClick(async () => {
-            if (await confirm(`Reload plugin?`, this.plugin.app)) {
-              try {
-                await this.plugin.reload();
-                showNotice(`${this.plugin.manifest.name} (v${this.plugin.manifest.version}) reloaded`, 3000, 'success');
-              } catch (error) {
-                console.error(error);
-              }
-            }
-          });
-        component.extraSettingsEl.classList.add("mod-warning");
-      })
-      .then(cb => {
-        cb.settingEl.classList.add("setting-head");
-      });
 
     new Setting(containerEl)
       .setName("Support the developers")

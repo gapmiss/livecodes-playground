@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { setIcon } from "obsidian";
+  import { setIcon, moment } from "obsidian";
   import { createPlayground, EmbedOptions } from "livecodes";
   import * as prettier from "prettier/standalone";
   import * as htmlPlugin from "prettier/plugins/html";
@@ -12,13 +12,12 @@
   import { openShareGistModal } from "../modals/ShareGist";
   import { openExternalResourcesModal } from "../modals/ExternalResources";
   import { openPlaygroundSettingsModal } from "../modals/PlaygroundSettings";
-  import moment from "moment";
   import { showNotice } from '../utils/notice';
   const { Octokit } = require("@octokit/rest");
   let nunjucks = require('nunjucks');
 
-  const app = this.app;
-  const plugin = app.plugins.plugins["livecodes-playground"];
+  const plugin = this.app.plugins.plugins["livecodes-playground"];
+  
   let container: any;
   let playground: any;
   let watcher: { remove: () => void } | null;
@@ -176,9 +175,10 @@
       //   console.log('PLAYGROUND LOADED…………');
       // });
 
-      playground.watch('ready', () => {
+      playground.watch('ready', async () => {
         // Livecodes playground ready
         buttonsWrapper.setAttribute('style', '');
+        // await playground.exec('showVersion');
         // console.log('PLAYGROUND READY…………');
       });
 

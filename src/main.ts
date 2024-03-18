@@ -469,11 +469,6 @@ export default class LivecodesPlugin extends Plugin {
 
   onunload() {
     this.state = "unloaded";
-    this.app.workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND).forEach((leaf) => {
-      if (leaf.view instanceof PlaygroundView) {
-        leaf.detach();
-      }
-    });
     console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
   }
 
@@ -957,50 +952,6 @@ export default class LivecodesPlugin extends Plugin {
     }
   };
 
-  /**
-   * https://github.com/eoureo/obsidian-runjs/blob/master/src/main.ts#L1394
-   */
-  async reload() {
-    this.state = "start reloading";
-    console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
-
-    this.app.workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND).forEach((leaf) => {
-      if (leaf.view instanceof PlaygroundView) {
-        leaf.detach();
-      }
-    });
-
-    let manifest_id = this.manifest.id;
-    // @ts-ignore
-    if (this.app.plugins.enabledPlugins.has(manifest_id)) {
-      this.state = "disable";
-      // @ts-ignore
-      await this.app.plugins.disablePlugin(manifest_id);
-
-      window.setTimeout(async () => {
-        // @ts-ignore
-        this.app.plugins.enablePlugin(manifest_id);
-
-        for (let i = 0; i < 100; i++) {
-          // @ts-ignore
-          let state = this.app.plugins.plugins[manifest_id]?.state;
-          if (state == "loaded") {
-            window.setTimeout(() => {
-              // @ts-ignore
-              this.app.setting.openTabById(manifest_id);
-            }, 100);
-            break;
-          }
-          await sleep(500);
-        }
-      }, 100);
-    }
-  }
-
-  sleep(ms:number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   async copyStringToClipboard(text:string, topic:string|undefined=undefined) {
     navigator.clipboard
       .writeText(text)
@@ -1059,4 +1010,3 @@ export default class LivecodesPlugin extends Plugin {
   }
 
 }
-
