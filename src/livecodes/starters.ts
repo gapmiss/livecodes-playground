@@ -615,5 +615,21 @@ export const livecodesStarters = [
       language: 'javascript',
       content: ''
     },
+  },
+  {
+    name: 'Preact',
+    activeEditor: 'script',
+    style: {
+      language: 'css',
+      content: '.container,\n.container button {\n  text-align: center;\n  font: 1em sans-serif;\n}\n.logo {\n  width: 150px;\n}'
+    },
+    markup: {
+      language: 'html',
+      content: '<div id="app"></div>'
+    },
+    script: {
+      language: 'jsx',
+      content: '/** @jsx h */\nimport { h, render } from \'preact\';\nimport { useSignal } from "@preact/signals?deps=preact";\n\nfunction App(props) {\n  const count = useSignal(0);\n  return (\n    <div class="container">\n      <h1>Hello, {props.name}!</h1>\n      <img className="logo" alt="logo" src="https://livecodes.io/livecodes/assets/templates/preact.svg" />\n      <p>You clicked {count} times.</p>\n      <button onClick={() => count.value++}>Click me</button>\n    </div>\n  );\n}\n\nrender(<App name="Preact" />, document.body);'
+    },
   }
 ]
