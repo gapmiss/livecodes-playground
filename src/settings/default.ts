@@ -61,7 +61,7 @@ export const DEFAULT_SETTINGS: LivecodesSettings = {
   trailingComma: true,
   wordWrap: false,
   enableAI: false,
-  autoUpdate: true,
+  autoUpdate: false,
   editorTheme: ["vs@light", "vs-dark@dark"],
   monacoDarkTheme: "",
   monacoLightTheme: "",

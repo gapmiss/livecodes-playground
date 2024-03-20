@@ -349,6 +349,7 @@ export default class LivecodesPlugin extends Plugin {
       this.app.workspace.on("file-menu", (menu, file) => {
         const f = this.app.vault.getFileByPath(file.path);
         if (f && f.extension.toLowerCase() === "json" && f.path.contains(this.settings.playgroundFolder)) {
+          menu.addSeparator();
           menu.addItem((item) => {
             item
               .setTitle("Open playground")
@@ -394,6 +395,7 @@ export default class LivecodesPlugin extends Plugin {
             }
           });
           if (showMenu) {
+            menu.addSeparator();
             menu.addItem( (item) => {
               item
                 .setTitle("Open in Livecodes")
@@ -412,15 +414,15 @@ export default class LivecodesPlugin extends Plugin {
         const f:TFile|null = this.app.vault.getFileByPath(file.path);
         if (f) {
           let showMenu = false;
-          let fileExt = f.name.split('.').pop();
-          if (ALLOWED_EXTS.includes(fileExt as string)) {
+          let fileExt:string|undefined = f.name.split('.').pop();
+          if (ALLOWED_EXTS.includes(fileExt!)) {
             showMenu = true;
           }
           if (showMenu) {
+            menu.addSeparator();
             menu.addItem( (item) => {
               item
                 .setTitle("Open in Livecodes")
-                .setSection('livecodes')
                 .setIcon("file-code-2")
                 .onClick(async () => {
                   await this.newLivecodesPlayground(true, f);
