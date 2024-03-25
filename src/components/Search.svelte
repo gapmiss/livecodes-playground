@@ -172,6 +172,8 @@
 {#if entries.length}
 <div class="search-results-wrapper">
   <div class="results-note">
+    <!-- limit: 50 -->
+    <!-- https://github.com/scambier/obsidian-omnisearch/blob/fce89e6f7457dda0083919735dc1ed6f25190eb1/src/search/omnisearch.ts#L270 -->
     {(entries.length === 50) ? entries.length + "+" : entries.length} playgrounds found
   </div>
   {#each entries as item}
@@ -204,6 +206,8 @@
       </div>
       <div class="result-row-stats">
         <div>{@html '<span>Score:</span> ' + Math.round(item.score)}</div>
+        <!-- limit: 99 -->
+        <!-- https://github.com/scambier/obsidian-omnisearch/blob/fce89e6f7457dda0083919735dc1ed6f25190eb1/src/tools/text-processing.ts#L119 -->
         <div>{@html '<span>Matches:</span> ' + ((item.matches.length === 99) ? item.matches.length + "+" : item.matches.length)}</div>
       </div>
     </div>
