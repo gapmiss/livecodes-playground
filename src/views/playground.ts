@@ -27,7 +27,7 @@ export class PlaygroundView extends ItemView {
 
   getDisplayText() {
     if (this.jsonTemplate === undefined) {
-      return 'NO TEMPLATE FOUND';
+      return 'Plugin no longer active';
     }
     let fileName = this.jsonTemplate?.path
       .substring(

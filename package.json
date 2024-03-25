@@ -28,6 +28,7 @@
 		"cheerio": "^1.0.0-rc.12",
 		"esbuild-svelte": "^0.8.0",
 		"livecodes": "^0.4.0",
+		"lodash-es": "^4.17.21",
 		"nunjucks": "^3.2.4",
 		"prettier": "^3.2.5",
 		"svelte": "^4.2.8",

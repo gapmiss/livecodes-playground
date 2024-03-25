@@ -1,5 +1,6 @@
-import { App, Plugin, PluginManifest, TFile, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem, Editor, MarkdownView, moment } from "obsidian";
+import { App, Plugin, PluginManifest, TFile, normalizePath, TFolder, requestUrl, Platform, Menu, MenuItem, Editor, MarkdownView, WorkspaceLeaf } from "obsidian";
 import { PlaygroundView, VIEW_TYPE_PLAYGROUND } from "./views/playground";
+import { LivecodesSearchView, VIEW_TYPE_PLAYGROUND_SEARCH } from './views/search';
 import { LivecodesSettingsTab } from './settings';
 import { PlaygroundSelectModal } from "./modals/PlaygroundSelect";
 import { StarterSelectModal } from "./modals/StarterSelect";
@@ -10,7 +11,7 @@ import { blankPlayground, codeBlockLanguages, ALLOWED_LANGS, ALLOWED_EXTS } from
 import { Parameters } from "../@types/global";
 import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
 // import { codeBlockPostProcessor } from './editor/codeblockProcessor';
-import { onElement } from './utils';
+import { onElement, copyStringToClipboard } from './utils';
 import { showNotice } from './utils/notice';
 // @ts-ignore
 import { config } from 'livecodes';
@@ -73,12 +74,29 @@ export default class LivecodesPlugin extends Plugin {
       (leaf) => new PlaygroundView(this.app, leaf, this.settings.jsonTemplate, this.settings),
     );
 
-    this.addRibbonIcon("file-code-2", "Open livecodes playground", async () => {
+    this.registerView(
+      VIEW_TYPE_PLAYGROUND_SEARCH,
+      (leaf) => new LivecodesSearchView(this.app, leaf, this.settings),
+    );
+
+    this.addCommand({
+      id: "open-livecodes-search",
+      name: "Search playgrounds",
+      callback: async () => {
+        await this.activateSearchView();
+      },
+    });
+
+    this.addRibbonIcon("file-code-2", "Open playground", async () => {
       new PlaygroundSelectModal(this).open();
     });
 
     this.addRibbonIcon("code", "Quick playground", async () => {
       await this.newLivecodesPlayground(false, null);
+    });
+
+    this.addRibbonIcon("search-code", "Search playgrounds", async () => {
+      await this.activateSearchView();
     });
 
     this.addCommand({
@@ -143,17 +161,17 @@ export default class LivecodesPlugin extends Plugin {
 
     this.addCommand({
       id: "open-livecodes-playground-from-codepen",
-      name: "New playground from Codepen",
+      name: "New playground from CodePen",
       callback: async () => {
         try {
-          await codepenUrlModal(this.app, "Codepen URL", "", "", "e.g. https://codepen.io/chriscoyier/pen/DELgOJ", false)
+          await codepenUrlModal(this.app, "CodePen URL", "", "", "e.g. https://codepen.io/chriscoyier/pen/DELgOJ", false)
             .then(async (cpUrl:string) => {
               if (cpUrl?.length === 0) {
                 return;
               }
               let regex = /https:\/\/codepen\.io\/[a-zA-Z0-9_\-]{1,50}\/pen\/[a-zA-z0-9]{1,50}/g;
               if (!regex.test(cpUrl)) {
-                showNotice('Error: Unable to validate as codepen.io URL. See the developer console for error details. Click this message to dismiss', 0, 'error');
+                showNotice('Error: Unable to validate as CodePen.io URL. See the developer console for error details. Click this message to dismiss', 0, 'error');
                 return;
               }
               showNotice(`Fetching pen from ${cpUrl}`, 10000, 'loading');
@@ -173,7 +191,7 @@ export default class LivecodesPlugin extends Plugin {
                       content = $(el).text()?.trim();
                     });
                     if (content === '') {
-                      showNotice("Error importing codepen: content not found." + " Click this message to dismiss.", 0, 'error');
+                      showNotice("Error importing CodePen: content not found." + " Click this message to dismiss.", 0, 'error');
                       return;
                     }
                     let penJson = JSON.parse(content);
@@ -366,7 +384,7 @@ export default class LivecodesPlugin extends Plugin {
               .setIcon("link")
               .onClick(async () => {
                 let playgroundPath = normalizePath(f.path);
-                await this.copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath)+")");
+                await copyStringToClipboard("["+f.name+"](obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath)+")");
               });
           });
           menu.addItem((item) => {
@@ -375,7 +393,7 @@ export default class LivecodesPlugin extends Plugin {
               .setIcon("link")
               .onClick(async () => {
                 let playgroundPath = normalizePath(f.path);
-                await this.copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath));
+                await copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath));
               });
           });
         }
@@ -504,6 +522,19 @@ export default class LivecodesPlugin extends Plugin {
     if (leaf?.view instanceof PlaygroundView) {
       this.app.workspace.revealLeaf(leaf);
     }
+  }
+
+  async activateSearchView() {
+    const { workspace } = this.app;
+    let leaf: WorkspaceLeaf | null;
+    const leaves = workspace.getLeavesOfType(VIEW_TYPE_PLAYGROUND_SEARCH);
+    if (leaves.length > 0) {
+      leaf = leaves[0];
+    } else {
+      leaf = workspace.getRightLeaf(false);
+      await leaf!.setViewState({ type: VIEW_TYPE_PLAYGROUND_SEARCH, active: true });
+    }
+    workspace.revealLeaf(leaf!);
   }
 
   async loadSettings() {
@@ -954,16 +985,16 @@ export default class LivecodesPlugin extends Plugin {
     }
   };
 
-  async copyStringToClipboard(text:string, topic:string|undefined=undefined) {
-    navigator.clipboard
-      .writeText(text)
-      .then(function () {
-        showNotice((topic !== undefined ? topic + " " : "Text ") + "copied to clipboard", 2500, 'success');
-      })
-      .catch(function (error) {
-        console.error('Failed to copy to clipboard: ', error)
-      })
-  }
+  // async copyStringToClipboard(text:string, topic:string|undefined=undefined) {
+  //   navigator.clipboard
+  //     .writeText(text)
+  //     .then(function () {
+  //       showNotice((topic !== undefined ? topic + " " : "Text ") + "copied to clipboard", 2500, 'success');
+  //     })
+  //     .catch(function (error) {
+  //       console.error('Failed to copy to clipboard: ', error)
+  //     })
+  // }
 
   createText = async (
       fileContent: string|undefined
