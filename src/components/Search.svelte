@@ -1,10 +1,8 @@
 <script lang="ts">
   import { setIcon, TFile } from "obsidian";
   import { onMount } from "svelte";
-  // import { escapeRegExp } from 'lodash-es';
   import { copyStringToClipboard } from "../utils";
   import {INDICATOR_SVG} from "../assets/indicator";
-  // import { showNotice } from '../utils/notice';
 
   // omnisearch API:
   type OmnisearchApi = {
@@ -42,8 +40,6 @@
   let noOmnisearch: HTMLElement;
   let noOmnisearchIcon: HTMLElement;
 
-  let omnisearch: OmnisearchApi;
-
   let startSearch = async function(query: string) {
     activeDocument.querySelector(".no-result")?.setAttr("style", "display: none;");
     activeDocument.querySelector(".waiting-indicator")?.setAttribute("style", "display: flex;");
@@ -54,13 +50,10 @@
     // Use "exact expressions" in quotes to further filter the results returned by the query
     // Use -exclusions to exclude notes containing certain words
     const result = await this.omnisearch.search('ext:"json" ' + query);
-    // console.log(result);
     if (result.length) {
       result.forEach((res: ResultNoteApi) => {
-        // console.log(res.excerpt);
         let fileExt = res.path.split('.').pop();
         if (fileExt === 'json') {
-          // console.log(res.matches);
           entries = [...entries, {title: res.basename, path: res.path, score: res.score, excerpt: res.excerpt, matches: res.matches}];
         }
       });
@@ -74,12 +67,6 @@
       activeDocument.querySelector(".waiting-indicator")?.setAttribute("style", "display: none;");
       activeDocument.querySelector(".no-result")?.setAttr("style", "display: flex;");
     }
-  }
-
-  function handleCreateNote(e:MouseEvent) {
-    e.preventDefault();
-    console.log('handleCreateNote');
-    console.log(e.target);
   }
 
   function handleOpenJson(e:MouseEvent) {
@@ -102,7 +89,7 @@
     }
   }
 
-  function createNoteHandler(node: HTMLElement, path: string) {
+  function copyUrlHandler(node: HTMLElement, path: string) {
     setIcon(node, "link");
     node.addEventListener("click", async (e) => {
       e.preventDefault();
@@ -120,62 +107,8 @@
     });
   }
 
-  /*/
-  function highlightText(text: string, matches: SearchMatchApi[]): string {
-    if (!matches.length) {
-      return text
-    }
-      try {
-      // Text to highlight
-      const src = new RegExp(
-        matches
-          .map(
-            // This regex will match the word (with \b word boundary)
-            // \b doesn't detect non-alphabetical character's word boundary, so we need to escape it
-            matchItem =>
-              `\\b${escapeRegExp(matchItem.match)}\\b${
-                !/[a-zA-Z]/.test(matchItem.match)
-                  ? `|${escapeRegExp(matchItem.match)}`
-                  : ''
-              }`
-          )
-          .join('|'),
-        'giu'
-      )
-
-      // Replacer function that will highlight the matches
-      const replacer = (match: string) => {
-        const matchInfo = matches.find(info =>
-          match.match(
-            new RegExp(
-              `\\b${escapeRegExp(info.match)}\\b${
-                !/[a-zA-Z]/.test(info.match) ? `|${escapeRegExp(info.match)}` : ''
-              }`,
-              'giu'
-            )
-          )
-        )
-        if (matchInfo) {
-          // return `<span class="${highlightClass}">${match}</span>`
-          return `<span class="omnisearch-default-highlight">${match}</span>`
-        }
-        return match
-      }
-
-      // Effectively highlight the text
-      return text.replace(src, replacer)
-    } catch (e) {
-      console.error('Omnisearch - Error in highlightText()', e)
-      return text
-    }
-  }
-  /**/
-
-
   onMount(() => {
     if (!this.app.plugins.plugins["omnisearch"]) {
-      // showNotice('Omnisearch not installed or enabled! Click to dismiss.', 0, 'error');
-      // console.log('Omnisearch not installed or enabled!');
       setIcon(noOmnisearchIcon, 'alert-triangle');
       activeDocument.querySelector(".search-form-wrapper")?.setAttr("style", "display: none;");
       activeDocument.querySelector(".no-omnisearch")?.setAttr("style", "display: block;");
@@ -188,7 +121,6 @@
       activeDocument.querySelector(".no-result")?.setAttr("style", "display: none;");
       startSearch(query);
     });
-    // https://nikitahl.com/input-clear-button
     searchInput.addEventListener("input", (evt) => {
       if ((evt.currentTarget! as HTMLInputElement).value && !searchInput.classList.contains("clear-input--touched")) {
         searchInput.classList.add("clear-input--touched")
@@ -211,7 +143,7 @@
 
 <div class="search-form-wrapper">
   <div class="search-form-input">
-    <div class="clear-input-container">
+    <div class="clear-input">
       <input
         type="text"
         placeholder="What are you looking for?"
@@ -244,7 +176,6 @@
   </div>
   {#each entries as item}
     <div class="result-row">
-      <!-- <div class="result-score" aria-label="Score: ${item.score}">score: {`${Math.round(item.score)}`}</div> -->
       <div>
         <div>
           <a
@@ -256,7 +187,7 @@
         </div>
         <div>
           <button
-            use:createNoteHandler={item.path}
+            use:copyUrlHandler={item.path}
             class="clickable-icon setting-editor-extra-setting-button"
             aria-label="Copy Obsidian URL to clipboard"
           >
@@ -276,35 +207,6 @@
         <div>{@html '<span>Matches:</span> ' + ((item.matches.length === 99) ? item.matches.length + "+" : item.matches.length)}</div>
       </div>
     </div>
-
-    <!-- <div style="padding:.25em;font-size:var(--font-smaller);">
-      {@html 'Score: ' + Math.round(item.score) + '<br>'}
-      {@html item.matches.length + ' matches'} -->
-      <!-- {
-        @html highlightText(
-          item.excerpt
-            .replaceAll('&amp;', '&')
-            .replaceAll('&lt;', '<')
-            .replaceAll('&gt;', '>')
-            .replaceAll('&quot;', '"')
-            .replaceAll('&#039;', "'")
-            .replaceAll('<br>', '')
-          , item.matches
-        )
-      } -->
-      <!-- {
-        item.excerpt
-          .replaceAll('&amp;', '&')
-          .replaceAll('&lt;', '<')
-          .replaceAll('&gt;', '>')
-          .replaceAll('&quot;', '"')
-          .replaceAll('&#039;', "'")
-          .replaceAll('<br>', '')
-        } -->
-    <!-- </div> -->
-    <!-- <div>
-      {item.matches.length} matches
-    </div> -->
   {:else}
     <div class="search-results-wrapper"></div>
   {/each}
