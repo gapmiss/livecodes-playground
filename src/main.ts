@@ -396,6 +396,7 @@ export default class LivecodesPlugin extends Plugin {
                 await copyStringToClipboard("obsidian://playground?vault="+encodeURIComponent(this.app.vault.getName())+"&playgroundPath="+encodeURIComponent(playgroundPath));
               });
           });
+          menu.addSeparator();
         }
       })
     );
@@ -422,6 +423,7 @@ export default class LivecodesPlugin extends Plugin {
                   await this.newLivecodesPlayground(true, f);
                 });
             });
+            menu.addSeparator();
           }
         }
       })
@@ -447,6 +449,7 @@ export default class LivecodesPlugin extends Plugin {
                   return;
                 });
             });
+            menu.addSeparator();
           }
         }
       })
