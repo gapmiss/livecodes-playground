@@ -143,7 +143,7 @@ export function codeBlockLanguages() {
 };
 
 export const blankPlayground = {
-  appUrl: "https://v26.livecodes.io/",
+  appUrl: "https://v28.livecodes.io/",
   title: "New Playground",
   description: "",
   head: "<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",

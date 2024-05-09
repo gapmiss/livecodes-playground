@@ -76,7 +76,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       .setClass("livecodes-settings-input-appurl")
       .addText(text =>
         text
-          .setPlaceholder('https://v26.livecodes.io/')
+          .setPlaceholder('https://v28.livecodes.io/')
           .setValue(this.plugin.settings.appUrl)
           .onChange(async newAppUrl => {
             this.plugin.settings.appUrl = newAppUrl;
