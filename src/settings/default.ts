@@ -14,6 +14,7 @@ export interface LivecodesSettings {
   editor: any;
   lineNumbers: boolean;
   darkTheme: boolean;
+  layout: string;
   useTabs: boolean;
   tabSize: any;
   closeBrackets: boolean;
@@ -53,6 +54,7 @@ export const DEFAULT_SETTINGS: LivecodesSettings = {
   editor: "monaco",
   lineNumbers: true,
   darkTheme: true,
+  layout: "responsive",
   useTabs: false,
   tabSize: "2",
   closeBrackets: true,

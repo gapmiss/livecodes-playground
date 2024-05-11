@@ -399,6 +399,24 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName('Layout')
+      .setDesc('Sets the playground layout to horizontal or vertical. If set to "responsive", the layout is vertical in small screens when the playground height is larger than its width, otherwise horizontal. (default: responsive)')
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({
+            "responsive": "responsive",
+            "vertical": "vertical",
+            "horizontal": "horizontal",
+          })
+          .setValue(this.plugin.settings.layout)
+          .onChange(async (newValue) => {
+            this.plugin.settings.layout = newValue;
+            await this.plugin.saveSettings();
+          });
+      });
+
+
+    new Setting(containerEl)
       .setName('Dark theme')
       .setDesc('Enable dark theme as default')
       .addToggle(toggle =>

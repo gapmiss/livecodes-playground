@@ -156,6 +156,7 @@ export const blankPlayground = {
   formatOnsave: false,
   mode: "full",
   theme: "dark",
+  layout: "responsive",
   recoverUnsaved: true,
   showSpacing: false,
   welcome: true,

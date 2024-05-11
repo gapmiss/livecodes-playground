@@ -29,6 +29,7 @@ export default class LivecodesPlugin extends Plugin {
   editor: any;
   lineNumbers: boolean;
   darkTheme: boolean;
+  layout: string;
   useTabs: boolean;
   tabSize: any;
   closeBrackets: boolean;
@@ -292,6 +293,7 @@ export default class LivecodesPlugin extends Plugin {
                         newPlayground.editorTheme = this.settings.editorTheme;
                         newPlayground.lineNumbers = this.settings.lineNumbers;
                         newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+                        newPlayground.layout = this.settings.layout;
                         newPlayground.useTabs = this.settings.useTabs;
                         newPlayground.tabSize = this.settings.tabSize;
                         newPlayground.closeBrackets = this.settings.closeBrackets;
@@ -597,6 +599,7 @@ export default class LivecodesPlugin extends Plugin {
     newPlayground.editorTheme = this.settings.editorTheme;
     newPlayground.lineNumbers = this.settings.lineNumbers;
     newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+    newPlayground.layout = this.settings.layout;
     newPlayground.useTabs = this.settings.useTabs;
     newPlayground.tabSize = this.settings.tabSize;
     newPlayground.closeBrackets = this.settings.closeBrackets;
@@ -730,6 +733,7 @@ export default class LivecodesPlugin extends Plugin {
         newPlayground.editorTheme = this.settings.editorTheme;
         newPlayground.lineNumbers = this.settings.lineNumbers;
         newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+        newPlayground.layout = this.settings.layout;
         newPlayground.useTabs = this.settings.useTabs;
         newPlayground.tabSize = this.settings.tabSize;
         newPlayground.closeBrackets = this.settings.closeBrackets;
@@ -871,6 +875,7 @@ export default class LivecodesPlugin extends Plugin {
         newPlayground.editorTheme = this.settings.editorTheme;
         newPlayground.lineNumbers = this.settings.lineNumbers;
         newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+        newPlayground.layout = this.settings.layout;
         newPlayground.useTabs = this.settings.useTabs;
         newPlayground.tabSize = this.settings.tabSize;
         newPlayground.closeBrackets = this.settings.closeBrackets;
@@ -956,6 +961,7 @@ export default class LivecodesPlugin extends Plugin {
         newPlayground.editorTheme = this.settings.editorTheme;
         newPlayground.lineNumbers = this.settings.lineNumbers;
         newPlayground.theme = this.settings.darkTheme ? "dark" : "light";
+        newPlayground.layout = this.settings.layout;
         newPlayground.useTabs = this.settings.useTabs;
         newPlayground.tabSize = this.settings.tabSize;
         newPlayground.closeBrackets = this.settings.closeBrackets;

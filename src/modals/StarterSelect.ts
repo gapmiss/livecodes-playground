@@ -105,6 +105,7 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
         newPlayground.editorTheme = this.plugin.settings.editorTheme;
         newPlayground.lineNumbers = this.plugin.settings.lineNumbers;
         newPlayground.theme = this.plugin.settings.darkTheme ? "dark" : "light";
+        newPlayground.layout = this.plugin.settings.layout;
         newPlayground.useTabs = this.plugin.settings.useTabs;
         newPlayground.tabSize = this.plugin.settings.tabSize;
         newPlayground.closeBrackets = this.plugin.settings.closeBrackets;
