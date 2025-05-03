@@ -184,8 +184,8 @@ button.share-gist-button:disabled {
 /* icons */
 td:has(span[class$="-icon"]),
 p:has(span[class$="-icon"]) {
-  display: flex;
-  gap: .5em;
+  /* display: flex; */
+  /* gap: .5em; */
 }
 span.info-icon {
   color: var(--color-blue);
