@@ -6,10 +6,5 @@
 	"description": "Client-side code editor playground - Powered by LiveCodes",
 	"author": "@gapmiss",
 	"authorUrl": "https://github.com/gapmiss",
-	"isDesktopOnly": false,
-	"fundingUrl": {
-		"Github Sponsors": "https://github.com/sponsors/gapmiss",
-		"Buy Me a Coffee": "https://buymeacoffee.com/gapmiss",
-		"Ko-Fi": "https://ko-fi.com/gapmiss"
-	}
+	"isDesktopOnly": false
 }
