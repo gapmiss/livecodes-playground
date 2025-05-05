@@ -6,7 +6,7 @@ export const livecodesStarters = [
     name: 'C++',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="name">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/cpp.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n\n<script>\n  // set initial input\n  livecodes.cpp.input = "-1";\n\n  addEventListener(\'load\', async () => {\n    const button = document.querySelector("#counter-button");\n\n    // wait till loaded\n    await livecodes.cpp.loaded;\n\n    // get initial output\n    const initialOutput = livecodes.cpp.output;\n    update(initialOutput);\n\n    button.onclick = async () => {\n      // run with new input\n      const {output, error, exitCode} = await livecodes.cpp.run(window.count);\n      update(output);\n    };\n\n    function update(output) {\n      const counter = document.querySelector("#counter");\n      const name = document.querySelector("#name");\n\n      const [title, count] = output.split(\'\\n\');\n\n      if (parseInt(count) !== NaN) {\n        window.count = count;\n        counter.innerText = window.count;\n      }\n      if (title) {\n        name.innerText = title;\n      }\n    }\n  });\n</script>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="name">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/cpp.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n\n<script>\n  // set initial input\n  livecodes.cpp.input = "-1";\n\n  addEventListener(\'load\', async () => {\n    const button = document.querySelector("#counter-button");\n\n    // wait till loaded\n    await livecodes.cpp.loaded;\n\n    // get initial output\n    const initialOutput = livecodes.cpp.output;\n    update(initialOutput);\n\n    button.onclick = async () => {\n      // run with new input\n      const {output, error, exitCode} = await livecodes.cpp.run(window.count);\n      update(output);\n    };\n\n    function update(output) {\n      const counter = document.querySelector("#counter");\n      const name = document.querySelector("#name");\n\n      const [title, count] = output.split(\'\\n\');\n\n      if (parseInt(count) !== NaN) {\n        window.count = count;\n        counter.innerText = window.count;\n      }\n      if (title) {\n        name.innerText = title;\n      }\n    }\n  });\n</script>\n'
     },
     style: {
       language: 'css',
@@ -21,7 +21,7 @@ export const livecodesStarters = [
     name: 'Lua (wasm)',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/lua.svg" />\n  <p id="counter">You clicked 0 times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/lua.svg" />\n  <p id="counter">You clicked 0 times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -36,7 +36,7 @@ export const livecodesStarters = [
     name: 'Lua',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/lua.svg" />\n  <p id="counter">You clicked 0 times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/lua.svg" />\n  <p id="counter">You clicked 0 times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -51,7 +51,7 @@ export const livecodesStarters = [
     name: 'Perl',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/perl.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/perl.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -66,7 +66,7 @@ export const livecodesStarters = [
     name: 'PHP (wasm)',
     markup: {
       language: 'html',
-      content: '<p>\n  <h1>Hello, <span id="title">world</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/php.svg" />\n</p>\n'
+      content: '<p>\n  <h1>Hello, <span id="title">world</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/php.svg" />\n</p>\n'
     },
     style: {
       language: 'css',
@@ -81,7 +81,7 @@ export const livecodesStarters = [
     name: 'PHP',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">world</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/php.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">world</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/php.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -96,7 +96,7 @@ export const livecodesStarters = [
     name: 'Ruby',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/ruby.svg" />\n  <p id="counter">You clicked 0 times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/ruby.svg" />\n  <p id="counter">You clicked 0 times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -126,7 +126,7 @@ export const livecodesStarters = [
     name: 'Python',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1 id="header">Hello, World!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/python.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1 id="header">Hello, World!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/python.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -156,7 +156,7 @@ export const livecodesStarters = [
     name: 'Tailwind CSS',
     markup: {
       language: 'html',
-      content: '<div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">\n  <div class="relative py-3 sm:max-w-xl sm:mx-auto">\n    <div class="back-card"></div>\n    <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">\n      <div class="max-w-md mx-auto">\n        <div>\n          <img src="https://v28.livecodes.io/livecodes/assets/templates/tailwindplay.svg" class="h-7 sm:h-8" />\n        </div>\n        <div class="divide-y divide-gray-200">\n          <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">\n            <p class="prose md:prose-xl">A template based on <a href="https://play.tailwindcss.com/" class="text-cyan-600 hover:text-cyan-700" target="_blank">Tailwind CSS playground</a>. Here you can do things like:</p>\n            <ul class="list-disc space-y-2">\n              <li class="flex items-start">\n                <span class="h-6 flex items-center sm:h-7">\n                  <svg class="flex-shrink-0 h-5 w-5 text-cyan-500" viewBox="0 0 20 20" fill="currentColor">\n                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />\n                  </svg>\n                </span>\n                <p class="ml-2">\n                  Customizing configuration in\n                  <code class="text-sm font-bold text-gray-900">menu → Custom Settings</code>\n                </p>\n              </li>\n              <li class="flex items-start">\n                <span class="h-6 flex items-center sm:h-7">\n                  <svg class="flex-shrink-0 h-5 w-5 text-cyan-500" viewBox="0 0 20 20" fill="currentColor">\n                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />\n                  </svg>\n                </span>\n                <p class="ml-2">\n                  Extracting classes with\n                  <code class="text-sm font-bold text-gray-900">@apply</code>\n                </p>\n              </li>\n              <li class="flex items-start">\n                <span class="h-6 flex items-center sm:h-7">\n                  <svg class="flex-shrink-0 h-5 w-5 text-cyan-500" viewBox="0 0 20 20" fill="currentColor">\n                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />\n                  </svg>\n                </span>\n                <p class="ml-2">Viewing generated CSS code (in <code class="text-sm font-bold text-gray-900">Compiled</code> pane below)</p>\n              </li>\n            </ul>\n            <p>Perfect for learning how the framework works, prototyping a new idea, or creating a demo to share online.</p>\n          </div>\n          <div class="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7">\n            <p>Want to dig deeper into Tailwind?</p>\n            <p>\n              <a href="https://tailwindcss.com/docs" class="text-cyan-600 hover:text-cyan-700" target="_blank"> Read the docs &rarr; </a>\n            </p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n'
+      content: '<div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">\n  <div class="relative py-3 sm:max-w-xl sm:mx-auto">\n    <div class="back-card"></div>\n    <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">\n      <div class="max-w-md mx-auto">\n        <div>\n          <img src="https://v45.livecodes.io/livecodes/assets/templates/tailwindplay.svg" class="h-7 sm:h-8" />\n        </div>\n        <div class="divide-y divide-gray-200">\n          <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">\n            <p class="prose md:prose-xl">A template based on <a href="https://play.tailwindcss.com/" class="text-cyan-600 hover:text-cyan-700" target="_blank">Tailwind CSS playground</a>. Here you can do things like:</p>\n            <ul class="list-disc space-y-2">\n              <li class="flex items-start">\n                <span class="h-6 flex items-center sm:h-7">\n                  <svg class="flex-shrink-0 h-5 w-5 text-cyan-500" viewBox="0 0 20 20" fill="currentColor">\n                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />\n                  </svg>\n                </span>\n                <p class="ml-2">\n                  Customizing configuration in\n                  <code class="text-sm font-bold text-gray-900">menu → Custom Settings</code>\n                </p>\n              </li>\n              <li class="flex items-start">\n                <span class="h-6 flex items-center sm:h-7">\n                  <svg class="flex-shrink-0 h-5 w-5 text-cyan-500" viewBox="0 0 20 20" fill="currentColor">\n                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />\n                  </svg>\n                </span>\n                <p class="ml-2">\n                  Extracting classes with\n                  <code class="text-sm font-bold text-gray-900">@apply</code>\n                </p>\n              </li>\n              <li class="flex items-start">\n                <span class="h-6 flex items-center sm:h-7">\n                  <svg class="flex-shrink-0 h-5 w-5 text-cyan-500" viewBox="0 0 20 20" fill="currentColor">\n                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />\n                  </svg>\n                </span>\n                <p class="ml-2">Viewing generated CSS code (in <code class="text-sm font-bold text-gray-900">Compiled</code> pane below)</p>\n              </li>\n            </ul>\n            <p>Perfect for learning how the framework works, prototyping a new idea, or creating a demo to share online.</p>\n          </div>\n          <div class="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7">\n            <p>Want to dig deeper into Tailwind?</p>\n            <p>\n              <a href="https://tailwindcss.com/docs" class="text-cyan-600 hover:text-cyan-700" target="_blank"> Read the docs &rarr; </a>\n            </p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -195,7 +195,7 @@ export const livecodesStarters = [
     name: 'jQuery',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/jquery.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/jquery.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -214,7 +214,7 @@ export const livecodesStarters = [
     },
     script: {
       language: 'riot',
-      content: '<counter>\n  <div class="container">\n    <h1>Hello, { props.title }!</h1>\n    <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/riot.svg" />\n    <p>You clicked { state.count } times.</p>\n    <button onclick="{ increment }">Click me</button>\n    <div class="footer">\n      <a href="{ props.url }" target="_blank">Riot.js Website</a>\n    </div>\n  </div>\n\n  <style>\n    .container,\n    .container button {\n      text-align: center;\n      font: 1em sans-serif;\n    }\n    .logo {\n      width: 150px;\n    }\n    .footer {\n      font: 0.8em sans-serif;\n      margin: 1.5em;\n    }\n  </style>\n\n  <script>\n    export default {\n      onBeforeMount(props, state) {\n        this.state = {\n          count: 0,\n        };\n      },\n      increment(e) {\n        e.preventDefault();\n        this.update({\n          count: this.state.count + 1,\n        });\n      },\n    };\n  </script>\n</counter>\n'
+      content: '<counter>\n  <div class="container">\n    <h1>Hello, { props.title }!</h1>\n    <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/riot.svg" />\n    <p>You clicked { state.count } times.</p>\n    <button onclick="{ increment }">Click me</button>\n    <div class="footer">\n      <a href="{ props.url }" target="_blank">Riot.js Website</a>\n    </div>\n  </div>\n\n  <style>\n    .container,\n    .container button {\n      text-align: center;\n      font: 1em sans-serif;\n    }\n    .logo {\n      width: 150px;\n    }\n    .footer {\n      font: 0.8em sans-serif;\n      margin: 1.5em;\n    }\n  </style>\n\n  <script>\n    export default {\n      onBeforeMount(props, state) {\n        this.state = {\n          count: 0,\n        };\n      },\n      increment(e) {\n        e.preventDefault();\n        this.update({\n          count: this.state.count + 1,\n        });\n      },\n    };\n  </script>\n</counter>\n'
     },
     style: {
       language: 'css',
@@ -225,7 +225,7 @@ export const livecodesStarters = [
     name: 'Astro',
     markup: {
       language: 'astro',
-      content: '---\nimport {format} from \'date-fns\';\n\nconst title = "Astro";\n\nconst builtAt: Date = new Date();\nconst builtAtFormatted = format(builtAt, \'MMMM dd, yyyy -- H:mm:ss.SSS\');\n---\n<html lang="en">\n\n<head>\n\t<meta charset="utf-8" />\n\t<meta name="viewport" content="width=device-width" />\n\t<title>Welcome to Astro</title>\n  <style>\n    .container,\n    .container button {\n      text-align: center;\n      font: 1em sans-serif;\n    }\n    .logo {\n      width: 150px;\n    }\n    .note {\n      margin: 1rem;\n      padding: 1rem;\n      border-radius: 8px;\n      background: #E4E5E6;\n      border: 1px solid #BBB;\n    }\n  </style>\n</head>\n\n<body>\n  <div class="container">\n    <h1>Hello, {title}!</h1>\n    <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/astro.svg" />\n    <p>You clicked <span id="counter">0</span> times.</p>\n    <button id="counter-button">Click me</button>\n    <p class="note">\n      <strong>RENDERED AT:</strong><br/>\n      {builtAtFormatted}\n    </p>\n  </div>\n  <script>\n    let count = 0\n    document\n      .querySelector("#counter-button")\n      .addEventListener("click", () => {\n        count += 1;\n        document.querySelector("#counter").innerText = count;\n    });\n  </script>\n</body>\n\n</html>\n'
+      content: '---\nimport {format} from \'date-fns\';\n\nconst title = "Astro";\n\nconst builtAt: Date = new Date();\nconst builtAtFormatted = format(builtAt, \'MMMM dd, yyyy -- H:mm:ss.SSS\');\n---\n<html lang="en">\n\n<head>\n\t<meta charset="utf-8" />\n\t<meta name="viewport" content="width=device-width" />\n\t<title>Welcome to Astro</title>\n  <style>\n    .container,\n    .container button {\n      text-align: center;\n      font: 1em sans-serif;\n    }\n    .logo {\n      width: 150px;\n    }\n    .note {\n      margin: 1rem;\n      padding: 1rem;\n      border-radius: 8px;\n      background: #E4E5E6;\n      border: 1px solid #BBB;\n    }\n  </style>\n</head>\n\n<body>\n  <div class="container">\n    <h1>Hello, {title}!</h1>\n    <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/astro.svg" />\n    <p>You clicked <span id="counter">0</span> times.</p>\n    <button id="counter-button">Click me</button>\n    <p class="note">\n      <strong>RENDERED AT:</strong><br/>\n      {builtAtFormatted}\n    </p>\n  </div>\n  <script>\n    let count = 0\n    document\n      .querySelector("#counter-button")\n      .addEventListener("click", () => {\n        count += 1;\n        document.querySelector("#counter").innerText = count;\n    });\n  </script>\n</body>\n\n</html>\n'
     },
     script: {
       language: 'javascript',
@@ -241,7 +241,7 @@ export const livecodesStarters = [
     activeEditor: 'markup',
     markup: {
       language: 'mdx',
-      content: 'import { Greeting, Counter } from \'./script\';\n\n<Greeting name="MDX" />\n\n![MDX Logo](https://v28.livecodes.io/livecodes/assets/templates/mdx.svg)\n\n<Counter />\n'
+      content: 'import { Greeting, Counter } from \'./script\';\n\n<Greeting name="MDX" />\n\n![MDX Logo](https://v45.livecodes.io/livecodes/assets/templates/mdx.svg)\n\n<Counter />\n'
     },
     style: {
       language: 'css',
@@ -264,7 +264,7 @@ export const livecodesStarters = [
     },
     script: {
       language: 'stencil',
-      content: 'import { Component, Prop, h, State } from "@stencil/core";\n\n@Component({\n  tag: "my-app",\n  styles: `\n    my-app,\n    button {\n      text-align: center;\n      font: 1em sans-serif;\n    }\n    .logo {\n      width: 150px;\n    }\n  `,\n})\nexport class App {\n  @Prop() title: string;\n  @State() count = 0;\n\n  increment = () => {\n    this.count += 1;\n  };\n\n  render() {\n    return (\n      <div class="container">\n        <h1>Hello, {this.title}!</h1>\n        <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/stencil.png" />\n        <p>You clicked {this.count} times.</p>\n        <button onClick={this.increment}>Click me</button>\n      </div>\n    );\n  }\n}\n'
+      content: 'import { Component, Prop, h, State } from "@stencil/core";\n\n@Component({\n  tag: "my-app",\n  styles: `\n    my-app,\n    button {\n      text-align: center;\n      font: 1em sans-serif;\n    }\n    .logo {\n      width: 150px;\n    }\n  `,\n})\nexport class App {\n  @Prop() title: string;\n  @State() count = 0;\n\n  increment = () => {\n    this.count += 1;\n  };\n\n  render() {\n    return (\n      <div class="container">\n        <h1>Hello, {this.title}!</h1>\n        <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/stencil.png" />\n        <p>You clicked {this.count} times.</p>\n        <button onClick={this.increment}>Click me</button>\n      </div>\n    );\n  }\n}\n'
     }
   },
   {
@@ -290,7 +290,7 @@ export const livecodesStarters = [
     },
     script: {
       language: 'solid.tsx',
-      content: 'import { createSignal } from "solid-js";\n\nfunction Counter(props: { name: string }) {\n  const [count, setCount] = createSignal(0);\n  const increment = () => setCount(count() + 1);\n  return (\n    <div className="container">\n      <h1>Hello, {props.name}!</h1>\n      <img className="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/solid.svg" />\n      <p>You clicked {count()} times.</p>\n      <button onClick={increment}>Click me</button>\n    </div>\n  );\n}\n\nexport default function App() {\n  return <Counter name="Solid" />;\n}\n'
+      content: 'import { createSignal } from "solid-js";\n\nfunction Counter(props: { name: string }) {\n  const [count, setCount] = createSignal(0);\n  const increment = () => setCount(count() + 1);\n  return (\n    <div className="container">\n      <h1>Hello, {props.name}!</h1>\n      <img className="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/solid.svg" />\n      <p>You clicked {count()} times.</p>\n      <button onClick={increment}>Click me</button>\n    </div>\n  );\n}\n\nexport default function App() {\n  return <Counter name="Solid" />;\n}\n'
     },
     markup: {
       language: 'html',
@@ -302,7 +302,7 @@ export const livecodesStarters = [
     activeEditor: 'script',
     script: {
       language: 'svelte',
-      content: '<script>\n  let title = "Svelte";\n  let counter = 0;\n  function increment() {\n    counter += 1;\n  }\n</script>\n\n<style>\n  .container,\n  .container button {\n    text-align: center;\n    font: 1em sans-serif;\n  }\n  .logo {\n    width: 150px;\n  }\n</style>\n\n<div class="container">\n  <h1>Hello, {title}!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/svelte.svg" />\n  <p>You clicked {counter} times.</p>\n  <button on:click="{increment}">Click me</button>\n</div>\n'
+      content: '<script>\n  let title = "Svelte";\n  let counter = 0;\n  function increment() {\n    counter += 1;\n  }\n</script>\n\n<style>\n  .container,\n  .container button {\n    text-align: center;\n    font: 1em sans-serif;\n  }\n  .logo {\n    width: 150px;\n  }\n</style>\n\n<div class="container">\n  <h1>Hello, {title}!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/svelte.svg" />\n  <p>You clicked {counter} times.</p>\n  <button on:click="{increment}">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -338,7 +338,7 @@ export const livecodesStarters = [
     name: 'Vue 2',
     markup: {
       language: 'html',
-      content: '<div id="app">\n  <h1>Hello, Vue!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/vue.svg" />\n  <p>You clicked {{ counter }} times.</p>\n  <button @click="increment()">Click me</button>\n</div>\n'
+      content: '<div id="app">\n  <h1>Hello, Vue!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/vue.svg" />\n  <p>You clicked {{ counter }} times.</p>\n  <button @click="increment()">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -356,7 +356,7 @@ export const livecodesStarters = [
     name: 'Vue 3 SFC',
     script: {
       language: 'vue',
-      content: '<script setup lang="tsx">\n  import { ref } from \'vue\';\n\n  const name = \'Vue\';\n  const count = ref(0);\n  const align = \'center\';\n\n  // define inline component\n  function Greeting(props: {name: string}) {\n    return <h1>Hello, { props.name }!</h1>\n  }\n</script>\n\n<template>\n  <div class="container">\n    <Greeting :name="name" />\n    <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/vue.svg" />\n    <p>You clicked {{ count }} times.</p>\n    <button @click="count++">Click me</button>\n  </div>\n</template>\n\n<style scoped>\n  .container,\n  .container button {\n    text-align: v-bind("align");\n    font: 1em sans-serif;\n  }\n  .logo {\n    width: 150px;\n  }\n</style>\n'
+      content: '<script setup lang="tsx">\n  import { ref } from \'vue\';\n\n  const name = \'Vue\';\n  const count = ref(0);\n  const align = \'center\';\n\n  // define inline component\n  function Greeting(props: {name: string}) {\n    return <h1>Hello, { props.name }!</h1>\n  }\n</script>\n\n<template>\n  <div class="container">\n    <Greeting :name="name" />\n    <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/vue.svg" />\n    <p>You clicked {{ count }} times.</p>\n    <button @click="count++">Click me</button>\n  </div>\n</template>\n\n<style scoped>\n  .container,\n  .container button {\n    text-align: v-bind("align");\n    font: 1em sans-serif;\n  }\n  .logo {\n    width: 150px;\n  }\n</style>\n'
     },
     markup: {
       language: 'html',
@@ -390,7 +390,7 @@ export const livecodesStarters = [
     },
     script: {
       language: 'jsx',
-      content: 'import { useState } from "https://esm.sh/react"\n\nfunction Counter(props) {\n  const [count, setCount] = useState(0);\n  return (\n    <div className="container">\n      <h1>Hello, {props.name}!</h1>\n      <img className="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/react.svg" />\n      <p>You clicked {count} times.</p>\n      <button onClick={() => setCount(count + 1)}>Click me</button>\n    </div>\n  );\n}\n\nexport default function App() {\n  return <Counter name="React" />;\n}\n'
+      content: 'import { useState } from "https://esm.sh/react"\n\nfunction Counter(props) {\n  const [count, setCount] = useState(0);\n  return (\n    <div className="container">\n      <h1>Hello, {props.name}!</h1>\n      <img className="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/react.svg" />\n      <p>You clicked {count} times.</p>\n      <button onClick={() => setCount(count + 1)}>Click me</button>\n    </div>\n  );\n}\n\nexport default function App() {\n  return <Counter name="React" />;\n}\n'
     },
     markup: {
       language: 'html',
@@ -401,7 +401,7 @@ export const livecodesStarters = [
     name: 'Typescript',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/typescript.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/typescript.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
@@ -416,7 +416,7 @@ export const livecodesStarters = [
     name: 'Javascript',
     markup: {
       language: 'html',
-      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v28.livecodes.io/livecodes/assets/templates/javascript.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
+      content: '<div class="container">\n  <h1>Hello, <span id="title">World</span>!</h1>\n  <img class="logo" alt="logo" src="https://v45.livecodes.io/livecodes/assets/templates/javascript.svg" />\n  <p>You clicked <span id="counter">0</span> times.</p>\n  <button id="counter-button">Click me</button>\n</div>\n'
     },
     style: {
       language: 'css',
