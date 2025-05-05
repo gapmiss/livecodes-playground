@@ -1,4 +1,5 @@
 import { App, Modal, Setting, ButtonComponent, setIcon } from "obsidian";
+import 'svelte';
 import LivecodesPlugin from '../main';
 import Tags from "../components/Tags.svelte";
 

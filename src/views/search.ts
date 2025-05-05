@@ -1,4 +1,5 @@
 import { type App, ItemView, WorkspaceLeaf, FileSystemAdapter, normalizePath, TFile } from 'obsidian';
+import 'svelte';
 import LivecodesPlugin from '../main';
 import Component from "../components/Search.svelte";
 

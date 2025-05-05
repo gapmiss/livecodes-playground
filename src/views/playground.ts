@@ -1,4 +1,5 @@
 import { type App, ItemView, WorkspaceLeaf, normalizePath, TFile, Menu } from 'obsidian';
+import 'svelte';
 // @ts-ignore
 import { config } from 'livecodes';
 import LivecodesPlugin from '../main';
