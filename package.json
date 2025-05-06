@@ -1,6 +1,6 @@
 {
 	"name": "livecodes-playgrounds",
-	"version": "0.12.1",
+	"version": "0.12.2",
 	"description": "Client-side code editor playground plugin for Obsidian.md - Powered by LiveCodes.io",
 	"main": "main.js",
 	"scripts": {
