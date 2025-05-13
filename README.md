@@ -30,15 +30,7 @@ Read about [why Livecodes](https://livecodes.io/docs/why), it's [features](https
 
 ### Manually
 
-1. download the latest [release archive](https://github.com/gapmiss/livecodes-playground/releases/)
-2. uncompress the downloaded archive
-3. move the `livecodes-playground` folder to `/path/to/vault/.obsidian/plugins/`
-4. Settings > Community plugins > reload **Installed plugins**
-5. enable plugin
-
-or:
-
-1. download `main.js`, `manifest.json` & `styles.css`
+1. download `main.js`, `manifest.json` & `styles.css` from the latest [release](https://github.com/gapmiss/livecodes-playground/releases/)
 2. create a new folder `/path/to/vault/.obsidian/plugins/livecodes-playground`
 3. move all 3 files to `/path/to/vault/.obsidian/plugins/livecodes-playground`
 4. Settings > Community plugins > reload **Installed plugins**
