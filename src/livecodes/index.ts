@@ -206,5 +206,5 @@ export const blankPlayground = {
   trailingComma: true,
   emmet: true,
   editorTheme: "[]",
-  version: "28"
+  version: "45"
 };
