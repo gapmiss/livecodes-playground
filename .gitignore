@@ -23,3 +23,4 @@ data.json
 .DS_Store
 .hotreload
 dev-n-copy.sh
+.claude
