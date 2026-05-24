@@ -447,13 +447,11 @@ div.results-note {
   right: 5px;
   bottom: 0px;
   line-height: 0;
-  height: var(--input-height);
   width: 16px;
   height: 16px;
   margin: auto;
   padding: 0 0;
   text-align: center;
-  display: flex;
   justify-content: center;
   align-items: center;
   transition: color 0.15s ease-in-out;
