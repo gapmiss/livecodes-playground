@@ -123,7 +123,7 @@ export const DEFAULT_SETTINGS: LivecodesSettings = {
   playgroundFolder: "playgrounds",
   notesFolder: "playgrounds/notes",
   autoWatch: true,
-  appUrl: "https://v45.livecodes.io/",
+  appUrl: "https://v49.livecodes.io/",
   shortUrl: false,
   fontFamily: "Default",
   fontSize: "12",

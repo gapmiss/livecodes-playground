@@ -145,7 +145,7 @@ export function codeBlockLanguages() {
 };
 
 export const blankPlayground: PlaygroundConfig = {
-  appUrl: "https://v45.livecodes.io/",
+  appUrl: "https://v49.livecodes.io/",
   title: "New Playground",
   description: "",
   head: "<meta charset=\"UTF-8\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />",
@@ -208,5 +208,5 @@ export const blankPlayground: PlaygroundConfig = {
   trailingComma: true,
   emmet: true,
   editorTheme: "[]",
-  version: "45"
+  version: "49"
 };
