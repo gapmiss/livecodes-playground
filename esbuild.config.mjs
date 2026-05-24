@@ -44,7 +44,12 @@ const context = await esbuild.context({
 	plugins: [
 		esbuildSvelte({
 			compilerOptions: { css: "injected" },
-			preprocess: sveltePreprocess(),
+			preprocess: sveltePreprocess({
+			typescript: {
+				tsconfigFile: false,
+				compilerOptions: { target: "ES2020" }
+			}
+		}),
 		}),
 	],
 })
