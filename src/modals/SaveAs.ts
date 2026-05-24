@@ -9,7 +9,7 @@ export class SaveAsModal extends Modal {
   placeholder: string;
   multiLine: boolean;
   callback: SaveAsCallback;
-  textComponent: TextComponent | TextAreaComponent;
+  textComponent!: TextComponent | TextAreaComponent;
 
   constructor(
     app: App,
@@ -51,8 +51,9 @@ export class SaveAsModal extends Modal {
       .setPlaceholder(this.placeholder)
       .then((cb) => {
         cb.inputEl.addClass("prompt-input");
-        cb.inputEl.addEventListener("keydown", (event: KeyboardEvent) =>  {
-          if (!event.shiftKey && event.key === "Enter") {
+        cb.inputEl.addEventListener("keydown", (event) =>  {
+          const kbEvent = event as KeyboardEvent;
+          if (!kbEvent.shiftKey && kbEvent.key === "Enter") {
             this.onOK();
             event.preventDefault(); // Prevents the addition of a new line in the text field
           }
@@ -94,7 +95,7 @@ export async function saveAsModal(
   multiLine: boolean = false,
   callback?: SaveAsCallback
 ): Promise<string | null> {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     new SaveAsModal(
       app,
       title,

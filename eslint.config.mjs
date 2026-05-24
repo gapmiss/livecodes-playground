@@ -3,7 +3,7 @@ import tseslint from "typescript-eslint";
 import obsidianmd from "eslint-plugin-obsidianmd";
 
 export default [
-    { ignores: ["node_modules/**", "main.js", "*.mjs", "package.json", "package-lock.json", "versions.json", "tsconfig.json"] },
+    { ignores: ["node_modules/**", "@types/**", "main.js", "*.mjs", "package.json", "package-lock.json", "versions.json", "tsconfig.json"] },
     ...tseslint.configs.recommendedTypeChecked.map(config => ({
         ...config,
         files: ["src/**/*.ts"],

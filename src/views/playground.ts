@@ -1,22 +1,19 @@
 import { type App, ItemView, WorkspaceLeaf, normalizePath, TFile, Menu } from 'obsidian';
 import 'svelte';
-// @ts-ignore
-import { config } from 'livecodes';
-import LivecodesPlugin from '../main';
+import { LivecodesSettings, PlaygroundConfig } from '../settings/default';
 import Component from "../components/Playground.svelte";
 
 export const VIEW_TYPE_PLAYGROUND = "Livecodes-view";
 
 export class PlaygroundView extends ItemView {
-  plugin: LivecodesPlugin;
-  component: Component;
+  component!: Component;
   jsonTemplate: TFile | undefined;
 
   constructor(
     app: App,
-    leaf: WorkspaceLeaf, 
+    leaf: WorkspaceLeaf,
     jsonTemplate: TFile|undefined,
-    private settings: any,
+    private settings: LivecodesSettings,
   ) {
     super(leaf);
     this.jsonTemplate = jsonTemplate;
@@ -62,12 +59,12 @@ export class PlaygroundView extends ItemView {
     let playgroundPath: string = normalizePath((this.jsonTemplate!).path);
     let fPath: TFile = this.app.vault.getFileByPath(playgroundPath)!;
     let tpl: string = await this.app.vault.read(fPath);
-    let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
+    let newTemplate: PlaygroundConfig = JSON.parse(tpl) as PlaygroundConfig;
     this.component = new Component({
       target: this.contentEl,
       props: {
         jsonTemplate: newTemplate,
-        playgroundPath: playgroundPath!
+        playgroundPath: playgroundPath
       },
     });
 
@@ -84,7 +81,7 @@ export class PlaygroundView extends ItemView {
     // console.log('--------- playground view onResize ---------');
   }
 
-  onPaneMenu(menu: Menu, source: 'more-options' | 'tab-header' | string): void {
+  onPaneMenu(menu: Menu, _source: string): void {
     // menu.addItem((item) => {
     //   item.setTitle('Do something');
     //   item.setSection('action');

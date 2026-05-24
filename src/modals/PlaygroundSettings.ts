@@ -123,15 +123,15 @@ export async function openPlaygroundSettingsModal(
   title: string | null,
   changes: {title: string, description: string, tags: string[], head: string, htmlAttrs: string},
   callback?: PlaygroundSettingsCallback
-): Promise<any[] | null> {
-  return await new Promise((resolve, reject) => {
+): Promise<unknown> {
+  return new Promise((resolve) => {
     new PlaygroundSettingsModal(
       app,
       plugin,
       title,
       changes,
       callback ??
-        ((text: any | null) => {
+        ((text: unknown) => {
           resolve(text);
         })
     ).open();

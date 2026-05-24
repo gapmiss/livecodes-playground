@@ -8,7 +8,7 @@ addIcon('indicator', INDICATOR_SVG);
 
 export function showNotice(message: string, duration:number = 4000, type: string|undefined): void {
 
-  const fragment = document.createDocumentFragment();
+  const fragment = activeDocument.createDocumentFragment();
 
   let wrapper = fragment.createDiv({
 		attr: {

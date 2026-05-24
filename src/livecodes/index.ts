@@ -1,3 +1,5 @@
+import { PlaygroundConfig } from '../settings/default';
+
 export const ALLOWED_LANGS = ["html","mdx","css","scss","javascript","jsx","typescript","tsx","astro","svelte"];
 export const ALLOWED_EXTS = ["html","mdx","css","scss","js","jsx","ts","tsx","astro","svelte"];
 
@@ -142,7 +144,7 @@ export function codeBlockLanguages() {
   return lists;
 };
 
-export const blankPlayground = {
+export const blankPlayground: PlaygroundConfig = {
   appUrl: "https://v45.livecodes.io/",
   title: "New Playground",
   description: "",

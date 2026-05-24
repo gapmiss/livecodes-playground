@@ -10,7 +10,7 @@ import { codejarDarkThemes } from "../livecodes/themes/codejarDarkThemes";
 import { codejarLightThemes } from "../livecodes/themes/codejarLightThemes";
 import { showNotice } from '../utils/notice';
 import { codeLanguages } from "../livecodes";
-import { NOTE_MD_TEMPLATE, GIST_MD_TEMPLATE } from './default';
+import { NOTE_MD_TEMPLATE, GIST_MD_TEMPLATE, EditorType } from './default';
 import { HelpModal } from '../modals/HelpModal';
 import { confirm } from "../modals/Confirm";
 
@@ -34,7 +34,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       1000
     );
 
-    let desc = document.createDocumentFragment();
+    const desc = activeDocument.createDocumentFragment();
     desc.append(
       "All changes are applied to future Livecodes playground views.",
       desc.createEl("br"),
@@ -92,7 +92,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.appUrl.title as string, helpModals.appUrl.description as string, "", true).open();
+            new HelpModal(this.app, helpModals.appUrl.title, helpModals.appUrl.description, "", true).open();
           })
       });
 
@@ -115,7 +115,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.playgroundFolder.title as string, helpModals.playgroundFolder.description as string).open();
+            new HelpModal(this.app, helpModals.playgroundFolder.title, helpModals.playgroundFolder.description).open();
           })
       });
 
@@ -136,7 +136,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.autoWatch.title as string, helpModals.autoWatch.description as string).open();
+            new HelpModal(this.app, helpModals.autoWatch.title, helpModals.autoWatch.description).open();
           })
       });
 
@@ -159,7 +159,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.notesFolder.title as string, helpModals.notesFolder.description as string).open();
+            new HelpModal(this.app, helpModals.notesFolder.title, helpModals.notesFolder.description).open();
           })
       });
 
@@ -184,7 +184,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.shortUrl.title as string, helpModals.shortUrl.description as string, 'alert').open();
+            new HelpModal(this.app, helpModals.shortUrl.title, helpModals.shortUrl.description, 'alert').open();
           })
       });
 
@@ -205,7 +205,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.githubToken.title as string, helpModals.githubToken.description as string).open();
+            new HelpModal(this.app, helpModals.githubToken.title, helpModals.githubToken.description).open();
           })
       });
 
@@ -226,7 +226,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.githubGistPublic.title as string, helpModals.githubGistPublic.description as string).open();
+            new HelpModal(this.app, helpModals.githubGistPublic.title, helpModals.githubGistPublic.description).open();
           })
       });
 
@@ -247,7 +247,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.enableAI.title as string, helpModals.enableAI.description as string, 'alert').open();
+            new HelpModal(this.app, helpModals.enableAI.title, helpModals.enableAI.description, 'alert').open();
           })
       });
 
@@ -267,7 +267,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           })
           .setValue(this.plugin.settings.editor)
           .onChange(async (newValue) => {
-            this.plugin.settings.editor = newValue;
+            this.plugin.settings.editor = newValue as EditorType;
             await toggleChoices(this.plugin.settings.editor);
             await this.plugin.saveSettings();
           });
@@ -277,7 +277,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.editor.title as string, helpModals.editor.description as string).open();
+            new HelpModal(this.app, helpModals.editor.title, helpModals.editor.description).open();
           })
       });
 
@@ -643,24 +643,24 @@ export class LivecodesSettingsTab extends PluginSettingTab {
             if (!isExpanded) {
               component.setIcon('chevron-down').setTooltip("Hide processors", { "placement": "left" })
               isExpanded = true;
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
+              toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:flex;')});
             }
             else {
               component.setIcon('chevron-right').setTooltip("Show processors", { "placement": "left" })
               isExpanded = false;
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+              toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:none;')});
             }
           });
       })
-      .then((c) => {
+      .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-quick-playground-heading .clickable-icon');
         if (bttn !== null) {
-          bttn!.setAttribute('tabindex', '0');
-          bttn!.addEventListener('keydown', (evt) => {
+          bttn.setAttribute('tabindex', '0');
+          bttn.addEventListener('keydown', (evt) => {
             const keyDown = evt.key;
             if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
                 evt.preventDefault();
-                bttn!.click();
+                bttn.click();
             }
           });
         }
@@ -735,24 +735,24 @@ export class LivecodesSettingsTab extends PluginSettingTab {
             if (!isExpanded) {
               component.setIcon('chevron-down').setTooltip("Hide processors", { "placement": "left" })
               isExpanded = true;
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
+              toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:flex;')});
             }
             else {
               component.setIcon('chevron-right').setTooltip("Show processors", { "placement": "left" })
               isExpanded = false;
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+              toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:none;')});
             }
           });
       })
       .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-templates-heading .clickable-icon');
         if (bttn !== null) {
-          bttn!.setAttribute('tabindex', '0');
-          bttn!.addEventListener('keydown', (evt) => {
+          bttn.setAttribute('tabindex', '0');
+          bttn.addEventListener('keydown', (evt) => {
             const keyDown = evt.key;
             if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
                 evt.preventDefault();
-                bttn!.click();
+                bttn.click();
             }
           });
         }
@@ -766,7 +766,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string, '', true).open();
+            new HelpModal(this.app, helpModals.noteTemplate.title, helpModals.noteTemplate.description, '', true).open();
           })
       })
       .addExtraButton((component) => {
@@ -778,8 +778,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
               try {
                 this.plugin.settings.noteMarkdownTemplate = NOTE_MD_TEMPLATE;
                 await this.plugin.saveSettings();
-                let textArea = activeDocument.querySelector('.livecodes-note-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
-                textArea!.value = NOTE_MD_TEMPLATE;
+                const textArea = activeDocument.querySelector<HTMLTextAreaElement>('.livecodes-note-template-setting .setting-item-control textarea');
+                if (textArea) textArea.value = NOTE_MD_TEMPLATE;
                 showNotice("Default note template restored", 3000, 'success');
               } catch (error) {
                 console.error(error);
@@ -807,7 +807,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
           .setIcon("help-circle")
           .setTooltip("Help", { "placement": "left" })
           .onClick(() => {
-            new HelpModal(this.app, helpModals.noteTemplate.title as string, helpModals.noteTemplate.description as string, '', true).open();
+            new HelpModal(this.app, helpModals.noteTemplate.title, helpModals.noteTemplate.description, '', true).open();
           })
       })
       .addExtraButton((component) => {
@@ -819,8 +819,8 @@ export class LivecodesSettingsTab extends PluginSettingTab {
               try {
                 this.plugin.settings.gistMarkdownTemplate = GIST_MD_TEMPLATE;
                 await this.plugin.saveSettings();
-                let textArea = activeDocument.querySelector('.livecodes-gist-template-setting .setting-item-control textarea') as HTMLTextAreaElement | null;
-                textArea!.value = GIST_MD_TEMPLATE;
+                const textArea = activeDocument.querySelector<HTMLTextAreaElement>('.livecodes-gist-template-setting .setting-item-control textarea');
+                if (textArea) textArea.value = GIST_MD_TEMPLATE;
                 showNotice("Default gist template restored", 3000, 'success');
               } catch (error) {
                 console.error(error);
@@ -853,25 +853,25 @@ export class LivecodesSettingsTab extends PluginSettingTab {
               component.setIcon('chevron-down').setTooltip("Hide", { "placement": "left" })
               isExpanded = true;
               activeDocument.querySelector('.livecodes-sponsorship-heading')!.setAttribute('style','border-bottom: 1px solid var(--background-modifier-border);');
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:block;')});
+              toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:block;')});
             }
             else {
               component.setIcon('chevron-right').setTooltip("Show", { "placement": "left" })
               isExpanded = false;
               activeDocument.querySelector('.livecodes-sponsorship-heading')!.setAttribute('style','border-bottom: 1px solid transparent;');
-              toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+              toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:none;')});
             }
           });
       })
       .then(() => {
         let bttn:HTMLDivElement|null = activeDocument.querySelector('.livecodes-sponsorship-heading .clickable-icon');
         if (bttn !== null) {
-          bttn!.setAttribute('tabindex', '0');
-          bttn!.addEventListener('keydown', (evt) => {
+          bttn.setAttribute('tabindex', '0');
+          bttn.addEventListener('keydown', (evt) => {
             const keyDown = evt.key;
             if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
                 evt.preventDefault();
-                bttn!.click();
+                bttn.click();
             }
           });
         }
@@ -906,26 +906,29 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       ),
     );
 
-    const toggleChoices = async (choice: string): Promise<any> => {
+    const toggleChoices = async (choice: string): Promise<void> => {
       switch (choice) {
-        case "monaco":
-          let monacodd = [dropdownCodejarDark, dropdownCodejarLight, dropdownCodemirrorDark, dropdownCodemirrorLight];
+        case "monaco": {
+          const monacodd = [dropdownCodejarDark, dropdownCodejarLight, dropdownCodemirrorDark, dropdownCodemirrorLight];
           monacodd.forEach((dd) => { dd.setClass("choiceHidden") });
           activeDocument.querySelector(".dropdownMonacoDark")?.removeClass("choiceHidden");
           activeDocument.querySelector(".dropdownMonacoLight")?.removeClass("choiceHidden");
           break;
-        case "codemirror":
-          let cmdd = [dropdownCodejarDark, dropdownCodejarLight, dropdownMonacoDark, dropdownMonacoLight];
+        }
+        case "codemirror": {
+          const cmdd = [dropdownCodejarDark, dropdownCodejarLight, dropdownMonacoDark, dropdownMonacoLight];
           cmdd.forEach((dd) => { dd.setClass("choiceHidden") });
           activeDocument.querySelector(".dropdownCodemirrorDark")?.removeClass("choiceHidden");
           activeDocument.querySelector(".dropdownCodemirrorLight")?.removeClass("choiceHidden");
           break;
-        case "codejar":
-          let cjdd = [dropdownCodemirrorDark, dropdownCodemirrorLight, dropdownMonacoDark, dropdownMonacoLight]
+        }
+        case "codejar": {
+          const cjdd = [dropdownCodemirrorDark, dropdownCodemirrorLight, dropdownMonacoDark, dropdownMonacoLight]
           cjdd.forEach((dd) => { dd.setClass("choiceHidden"); });
           activeDocument.querySelector(".dropdownCodejarDark")?.removeClass("choiceHidden");
           activeDocument.querySelector(".dropdownCodejarLight")?.removeClass("choiceHidden");
           break;
+        }
         default:
           break;
       }
@@ -937,12 +940,12 @@ export class LivecodesSettingsTab extends PluginSettingTab {
         this.plugin.settings.codejarDarkTheme,
         this.plugin.settings.codejarLightTheme,
       ]
-      this.plugin.settings.editorTheme = allThemes.filter(n => n).join(",");
+      this.plugin.settings.editorTheme = allThemes.filter(n => n);
 
       await this.plugin.saveSettings();
     }
 
-    toggleChoices(this.plugin.settings.editor);
+    void toggleChoices(this.plugin.settings.editor);
 
   }
 
@@ -952,7 +955,7 @@ export class LivecodesSettingsTab extends PluginSettingTab {
  * derived from: https://github.com/tgrosinger/advanced-tables-obsidian/blob/a8a483f1b9b5fc10eae5fd11bf808b56b7d06fb3/src/main.ts
  */
 const createDonateButton = (link: string, img: HTMLElement): HTMLElement => {
-  const a = document.createElement('a');
+  const a = activeDocument.createElement('a');
   a.setAttribute('href', link);
   a.setAttribute('tabindex', '0');
   a.setAttribute('aria-label', link);

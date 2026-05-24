@@ -1,5 +1,5 @@
-import { App, Notice, Modal, setIcon } from "obsidian";
-import { buttonTour, helpModals } from "../settings/help";
+import { App, Modal, setIcon } from "obsidian";
+import { buttonTour } from "../settings/help";
 import { copyStringToClipboard } from "../utils";
 
 export class HelpModal extends Modal {
@@ -37,8 +37,9 @@ export class HelpModal extends Modal {
     
     // Title and Message
     contentEl.createEl('h1', {text: this.title});
-    const range = document.createRange();
+    const range = activeDocument.createRange();
     range.selectNodeContents(contentEl);
+    // eslint-disable-next-line no-unsanitized/method -- message is static trusted content from help.ts
     const node = range.createContextualFragment(`${this.message}`);
     contentEl.append(node);
 
@@ -49,22 +50,22 @@ export class HelpModal extends Modal {
     
     // setup click-2-copy
     if (this.clickToCopy) {
-      let inputEl = contentEl.querySelectorAll('[class$=-copy]') as NodeListOf<HTMLElement>;
+      let inputEl = contentEl.querySelectorAll('[class$=-copy]');
       inputEl.forEach((el) => {
         let iconEl = contentEl.createSpan({cls: 'copy-icon', attr: {"aria-label":"Click to copy"}});
         setIcon(iconEl, "copy");
         iconEl.setAttribute('data-tooltip-position', 'top');
         iconEl.setAttribute('tabindex', '0');
-        (el as HTMLElement).insertAdjacentElement("beforebegin", iconEl);
-        [iconEl,(el as HTMLElement)].forEach((elt) => {
-          elt.addEventListener("click", async () => {
-            await copyStringToClipboard(el?.textContent!, el?.textContent!);
+        (el).insertAdjacentElement("beforebegin", iconEl);
+        [iconEl,(el)].forEach((elt) => {
+          elt.addEventListener("click", () => {
+            void copyStringToClipboard(el?.textContent, el?.textContent);
           });
           elt.addEventListener('keydown', (evt) => {
-            const keyDown = evt.key;
+            const keyDown = (evt as KeyboardEvent).key;
             if ( keyDown === 'Enter' || (['Spacebar', ' '].indexOf(keyDown) >= 0)) {
                 evt.preventDefault();
-                elt.click();
+                (elt as HTMLElement).click();
             }
           });
         });
@@ -76,19 +77,19 @@ export class HelpModal extends Modal {
       let toolButtons = activeDocument.querySelectorAll('[class$="-button clickable-icon"]');
       let button = activeDocument.querySelector('[data-step]');
       if (button) {
-        button.addEventListener('click', (el) => {
-          let dataStep = (el.target as HTMLElement)!.getAttribute('data-step') as unknown as number;
+        button.addEventListener('click', (evt) => {
+          const dataStep = (evt.target as HTMLElement).getAttribute('data-step') as unknown as number;
           this.close();
-          new HelpModal(this.app, buttonTour[dataStep].popover.title as string, buttonTour[dataStep].popover.description as string, '', false, true).open();
+          new HelpModal(this.app, buttonTour[dataStep].popover.title, buttonTour[dataStep].popover.description, '', false, true).open();
           toolButtons[dataStep].addClass('button-highlight');
         });					
       }
       let prevButtons = activeDocument.querySelectorAll('[data-prev]');
       prevButtons.forEach((button) => {
-        button.addEventListener('click', (el) => {
-          let dataPrev = button.getAttribute('data-prev') as unknown as number;
+        button.addEventListener('click', () => {
+          const dataPrev = button.getAttribute('data-prev') as unknown as number;
           this.close();
-          new HelpModal(this.app, buttonTour[dataPrev-1].popover.title as string, buttonTour[dataPrev-1].popover.description as string, '', false, true).open();
+          new HelpModal(this.app, buttonTour[dataPrev-1].popover.title, buttonTour[dataPrev-1].popover.description, '', false, true).open();
           toolButtons[dataPrev-1].addClass('button-highlight');
         });
       });
@@ -124,7 +125,7 @@ export class HelpModal extends Modal {
         stepLink.addEventListener("click", (evt) => {
           let dataStepNumber = (evt.target as HTMLElement).getAttribute('data-step-number') as unknown as number;
           this.close();
-          new HelpModal(this.app, buttonTour[dataStepNumber].popover.title as string, buttonTour[dataStepNumber].popover.description as string, '', false, true).open();
+          new HelpModal(this.app, buttonTour[dataStepNumber].popover.title, buttonTour[dataStepNumber].popover.description, '', false, true).open();
           toolButtons[dataStepNumber].addClass('button-highlight');
         });
         newStep.appendChild(stepLink);
@@ -145,7 +146,7 @@ export class HelpModal extends Modal {
   }
 
   copyStringToClipboard(text:string) {
-    navigator.clipboard.writeText(text)
+    void navigator.clipboard.writeText(text);
   }
 
 }

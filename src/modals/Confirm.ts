@@ -11,9 +11,10 @@ class ConfirmModal extends Modal {
   constructor(app: App) {
     super(app);
     this.containerEl.addClass("mod-confirmation");
-    this.addButton("mod-cta", "OK", () => this.resolve && this.resolve(true));
+    this.addButton("mod-cta", "OK", () => { if (this.resolve) this.resolve(true); });
     this.addCancelButton();
   }
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises -- intentionally returns Promise for await usage
   open(): Promise<boolean> {
     super.open();
     return new Promise((resolve) => (this.resolve = resolve));
@@ -21,18 +22,18 @@ class ConfirmModal extends Modal {
   addButton(
     cls: string | string[],
     text: string,
-    callback?: (evt: MouseEvent) => any,
+    callback?: (evt: MouseEvent) => unknown,
   ) {
     this.buttonContainerEl
       .createEl("button", { cls, text })
-      .addEventListener("click", async (evt) => {
-        callback && (await callback(evt));
+      .addEventListener("click", (evt) => {
+        if (callback) void callback(evt);
         this.close();
       });
     return this;
   }
   onClose() {
-    this.resolve && this.resolve(false);
+    if (this.resolve) this.resolve(false);
   }
 
   addCancelButton() {

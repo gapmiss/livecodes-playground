@@ -32,7 +32,7 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
   }
 
   getItemText(item: TFile): string {
-    let regex = new RegExp(this.plugin.settings.playgroundFolder+"\/", "g");
+    const regex = new RegExp(this.plugin.settings.playgroundFolder + "/", "g");
     return item.path.replace(regex, "").replace(".json", "");
   }
 
@@ -40,15 +40,13 @@ export class PlaygroundSelectModal extends FuzzySuggestModal<TFile> {
     super.renderSuggestion(match, el);
   }
 
-  async onChooseItem(f: TFile) {
+  onChooseItem(f: TFile) {
     if (f.path) {
       this.plugin.settings.jsonTemplate = f;
-      this.plugin.saveSettings();
-      await this.plugin.activatePlaygroundView();
-      return Promise.resolve;
+      void this.plugin.saveSettings();
+      void this.plugin.activatePlaygroundView();
     } else {
-      console.log(`Invalid file path: ${f.path}`);
-      return Promise.reject;
+      console.error(`Invalid file path: ${f.path}`);
     }
   }
 

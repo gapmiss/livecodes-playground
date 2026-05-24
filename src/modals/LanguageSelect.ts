@@ -9,21 +9,21 @@ import {
 } from "obsidian";
 import { codeLanguages } from "../livecodes";
 
-type LanguageSelectCallback = (changes:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string}) => void;
+type LanguageSelectCallback = (changes:{title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string}) => void;
 
 export class LanguageSelectModal extends Modal {
   app: App;
   plugin: LivecodesPlugin;
   vault: Vault;
   title: string | null;
-  changes: {title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string};
+  changes: {title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string};
   callback: LanguageSelectCallback;
 
   constructor(
     app: App,
     plugin: LivecodesPlugin, 
     title: string | null,
-    changes: {title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string},
+    changes: {title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string},
     callback: LanguageSelectCallback
   ) {
     super(app);
@@ -98,12 +98,12 @@ export class LanguageSelectModal extends Modal {
           if (!isExpanded) {
             component.setIcon('chevron-down').setTooltip("Hide processors", { "placement": "left" })
             isExpanded = true;
-            toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:flex;')});
+            toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:flex;')});
           }
           else {
             component.setIcon('chevron-right').setTooltip("Show processors", { "placement": "left" })
             isExpanded = false;
-            toggles.forEach((toggle:HTMLDivElement)=>{toggle.setAttribute('style', 'display:none;')});
+            toggles.forEach((toggle)=>{(toggle as HTMLElement).setAttribute('style', 'display:none;')});
           }
         });
     }).then((c) => {
@@ -221,20 +221,19 @@ export async function OpenLanguageSelectCallback(
   app: App,
   plugin: LivecodesPlugin,
   title: string | null,
-  changes: {title: string, markup: string, style: string, script: string},
+  changes: {title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string},
   callback?: LanguageSelectCallback
-): Promise<any[] | null> {
-  return await new Promise((resolve, reject) => {
+): Promise<unknown[] | null> {
+  return new Promise((_resolve, _reject) => {
     new LanguageSelectModal(
-      this.app,
-      this.plugin,
+      app,
+      plugin,
       title,
-      this.changes,
+      changes,
       callback ??
         (() => {
-          return JSON.stringify(this.changes);
+          return JSON.stringify(changes);
         })
-    
     ).open();
   });
 }

@@ -1,4 +1,4 @@
-import { normalizePath, App, TFile } from "obsidian";
+import { normalizePath, App } from "obsidian";
 import { showNotice } from './notice';
 
 export function saveJson(
@@ -6,7 +6,7 @@ export function saveJson(
   path: string,
   content: string
 ) {
-  savePlaygroundToFile(app, path, content);
+  void savePlaygroundToFile(app, path, content);
 }
 
 async function savePlaygroundToFile(
@@ -14,12 +14,13 @@ async function savePlaygroundToFile(
   path: string,
   content: string
 ) {
-  let filePath = normalizePath(path);
-  let fPath: TFile = this.app.vault.getFileByPath(filePath)!;
+  const filePath = normalizePath(path);
+  const fPath = app.vault.getFileByPath(filePath);
+  if (!fPath) return;
   try {
     await app.vault.modify(fPath, content);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -55,7 +56,7 @@ export async function copyStringToClipboard(text:string, topic:string|undefined=
  * https://github.com/NomarCub/obsidian-copy-url-in-preview/blob/main/src/helpers.ts#L78
  */
 export interface Listener {
-  (this: Document, ev: Event): any;
+  (this: Document, ev: Event): unknown;
 }
 
 export function onElement(

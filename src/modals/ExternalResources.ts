@@ -112,15 +112,15 @@ export async function openExternalResourcesModal(
   title: string | null,
   changes: {stylesheets: string[], scripts: string[], cssPreset: string},
   callback?: ExternalResourcesCallback
-): Promise<any[] | null> {
-  return await new Promise((resolve, reject) => {
+): Promise<unknown> {
+  return new Promise((resolve) => {
     new ExternalResourcesModal(
       app,
       plugin,
       title,
       changes,
       callback ??
-        ((text: any | null) => {
+        ((text: unknown) => {
           resolve(text);
         })
     ).open();

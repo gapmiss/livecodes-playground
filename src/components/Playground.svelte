@@ -593,7 +593,7 @@
   });
 
   const handleWatchedTemplate = (playgroundPath: string, output: any) => {
-    saveJson(app, playgroundPath, JSON.stringify(output, null, 2));
+    saveJson(this.app, playgroundPath, JSON.stringify(output, null, 2));
   };
 
   const createText = async (

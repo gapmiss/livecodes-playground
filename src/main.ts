@@ -9,48 +9,16 @@ import { saveAsModal } from "./modals/SaveAs";
 import { codepenUrlModal } from "./modals/codepenUrl";
 import { blankPlayground, codeBlockLanguages, ALLOWED_LANGS, ALLOWED_EXTS } from "./livecodes";
 import { Parameters } from "../@types/global";
-import { LivecodesSettings, DEFAULT_SETTINGS } from './settings/default';
+import { LivecodesSettings, DEFAULT_SETTINGS, PlaygroundConfig } from './settings/default';
 // import { codeBlockPostProcessor } from './editor/codeblockProcessor';
 import { onElement, copyStringToClipboard } from './utils';
 import { showNotice } from './utils/notice';
-// @ts-ignore
-import { config } from 'livecodes';
 import * as cheerio from 'cheerio';
 
 export default class LivecodesPlugin extends Plugin {
 
   settings!: LivecodesSettings;
-  manifest: PluginManifest;
-  plugin: LivecodesPlugin;
-  state: string = 'initial';
-  params: any;
-  fontFamily: any;
-  fontSize: any;
-  editor: any;
-  lineNumbers: boolean;
-  darkTheme: boolean;
-  layout: string;
-  useTabs: boolean;
-  tabSize: any;
-  closeBrackets: boolean;
-  semicolons: boolean;
-  singleQuote: boolean;
-  trailingComma: boolean;
-  wordWrap: boolean;
-  enableAI: boolean;
-  autoUpdate: boolean;
-  editorTheme: any;
-  monacoDarkTheme: any;
-  monacoLightTheme: any;
-  codemirrorDarkTheme: any;
-  codemirrorLightTheme: any;
-  codejarDarkTheme: any;
-  codejarLightTheme: any;
-  delay: number = 1500;
-  d: any = new Date();
-  jsonTemplate: TFile | undefined;
-  dataHeight: string | undefined;
-  logDebug: boolean = true;
+  state: 'initial' | 'loaded' | 'unloaded' = 'initial';
 
   constructor(app: App, manifest: PluginManifest) {
     super(app, manifest);
@@ -62,8 +30,8 @@ export default class LivecodesPlugin extends Plugin {
     if (Platform.isDesktop) {
       this.register(
         onElement(
-          document,
-          "contextmenu" as keyof HTMLElementEventMap,
+          activeDocument,
+          "contextmenu",
           "div",
           this.onClickCodeblock.bind(this)
         )
@@ -129,11 +97,12 @@ export default class LivecodesPlugin extends Plugin {
           windicss: false,
           unocss: false,
           script: "javascript",
+          processor: "",
         };
-        let cb = async (res: any) => {
-          await this.newLanguageSelectPlayground(res);
+        const cb = (res: {title: string, markup: string, style: string, twcss: boolean, windicss: boolean, unocss: boolean, lightningcss: boolean, script: string, processor: string}) => {
+          void this.newLanguageSelectPlayground(res);
         };
-        new LanguageSelectModal(this.app, this.plugin, "New playground", conf, cb).open();
+        new LanguageSelectModal(this.app, this, "New playground", conf, cb).open();
       },
     });
 
@@ -148,11 +117,11 @@ export default class LivecodesPlugin extends Plugin {
     this.addCommand({
       id: "open-codeblocks-in-livecodes",
       name: "Open codeblocks in Livecodes",
-      editorCheckCallback: (checking, editor, view) => {
-        let res = this.checkForCodeblocks( editor );
+      editorCheckCallback: (checking, editor, _view) => {
+        const res = this.checkForCodeblocks(editor);
         if (res) {
           if (!checking) {
-            this.newLivecodesPlaygroundFromCodeblocks();
+            void this.newLivecodesPlaygroundFromCodeblocks();
           }
           return true;
         }
@@ -161,16 +130,16 @@ export default class LivecodesPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: "open-livecodes-playground-from-codepen",
+      id: "open-playground-from-codepen",
       name: "New playground from CodePen",
       callback: async () => {
         try {
           await codepenUrlModal(this.app, "CodePen URL", "", "", "e.g. https://codepen.io/chriscoyier/pen/DELgOJ", false)
-            .then(async (cpUrl:string) => {
-              if (cpUrl?.length === 0) {
+            .then(async (cpUrl) => {
+              if (!cpUrl || cpUrl.length === 0) {
                 return;
               }
-              let regex = /https:\/\/codepen\.io\/[a-zA-Z0-9_\-]{1,50}\/pen\/[a-zA-z0-9]{1,50}/g;
+              const regex = /https:\/\/codepen\.io\/[a-zA-Z0-9_-]{1,50}\/pen\/[a-zA-z0-9]{1,50}/g;
               if (!regex.test(cpUrl)) {
                 showNotice('Error: Unable to validate as CodePen.io URL. See the developer console for error details. Click this message to dismiss', 0, 'error');
                 return;
@@ -181,8 +150,7 @@ export default class LivecodesPlugin extends Plugin {
                   let htmlContent = f.text;
                   // console.log('htmlContent');
                   // console.log(htmlContent);
-                  let cnf:Partial<config> = {title: '', markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''}};
-                  try {
+                  let cnf:PlaygroundConfig = {title: '', markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''}};
                     // https://cheerio.js.org/docs/basics/loading
                     const $ = cheerio.load(htmlContent);
                     let content: string = '';
@@ -202,8 +170,8 @@ export default class LivecodesPlugin extends Plugin {
                     // console.log('itemJson');
                     // console.log(itemJson);
                     await saveAsModal(this.app, "New livecodes playground", "Save as:", (itemJson.title !== '') ? itemJson.title : 'Untitled', "e.g. New Playground", false)
-                      .then(async (fName:string) => {
-                        if (fName?.length === 0) {
+                      .then(async (fName) => {
+                        if (!fName || fName.length === 0) {
                           return;
                         }
 
@@ -211,9 +179,10 @@ export default class LivecodesPlugin extends Plugin {
                         cnf.description = (itemJson.description !== '') ? itemJson.description : '';
                         cnf.tags = (itemJson.tags.length) ? itemJson.tags : [];
 
-                        let extStylesheets:any[] = [];
-                        let extScripts:any[] = [];
+                        let extStylesheets: string[] = [];
+                        let extScripts: string[] = [];
                         if (itemJson.resources.length) {
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           itemJson.resources.forEach((resource: any) => {
                             if (resource.resource_type === 'css') {
                               extStylesheets = [...extStylesheets, resource.url];
@@ -285,7 +254,7 @@ export default class LivecodesPlugin extends Plugin {
                           cnf.htmlAttrs = `lang="en" class="${itemJson.html_classes}"`
                         }
 
-                        let newPlayground:Partial<config> = {...blankPlayground, ...cnf};
+                        let newPlayground:PlaygroundConfig = {...blankPlayground, ...cnf};
                         newPlayground.appUrl = this.settings.appUrl;
                         newPlayground.fontFamily = this.settings.fontFamily;
                         newPlayground.fontSize = this.settings.fontSize;
@@ -327,15 +296,12 @@ export default class LivecodesPlugin extends Plugin {
                         }
                       }
                     );
-                  } catch (error) {
-                    throw error;
-                  }
                 }
               );
             });
         } catch (error) {
           showNotice(error + " Click this message to dismiss.", 0, 'error');
-          console.log(error);
+          console.error(error);
         }
       }
     });
@@ -344,7 +310,7 @@ export default class LivecodesPlugin extends Plugin {
       const parameters = e as unknown as Parameters;
       if (parameters.playgroundPath) {
         try {
-          const f = this.app.vault.getFileByPath(parameters.playgroundPath!);
+          const f = this.app.vault.getFileByPath(parameters.playgroundPath);
           if (f) {
             this.settings.jsonTemplate = f;
             await this.saveSettings();
@@ -489,12 +455,10 @@ export default class LivecodesPlugin extends Plugin {
     // });
 
     this.state = "loaded";
-    console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
   }
 
   onunload() {
     this.state = "unloaded";
-    console.log(this.manifest.name, "(v"+this.manifest.version+")", this.state );
   }
 
   private checkForCodeblocks(
@@ -505,7 +469,7 @@ export default class LivecodesPlugin extends Plugin {
     let matches;
     do {
       matches = PATTERN.exec(markdown);
-      if (matches && [...ALLOWED_LANGS,...['js','ts']].includes(matches![2])) {
+      if (matches && [...ALLOWED_LANGS,...['js','ts']].includes(matches[2])) {
           return true;
       }
     } while (matches);
@@ -525,7 +489,7 @@ export default class LivecodesPlugin extends Plugin {
     const leaf = this.app.workspace.getMostRecentLeaf();
 
     if (leaf?.view instanceof PlaygroundView) {
-      this.app.workspace.revealLeaf(leaf);
+      void this.app.workspace.revealLeaf(leaf);
     }
   }
 
@@ -539,7 +503,7 @@ export default class LivecodesPlugin extends Plugin {
       leaf = workspace.getRightLeaf(false);
       await leaf!.setViewState({ type: VIEW_TYPE_PLAYGROUND_SEARCH, active: true });
     }
-    workspace.revealLeaf(leaf!);
+    void workspace.revealLeaf(leaf!);
   }
 
   async loadSettings() {
@@ -561,7 +525,7 @@ export default class LivecodesPlugin extends Plugin {
     if (res.title?.length === 0) {
       return;
     }
-    let newPlayground:Partial<config> = blankPlayground;
+    let newPlayground:PlaygroundConfig = blankPlayground;
 
     newPlayground.markup.language = res.markup;
     newPlayground.markup.content = '';
@@ -589,7 +553,7 @@ export default class LivecodesPlugin extends Plugin {
     if (res.windicss) {
       processors.push("windicss");
     }
-    newPlayground.processors = processors as unknown as string;
+    newPlayground.processors = processors;
 
     newPlayground.title = res.title;
     newPlayground.appUrl = this.settings.appUrl;
@@ -633,11 +597,11 @@ export default class LivecodesPlugin extends Plugin {
 
   async newLivecodesPlayground(fromMenu:boolean = false, file:TFile|TFolder|null) {
     await saveAsModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
-      .then(async (fName:string) => {
-        if (fName?.length === 0) {
+      .then(async (fName) => {
+        if (!fName || fName.length === 0) {
           return;
         }
-        let newPlayground:Partial<config> = blankPlayground;
+        let newPlayground:PlaygroundConfig = blankPlayground;
         if (fromMenu && file !== null && (file instanceof TFile || file instanceof TFolder)) {
           let foundMarkup: boolean = false;
           let foundStyle: boolean = false;
@@ -663,7 +627,8 @@ export default class LivecodesPlugin extends Plugin {
               newScriptExtension = fileExt;
             }
           } else if (file instanceof TFolder) {
-            file.children.forEach((f:TFile) => {
+            file.children.forEach((f) => {
+              if (!(f instanceof TFile)) return;
               if (f.extension === 'html' || f.extension === 'mdx' || f.extension === 'astro') {
                 newMarkupFile = normalizePath(f.path);
                 newMarkupExtension = f.extension;
@@ -767,10 +732,10 @@ export default class LivecodesPlugin extends Plugin {
   };
 
   async newLivecodesPlaygroundFromGist(tpl: string) {
-    let newTemplate: Partial<config> = JSON.parse(tpl) as Partial<config>;
+    let newTemplate: PlaygroundConfig = JSON.parse(tpl) as PlaygroundConfig;
     await saveAsModal(this.app, "New livecodes playground", "Save as:", newTemplate.title, "e.g. New Playground", false)
-      .then(async (fName:string) => {
-        if (fName?.length === 0) {
+      .then(async (fName) => {
+        if (!fName || fName.length === 0) {
           return;
         }
         let newPlayground = newTemplate;
@@ -798,8 +763,8 @@ export default class LivecodesPlugin extends Plugin {
 
   async newLivecodesPlaygroundFromCodeblock(language: string, code: string) {
     await saveAsModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
-      .then(async (fName:string) => {
-        if (fName?.length === 0) {
+      .then(async (fName) => {
+        if (!fName || fName.length === 0) {
           return;
         }
         let newPlayground = blankPlayground;
@@ -851,7 +816,7 @@ export default class LivecodesPlugin extends Plugin {
           ) {
             let processors = [];
             processors.push(language);;
-            newPlayground.processors = processors as unknown as string;
+            newPlayground.processors = processors;
             if (language === 'tailwindcss') {
               newPlayground.style.content = "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n" + code;
               newPlayground.style.language = "tailwindcss";
@@ -912,7 +877,7 @@ export default class LivecodesPlugin extends Plugin {
     let view = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (view?.file) {
       let fCache = this.app.metadataCache.getFileCache(view.file);
-      let cnf:Partial<config> = {markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''},};
+      let cnf:PlaygroundConfig = {markup:{content:'',language:''},style:{content:'',language:''},script:{content:'',language:''},};
       let cacheRead = await this.app.vault.cachedRead(view?.file);
       let codeSections = fCache?.sections?.filter( (section) => section.type === "code" ) || [];
       for (let section of codeSections) {
@@ -945,11 +910,11 @@ export default class LivecodesPlugin extends Plugin {
       let codeSource = fCache?.frontmatter?.source || null;
 
       await saveAsModal(this.app, "New livecodes playground", "Save as:", view.file.name.replace(".md", ""), "e.g. New Playground", false)
-      .then(async (fName:string) => {
-        if (fName?.length === 0) {
+      .then(async (fName) => {
+        if (!fName || fName.length === 0) {
           return;
         }
-        let newPlayground:Partial<config> = {...blankPlayground, ...cnf};
+        let newPlayground:PlaygroundConfig = {...blankPlayground, ...cnf};
         if (codeSource) {
           newPlayground.description = 'Source: ' + codeSource;
         }
@@ -1011,18 +976,18 @@ export default class LivecodesPlugin extends Plugin {
       return fileContent?.trim() as string;
   }
 
-  onClickCodeblock(event: MouseEvent) {
-    let target = event.target as HTMLElement;
+  onClickCodeblock(ev: Event) {
+    const event = ev as MouseEvent;
+    const target = event.target as HTMLElement;
     let nodeType = target.localName;
     if (nodeType !== 'code' && !(target.parentElement instanceof HTMLPreElement)) {
       return;
     }
     let lang = 'text';
     let LANG_REGEX = /^language-/;
-    target.classList.forEach((val, key) => {
+    target.classList.forEach((val) => {
       if (LANG_REGEX.test(val)) {
         lang = val.replace(`language-`, '');
-        return;
       }
     });
     let menu = new Menu();
@@ -1031,12 +996,12 @@ export default class LivecodesPlugin extends Plugin {
         item
           .setIcon("code")
           .setTitle("Open in Livecodes")
-          .onClick(async (ele) => {
-            let code:string = '';
+          .onClick(async () => {
+            let code = '';
             if (nodeType === 'code') {
-              code = target.textContent!;
+              code = target.textContent ?? '';
             } else {
-              code = target.firstChild?.textContent!;
+              code = target.firstChild?.textContent ?? '';
             }
             await this.newLivecodesPlaygroundFromCodeblock(lang, code);
           })

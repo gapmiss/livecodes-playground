@@ -9,20 +9,21 @@ import { livecodesStarters } from "../livecodes/starters";
 import { saveAsModal } from "./SaveAs";
 import { blankPlayground } from "../livecodes";
 import { showNotice } from '../utils/notice';
+import { StarterTemplate } from '../settings/default';
 
-export class StarterSelectModal extends FuzzySuggestModal<string> {
+export class StarterSelectModal extends FuzzySuggestModal<StarterTemplate> {
   plugin: LivecodesPlugin;
   vault: Vault;
-  name: string;
-  activeEditor: string;
-  head: string;
-  markup: [];
-  style: [];
-  script: [];
-  content: string;
-  language: string;
-  stylesheets: string[];
-  scripts: string[];
+  name!: string;
+  activeEditor!: string;
+  head!: string;
+  markup!: [];
+  style!: [];
+  script!: [];
+  content!: string;
+  language!: string;
+  stylesheets!: string[];
+  scripts!: string[];
   
   constructor(plugin: LivecodesPlugin) {
     super(plugin.app);
@@ -32,17 +33,15 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
     this.setPlaceholder("Select a starter or type to search");
   }
 
-  getItems(): any[] {
-    return livecodesStarters.sort( (a: { name: string; }, b: { name: string; }) => {
-      return a.name.localeCompare(b.name);
-    });
+  getItems(): StarterTemplate[] {
+    return livecodesStarters.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  getItemText(item: any): string {
+  getItemText(item: StarterTemplate): string {
     return item.name;
   }
 
-  renderSuggestion(match: FuzzyMatch<string>, el: HTMLElement) {
+  renderSuggestion(match: FuzzyMatch<StarterTemplate>, el: HTMLElement) {
     super.renderSuggestion(match, el);
   }
 
@@ -52,10 +51,10 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
     return fileContent?.trim() as string;
   }
 
-  async onChooseItem(starter: any) {
-    await saveAsModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
-      .then(async (fName:string) => {				
-        if (fName?.length === 0) {
+  onChooseItem(starter: StarterTemplate) {
+    void saveAsModal(this.app, "New livecodes playground", "Save as:", "", "e.g. New Playground", false)
+      .then(async (fName) => {
+        if (!fName || fName.length === 0) {
           return;
         }
         let newPlayground = blankPlayground;
@@ -73,15 +72,15 @@ export class StarterSelectModal extends FuzzySuggestModal<string> {
         if (foundProcessors) {
           newPlayground.processors = starter.processors;
         }
-        if (foundMarkup) {
+        if (foundMarkup && starter.markup) {
           newPlayground.markup.content = starter.markup.content;
           newPlayground.markup.language = starter.markup.language;
         }
-        if (foundStyle) {
+        if (foundStyle && starter.style) {
           newPlayground.style.content = starter.style.content;
           newPlayground.style.language = starter.style.language;
         }
-        if (foundScript) {
+        if (foundScript && starter.script) {
           newPlayground.script.content = starter.script.content;
           newPlayground.script.language = starter.script.language;
         }
