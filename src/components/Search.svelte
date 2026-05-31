@@ -139,6 +139,7 @@
   });
 </script>
 
+<div class="search-form-container">
 <div class="search-form-heading">Playground search</div>
 
 <div class="search-form-wrapper">
@@ -179,7 +180,7 @@
   {#each entries as item}
     <div class="result-row">
       <div>
-        <div>
+        <div class="result-row-link">
           <a
             href="obsidian://playground?vault={encodeURIComponent(app.vault.getName())}&playgroundPath={encodeURIComponent(item.path)}"
             aria-label="Open playground → {item.path.split('/').pop().replace('.json', '')}"
@@ -187,7 +188,7 @@
             {item.title}
           </a>
         </div>
-        <div>
+        <div class="result-row-action">
           <button
             use:copyUrlHandler={item.path}
             class="clickable-icon setting-editor-extra-setting-button"
@@ -195,7 +196,7 @@
           >
           </button>
         </div>
-        <div>
+        <div class="result-row-action">
           <button
             use:openJsonHandler={item.path}
             class="clickable-icon setting-editor-extra-setting-button"
@@ -230,4 +231,5 @@
   <p>
     <a href="obsidian://show-plugin?id=omnisearch">Install Omnisearch plugin</a>
   </p>
+</div>
 </div>

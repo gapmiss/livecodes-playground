@@ -41,7 +41,10 @@ export class ExternalResourcesModal extends Modal {
         .onChange(async newStylesheetsSetting => {
           this.changes.stylesheets = newStylesheetsSetting.trim().split("\n");
         })
-      );
+      )
+      .then(setting => {
+        setting.controlEl.addClass("setting-item-control-textarea");
+      });
 
     new Setting(this.contentEl)
       .setName('External scripts')
@@ -54,7 +57,10 @@ export class ExternalResourcesModal extends Modal {
         .onChange(async newScriptsSetting => {
           this.changes.scripts = newScriptsSetting.trim().split("\n");
         })
-      );
+      )
+      .then(setting => {
+        setting.controlEl.addClass("setting-item-control-textarea");
+      });
 
     new Setting(this.contentEl)
       .setName('CSS preset')

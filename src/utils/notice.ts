@@ -68,6 +68,8 @@ export function showNotice(message: string, duration:number = 4000, type: string
     },
   });
 
-  new Notice(fragment, duration);
+  const notice = new Notice("", duration);
+  notice.noticeEl.empty();
+  notice.noticeEl.append(fragment);
 
 }

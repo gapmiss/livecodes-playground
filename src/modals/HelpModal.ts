@@ -34,7 +34,10 @@ export class HelpModal extends Modal {
     contentEl.empty();
     
     contentEl.addClass("livecodes-help-modal");
-    
+    if (!this.steps) {
+      contentEl.addClass("livecodes-help-modal-simple");
+    }
+
     // Title and Message
     contentEl.createEl('h1', {text: this.title});
     const range = activeDocument.createRange();

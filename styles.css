@@ -33,10 +33,10 @@ body.theme-light {
  .modal-content.livecodes-help-modal code {
   font-size: var(--font-smaller)
  }
- .livecodes-help-modal:not(:has(button[data-prev])) {
+ .livecodes-help-modal.livecodes-help-modal-simple {
   padding: 1rem;
  }
-.livecodes-prompt-modal input.prompt-input {
+.modal-container.livecodes-prompt-modal input.prompt-input {
   width: 100%;
   padding: var(--size-4-6);
   background-color: var(--background-primary);
@@ -44,18 +44,18 @@ body.theme-light {
   border: none;
   height: 40px;
   border-radius: var(--radius-m);
-  border-bottom: none !important;
+  border-bottom: none;
 }
-.livecodes-prompt-modal input.prompt-input:hover,
-.livecodes-prompt-modal input.prompt-input:focus,
-.livecodes-prompt-modal input.prompt-input:focus-visible {
-  border-bottom: none !important;
+.modal-container.livecodes-prompt-modal input.prompt-input:hover,
+.modal-container.livecodes-prompt-modal input.prompt-input:focus,
+.modal-container.livecodes-prompt-modal input.prompt-input:focus-visible {
+  border-bottom: none;
   box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 .livecodes-editor-settings-modal .title-setting input {
   width: 100%;
 }
-.livecodes-external-resources-modal .setting-item-control:has(textarea),
+.livecodes-external-resources-modal .setting-item-control-textarea,
 .livecodes-editor-settings-modal .setting-item-control {
   justify-content: flex-start;
 }
@@ -86,8 +86,8 @@ div.livecodes-editor-settings-modal .tags-setting,
 div.livecodes-editor-settings-modal .htmlattrs-setting {
   display: block;
 }
-div.livecodes-editor-settings-modal div.setting-item-description {
-  margin-block-end: .5em !important;
+div.livecodes-editor-settings-modal .setting-item div.setting-item-description {
+  margin-block-end: .5em;
   font-size: var(--font-smaller);
 }
 div.modal-button-notice {
@@ -115,10 +115,10 @@ button.share-gist-button:disabled {
 .setting-item-heading-onboarding .setting-item-name {
   color: var(--text-accent)
 }
-.setting-item-heading-onboarding {
+.livecodes-settings-tab .setting-item.setting-item-heading-onboarding {
   background-color: var(--background-secondary);
   border-radius: var(--size-2-3);
-  padding: 1em .5em !important;
+  padding: 1em .5em;
   margin-bottom: 1em;
 }
 .livecodes-settings-tab .setting-item-heading .setting-item-name {
@@ -144,14 +144,14 @@ button.share-gist-button:disabled {
   align-items: start;
   gap: .75em;
 }
-.livecodes-sponsorship {
+.livecodes-settings-tab .livecodes-sponsorship {
   background-color: var(--background-secondary);
   border-radius: var(--size-2-3);
-  padding: 1em .5em !important;
+  padding: 1em .5em;
   margin-top: 1em;
   text-align: center;
 }
-.livecodes-sponsorship a:has(svg) {
+.livecodes-sponsorship a.livecodes-sponsorship-link {
   display: inline-block;
 }
 .livecodes-sponsorship-button {
@@ -226,13 +226,13 @@ iframe.livecodes #external-resources-btn {
 /**
  * help modal
  */
-div:has(> button[data-prev]) span {
+div.paging-controls span {
   font-size: var(--font-smaller);
   color: var(--text-faint);
   display: inline-block;
   padding-block-start: .4em;
 }
-div:has(> button[data-prev]) {
+div.paging-controls {
   display: flex;
   gap: 2em;
   width: 100%;
@@ -281,7 +281,7 @@ div:has(> button[data-prev]) {
   outline:0
 }
 .steps-bullets ul li a.active {
-  width: 20px !important;
+  width: 20px;
   background:#999;
   cursor: default;
 }
@@ -328,7 +328,7 @@ div.search-form-heading {
   display: flex;
   justify-content: center;
 }
-div:has(.search-form-wrapper) {
+div.search-form-container {
   font-family: var(--font-interface);
 }
 .search-form-wrapper {
@@ -374,7 +374,7 @@ div:has(.search-form-wrapper) {
   gap: .15em;
   /* justify-content: center; */
 }
-.result-row div:nth-child(1) div:has(a) {
+.result-row div:nth-child(1) div.result-row-link {
   display: inline-block;
   flex-grow: 1;
   flex-basis: 160px;
@@ -395,7 +395,7 @@ div:has(.search-form-wrapper) {
   border: 3px solid var(--background-modifier-border-focus);
   border-radius: var(--size-2-3);
 }
-.result-row div:nth-child(1) div:has(button) {
+.result-row div:nth-child(1) div.result-row-action {
   display: inline-block;
   padding: 0;
 }

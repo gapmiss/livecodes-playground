@@ -961,6 +961,7 @@ const createDonateButton = (link: string, img: HTMLElement): HTMLElement => {
   a.setAttribute('aria-label', link);
   a.setAttribute("data-tooltip-position", "top");
   a.addClass('livecodes-sponsorship-button');
+  a.addClass('livecodes-sponsorship-link');
   a.appendChild(img);
   return a;
 };
