@@ -18,9 +18,12 @@
 		"@types/node": "^20.0.0",
 		"@typescript-eslint/parser": "^8.0.0",
 		"esbuild": "^0.25.3",
+		"esbuild-svelte": "^0.9.5",
 		"eslint": "^9.0.0",
 		"eslint-plugin-obsidianmd": "^0.3.0",
 		"obsidian": "^1.5.7-1",
+		"svelte": "^5.56.0",
+		"svelte-check": "^4.4.8",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.0.0"
 	},
@@ -29,12 +32,8 @@
 		"@popperjs/core": "^2.11.8",
 		"@tsconfig/svelte": "^5.0.2",
 		"cheerio": "^1.0.0-rc.12",
-		"esbuild-svelte": "^0.8.0",
 		"livecodes": "^0.5.0",
 		"nunjucks": "^3.2.4",
-		"prettier": "^3.2.5",
-		"svelte": "^4.2.8",
-		"svelte-check": "^3.6.2",
-		"svelte-preprocess": "^5.1.3"
+		"prettier": "^3.2.5"
 	}
 }

@@ -2,11 +2,11 @@
   import { onMount } from "svelte";
   import { flip } from "svelte/animate";
 
-  export let changes: {
-    tags: string[];
-  };
-  export let delimiter = ",";
-  let current = "";
+  let { changes, delimiter = "," }: {
+    changes: { tags: string[] };
+    delimiter?: string;
+  } = $props();
+  let current = $state("");
 
   function parseInput() {
     const tagSet = new Set(changes.tags);
@@ -45,9 +45,9 @@
         {#each [...changes.tags.values()] as tag (tag)}
             <div class="multi-select-pill" animate:flip={{ duration: 200 }}>
               <div class="multi-select-pill-content"><span>{tag}</span></div>
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <!-- svelte-ignore a11y-no-static-element-interactions -->
-              <div class="multi-select-pill-remove-button" aria-label="Remove tag" on:click={() => removeTag(tag)}>
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
+              <div class="multi-select-pill-remove-button" aria-label="Remove tag" onclick={() => removeTag(tag)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -68,8 +68,8 @@
           <input
             class="tag-entry"
             type="text"
-            on:keyup={handleInput}
-            on:blur={parseInput}
+            onkeyup={handleInput}
+            onblur={parseInput}
             bind:value={current}
           />
         </div>

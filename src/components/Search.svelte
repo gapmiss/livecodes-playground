@@ -149,7 +149,7 @@
         type="text"
         placeholder="What are you looking for?"
         bind:this={searchInput}
-        on:keypress={handleKeypress}
+        onkeypress={handleKeypress}
         class="search-input"
       />
       <button

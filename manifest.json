@@ -2,7 +2,7 @@
 	"id": "livecodes-playground",
 	"name": "Livecodes Playground",
 	"version": "0.12.8",
-	"minAppVersion": "1.7.2",
+	"minAppVersion": "1.8.7",
 	"description": "Client-side code editor playground - Powered by LiveCodes.",
 	"author": "@gapmiss",
 	"authorUrl": "https://github.com/gapmiss",

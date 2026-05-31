@@ -1,5 +1,5 @@
 import { type App, ItemView, WorkspaceLeaf, FileSystemAdapter } from 'obsidian';
-import 'svelte';
+import { mount, unmount } from 'svelte';
 import LivecodesPlugin from '../main';
 import Component from "../components/Search.svelte";
 
@@ -7,7 +7,7 @@ export const VIEW_TYPE_PLAYGROUND_SEARCH = "livecodes-search-view";
 
 export class LivecodesSearchView extends ItemView {
   plugin!: LivecodesPlugin;
-  component!: Component;
+  component!: ReturnType<typeof mount>;
   adapter: FileSystemAdapter;
 
   constructor(
@@ -36,13 +36,13 @@ export class LivecodesSearchView extends ItemView {
       this.contentEl.empty();
     }
 
-    this.component = new Component({
+    this.component = mount(Component, {
       target: this.contentEl
     });
 
   }
 
   async onClose() {
-    this.component.$destroy();
+    void unmount(this.component);
   }
 }

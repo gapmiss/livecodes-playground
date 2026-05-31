@@ -1,12 +1,12 @@
 import { type App, ItemView, WorkspaceLeaf, normalizePath, TFile, Menu } from 'obsidian';
-import 'svelte';
+import { mount, unmount } from 'svelte';
 import { LivecodesSettings, PlaygroundConfig } from '../settings/default';
 import Component from "../components/Playground.svelte";
 
 export const VIEW_TYPE_PLAYGROUND = "Livecodes-view";
 
 export class PlaygroundView extends ItemView {
-  component!: Component;
+  component!: ReturnType<typeof mount>;
   jsonTemplate: TFile | undefined;
 
   constructor(
@@ -60,7 +60,7 @@ export class PlaygroundView extends ItemView {
     let fPath: TFile = this.app.vault.getFileByPath(playgroundPath)!;
     let tpl: string = await this.app.vault.read(fPath);
     let newTemplate: PlaygroundConfig = JSON.parse(tpl) as PlaygroundConfig;
-    this.component = new Component({
+    this.component = mount(Component, {
       target: this.contentEl,
       props: {
         jsonTemplate: newTemplate,
@@ -71,7 +71,7 @@ export class PlaygroundView extends ItemView {
   }
 
   async onClose() {
-    this.component.$destroy();
+    void unmount(this.component);
   }
 
   /**

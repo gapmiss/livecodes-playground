@@ -1,5 +1,4 @@
 import esbuildSvelte from "esbuild-svelte";
-import sveltePreprocess from "svelte-preprocess";
 import esbuild from "esbuild";
 import process from "process";
 import { builtinModules } from "module";
@@ -44,12 +43,6 @@ const context = await esbuild.context({
 	plugins: [
 		esbuildSvelte({
 			compilerOptions: { css: "injected" },
-			preprocess: sveltePreprocess({
-			typescript: {
-				tsconfigFile: false,
-				compilerOptions: { target: "ES2020" }
-			}
-		}),
 		}),
 	],
 })

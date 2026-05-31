@@ -1,6 +1,7 @@
 <script lang="ts">
   import { setIcon, moment } from "obsidian";
-  import { createPlayground, EmbedOptions } from "livecodes";
+  import { createPlayground } from "livecodes";
+  import type { EmbedOptions } from "livecodes";
   import * as prettier from "prettier/standalone";
   import * as htmlPlugin from "prettier/plugins/html";
   import * as markdownPlugin from "prettier/plugins/markdown";
@@ -756,73 +757,73 @@
   <div
     bind:this={container}
     data-height={plugin.settings.dataHeight || "600"}
-  />
+  ></div>
   <div class="buttons-wrapper" style="display:none;" bind:this={buttonsWrapper}>
     <button
       aria-label="Watch for changes & SAVE"
       bind:this={onWatch}
       data-tooltip-position="bottom"
       class="watch-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Create note"
       bind:this={createNote}
       data-tooltip-position="bottom"
       class="create-note-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Save as new playground"
       bind:this={saveAsNewPlayground}
       data-tooltip-position="bottom"
       class="save-as-new-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Save as HTML"
       bind:this={downloadHTML}
       data-tooltip-position="bottom"
       class="save-html-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Copy HTML to clipboard"
       bind:this={copyHTML}
       data-tooltip-position="bottom"
       class="copy-html-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Copy share URL to clipboard"
       bind:this={copyShareUrl}
       data-tooltip-position="bottom"
       class="share-url-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Share as Github gist"
       bind:this={openShareGist}
       data-tooltip-position="bottom"
       class="create-gist-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Set {plugin.settings.darkTheme ? 'light' : 'dark'} mode"
       bind:this={toggleTheme}
       data-tooltip-position="bottom"
       class="theme-mode-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="External resources"
       bind:this={openExternalResources}
       data-tooltip-position="bottom"
       class="external-resources-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Playground settings"
       bind:this={openPlaygroundSettings}
       data-tooltip-position="bottom"
       class="playground-settings-button clickable-icon"
-    />
+    ></button>
     <button
       aria-label="Help"
       bind:this={showHelp}
       data-tooltip-position="bottom"
       class="clickable-icon"
-    />
+    ></button>
   </div>
 </div>

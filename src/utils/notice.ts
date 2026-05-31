@@ -69,7 +69,7 @@ export function showNotice(message: string, duration:number = 4000, type: string
   });
 
   const notice = new Notice("", duration);
-  notice.noticeEl.empty();
-  notice.noticeEl.append(fragment);
+  notice.messageEl.empty();
+  notice.messageEl.append(fragment);
 
 }

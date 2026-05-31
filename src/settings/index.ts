@@ -34,39 +34,33 @@ export class LivecodesSettingsTab extends PluginSettingTab {
       1000
     );
 
-    const desc = activeDocument.createDocumentFragment();
-    desc.append(
-      "All changes are applied to future Livecodes playground views.",
-      desc.createEl("br"),
-      desc.createEl("br"),
-      "Need help or an introduction? Visit the plugin ",
-      desc.createEl("a", {
-        href: "https://github.com/gapmiss/livecodes-playground/",
-        text: "README",
-        attr: { "aria-label": "https://github.com/gapmiss/livecodes-playground/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
-      }),
-      " and ",
-      desc.createEl("a", {
-        href: "https://gapmiss.github.io/livecodes-playground-docs/",
-        text: "documentation",
-        attr: { "aria-label": "https://gapmiss.github.io/livecodes-playground-docs/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
-      }),
-      " and LiveCodes.io ",
-      desc.createEl("a", {
-        href: "https://livecodes.io/docs/getting-started/",
-        text: "documentation",
-        attr: { "aria-label": "https://livecodes.io/docs/getting-started/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
-      }),
-      " for additional help."
-    );
-
     new Setting(containerEl)
-      .setDesc(desc)
       .setClass("setting-item-heading-onboarding")
       .then(cb => {
-        cb.settingEl.classList.add("setting-head");
-      })
-      .then(cb => {
+        cb.descEl.append(
+          "All changes are applied to future Livecodes playground views.",
+          cb.descEl.createEl("br"),
+          cb.descEl.createEl("br"),
+          "Need help or an introduction? Visit the plugin ",
+          cb.descEl.createEl("a", {
+            href: "https://github.com/gapmiss/livecodes-playground/",
+            text: "README",
+            attr: { "aria-label": "https://github.com/gapmiss/livecodes-playground/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
+          }),
+          " and ",
+          cb.descEl.createEl("a", {
+            href: "https://gapmiss.github.io/livecodes-playground-docs/",
+            text: "documentation",
+            attr: { "aria-label": "https://gapmiss.github.io/livecodes-playground-docs/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
+          }),
+          " and LiveCodes.io ",
+          cb.descEl.createEl("a", {
+            href: "https://livecodes.io/docs/getting-started/",
+            text: "documentation",
+            attr: { "aria-label": "https://livecodes.io/docs/getting-started/", "class": "external-link", "data-tooltip-position": "top", "tabindex": '0' }
+          }),
+          " for additional help."
+        );
         cb.settingEl.classList.add("setting-head");
       });
 
