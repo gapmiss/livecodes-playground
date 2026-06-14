@@ -35,5 +35,8 @@
 		"livecodes": "^0.5.0",
 		"nunjucks": "^3.2.4",
 		"prettier": "^3.2.5"
+	},
+	"allowScripts": {
+		"esbuild@0.25.12": true
 	}
 }
