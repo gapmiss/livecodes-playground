@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@types/node": "^20.0.0",
 		"@typescript-eslint/parser": "^8.0.0",
-		"esbuild": "^0.25.3",
+		"esbuild": "^0.28.1",
 		"esbuild-svelte": "^0.9.5",
 		"eslint": "^9.0.0",
 		"eslint-plugin-obsidianmd": "^0.3.0",
@@ -37,6 +37,6 @@
 		"prettier": "^3.2.5"
 	},
 	"allowScripts": {
-		"esbuild@0.25.12": true
+		"esbuild@0.28.1": true
 	}
 }
